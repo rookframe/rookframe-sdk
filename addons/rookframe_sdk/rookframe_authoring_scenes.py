@@ -4,29 +4,34 @@ import json
 
 def presentation(package_id: str) -> str:
     root = f"res://rookframe/packages/{package_id}"
-    return f'''extends Control
+    return f'''extends "{root}/sdk/presentation.gd"
 
-const SDK = preload("{root}/sdk/package_sdk_facade.gd")
-const RAIL = preload("{root}/ui/rail.tscn")
-const WINDOW = preload("{root}/ui/window.tscn")
-var sdk: RefCounted
-var _window: Control
+const WINDOW_BUTTON: SDK.WindowButton = preload("{root}/ui/window_button.tres")
 
 
-func compose_presentation(host: Object) -> Control:
-\tsdk = SDK.new()
-\tsdk.bind(host)
-\tvar rail := RAIL.instantiate() as Button
-\trail.pressed.connect(_open_window)
-\tif not sdk.mount_rail("left", rail):
-\t\trail.free()
-\treturn self
+func compose() -> void:
+\tvar rail: SDK.Rail = sdk.rails.left
+\trail.push(WINDOW_BUTTON)
+'''
 
 
-func _open_window() -> void:
-\tif _window == null:
-\t\t_window = WINDOW.instantiate() as Control
-\tsdk.open_extension_surface(_window)
+def window_button(package_id: str) -> str:
+    root = f"res://rookframe/packages/{package_id}"
+    return f'''[gd_resource type="Resource" load_steps=6 format=3]
+
+[ext_resource type="Script" path="{root}/sdk/window_button.gd" id="entry"]
+[ext_resource type="Script" path="{root}/sdk/extension_surface.gd" id="surface"]
+[ext_resource type="PackedScene" path="{root}/ui/window_button.tscn" id="button"]
+[ext_resource type="PackedScene" path="{root}/ui/window.tscn" id="window"]
+
+[sub_resource type="Resource" id="ExtensionWindow"]
+script = ExtResource("surface")
+scene = ExtResource("window")
+
+[resource]
+script = ExtResource("entry")
+button_scene = ExtResource("button")
+window = SubResource("ExtensionWindow")
 '''
 
 

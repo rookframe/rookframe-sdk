@@ -1,31 +1,81 @@
-# Edition 2027 — initial authoring interface
+# Edition 2027 — typed Package authoring
 
-Preload `res://rookframe/packages/<id>/sdk/package_sdk_facade.gd`; instantiate it
-normally. The generated Implementation demonstrates native `_ready` setup:
-Rookframe attaches the Package-scoped adapter as `rookframe_sdk` metadata before
-adding the Node to its World subtree. In the editor that metadata is absent.
-A Presentation instead receives the same scoped adapter as the argument of
-`compose_presentation(host: Object) -> Control`. The generated Presentation binds
-it automatically. These objects die with the World or local Presentation.
+Extend the generated Package-local Presentation base. It supplies a typed `sdk`
+before calling `compose()`. A window-opening entry is an authored resource:
 
-| Facade method | Contract |
+```gdscript
+extends "res://rookframe/packages/<id>/sdk/presentation.gd"
+
+const CALENDAR_WINDOW_BUTTON: SDK.WindowButton = preload("res://rookframe/packages/<id>/ui/window_button.tres")
+
+func compose() -> void:
+    var rail: SDK.Rail = sdk.rails.left
+    rail.push(CALENDAR_WINDOW_BUTTON)
+```
+
+The Publisher chooses the Rail and the entry. Rookframe owns native scene
+instantiation, opening signals, mounting, ordering across Packages, responsive
+geometry, registration lifetime, failure reporting and managed-window mechanics.
+No Publisher-side binding, string-based mount, boolean cleanup branch or native
+signal connection is required for this standard action.
+
+## Types available in Godot
+
+| Type / member | Contract |
 | --- | --- |
-| `bind(host: Object)` | Receives the host-supplied scoped adapter during setup. |
-| `package_id() -> String` | Stable Package UUID, independent of builds. |
-| `package_root() -> String` | Stable author root in the editor; immutable selected profile root in a World. |
-| `presentation_experience() -> String` | `desktop`, `tablet` or `phone`; editor defaults to desktop. |
-| `mount_rail(rail: String, content: Control) -> bool` | Mount an unparented authored entry in the left or right Rail's Package slot. System entries precede optional Packages. Host owns slot layout and cleanup. |
-| `open_extension_surface(content: Control) -> bool` | Open authored content in the host-managed window. Reusing the same content retains its Node instance across close/reopen, dock/float and minimize/restore. Host owns chrome, focus and responsive placement. |
+| `SDK.Rail` | Package-scoped access to one Rail's Package contribution slot. It is not the private host Node. |
+| `sdk.rails.left`, `sdk.rails.right` | Read-only typed Rail handles. |
+| `Rail.push(entry: SDK.WindowButton) -> void` | Register an authored window-opening entry. Multiple entries retain insertion order within the Package; System precedes optional Packages in stable Package-ID order. The same button-scene/window-scene pair is idempotent within one Rail and Presentation. |
+| `SDK.WindowButton` | Authored Resource with `button_scene: PackedScene` and `window: SDK.ExtensionSurface`. The button scene must have a native Button root. |
+| `SDK.ExtensionSurface` | Authored Resource with `scene: PackedScene`. The scene must have a Control root; its internal UI belongs to the Package. |
+| `sdk.package_id() -> String` | Stable Package UUID, independent of builds and installations. |
+| `sdk.package_root() -> String` | Current admitted resource root for this Package. |
+| `sdk.presentation_experience() -> String` | Current `desktop`, `tablet` or `phone` experience. |
 
-These methods require revision 1. The author kit checks declared minimum revision
-against actual reviewed SDK operations; settings require revision 2 and trusted
-service operations require revision 3. This initial public facade covers the
-RFG-225 author-to-World path; broader Content, UI and domain API authoring grows
-in the following Project 02 slices. Direct Godot APIs and public UI Kit resources
-remain separate contracts and receive normal production admission checks.
+Open `ui/window_button.tres` in the Inspector to choose the button scene and its
+typed window target. Edit those scenes with the ordinary Godot scene editor and
+public UI Kit. Type hints use path-preloaded scripts, following
+[Godot's custom type support](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/static_typing.html#custom-variable-types).
+They do not require global `class_name` registrations or Package autoloads.
 
-Use ordinary `preload`, path-attached scripts, scenes and resources within your
-Package. There are no Package autoloads or process-global class registrations.
-Use the public component root's exported properties and methods, not its internal
-child structure. The initial Rail scene connects `pressed` to a Presentation
-method, which instantiates the window scene and calls `open_extension_surface`.
+## Ownership and errors
+
+A window is instantiated lazily on its first activation. Reopening, docking,
+floating, minimizing and restoring preserve its live content. Different entries
+targeting the same scene share that window. Presentation replacement updates the
+Rail entries while retaining window content and its draft state until World
+teardown. A different target scene has separate content. Closing a managed
+window hides it; World teardown frees the content and all registrations.
+
+Registration validates the authored scenes through the Package-bound checked
+resource loader. Invalid setup fails the existing Package startup or staged
+Presentation replacement operation, with a diagnostic. A failure while opening
+a window is attributed to that Package and scene and ends the affected World
+Application through its existing return-to-Manager cleanup. Publishers do not
+own disposal of rejected registration controls.
+
+## Implementation setup
+
+Extend `sdk/implementation.gd` and override `start() -> void` when Implementation
+setup is needed. The SDK binds before `start()` in an installed World. The
+surrounding Node lifecycle remains native Godot. The generated base owns the
+metadata binding; Publisher code receives the typed facade directly.
+
+All files in the generated `sdk/` directory ship with the Package. They are
+checked against the exact authoring kit and receive the same production source
+and resource verification as other Package code. No generated file is exempt
+from admission. These facilities require Edition 2027 revision 1; broader
+Content and domain APIs continue in later Project 02 work.
+
+Direct Godot behavior within authored Package UI and the independently versioned
+UI Kit remain their existing contracts. Use public component properties and
+signals for Package-internal behavior, without depending on private child paths.
+
+## Migrating the initial 0.1.x example
+
+Update the exact SDK pin and authoring lock together. Replace the generated
+`sdk/` directory with the current `facade` command, extend its Presentation base,
+and move the button/window references into a `WindowButton` resource. Replace
+manual binding, button instantiation, opening signal wiring and `mount_rail`
+with `Rail.push`. Keep the authored button and window scenes. Initialization
+does not overwrite a Publisher's existing source to perform this migration.

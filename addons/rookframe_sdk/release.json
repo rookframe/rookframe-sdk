@@ -1,5 +1,5 @@
 {
-  "version": "0.1.1",
+  "version": "0.2.0",
   "edition": "2027",
   "maximumRevision": 3,
   "uiKit": {
@@ -10,14 +10,15 @@
     "checker/GDSHRAPT-LICENSE.txt": "6b64bd26bd90c9981ebb91b99c20ef595209767ae33583d44e3a3b6aa7025571",
     "checker/GDShrapt.Reader.dll": "576831f6f96c6cd3727bd783dd0cc7259f0741d49155abda5999d87af0d1859f",
     "checker/Rookframe.PackageCheck.deps.json": "273950442406babfc0693f093eefb958e33ece5af42de57e62ba68e8c4a12f21",
-    "checker/Rookframe.PackageCheck.dll": "3ee8d946b117598d20e96222c4e52884f936a0706b2d351f677d6530228a5f79",
+    "checker/Rookframe.PackageCheck.dll": "624e76008c471ed4cbd918f692049efec7ff2f7a7fd74669ae90aa9b834788ad",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
-    "plugin.cfg": "1c7da17ac52b6bfcca69fbb471e27ea2fa3fd56802bdc7d537df0b4e47e4d78d",
+    "plugin.cfg": "4ec23cdbcb308d1367cee35fcb130732cd07dd9a38168b93b854ca858d333a30",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "352ad7f9661010011eedd9c88a91b421acc3587f2572ac7d2dbf29fecffac2f0",
+    "rookframe_authoring.py": "685f82bb9113f1cae991b018234b8a5863874a79e086d4a3ac8a08341fb9f8e7",
     "rookframe_authoring_checks.py": "4ba7864ad9af82b59870a72f10d97023dbad82490f615768cc21df3ffb76f737",
-    "rookframe_authoring_scenes.py": "ec2dbca18a37a10f4096b5eb4e1e2e8fa242cd8eb47f50eec26a1c062b296998",
-    "rookframe_package_build.py": "b8ffd8d5f2ad95dcbbd06c3ac565667607e3703a9291585a053bb7ade45c9012"
+    "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
+    "rookframe_package_build.py": "b8ffd8d5f2ad95dcbbd06c3ac565667607e3703a9291585a053bb7ade45c9012",
+    "rookframe_sdk_facade.py": "2ff1079c01c0c19b5d8d046bf695a683d5079cb912fa58aafc5627d012f96bfd"
   },
   "uiFiles": {
     "README.md": "15b90e8e0ae983f4b763584017f0499e71006266a948eb7542cd3642098a577e",
@@ -200,5 +201,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "f73c6141e15d15064d821d42eacb24889a5130e9"
+  "sourceRevision": "8f502aec59d74647a824eddad1756c22f216b040"
 }

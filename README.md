@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.1.1
+# Rookframe SDK Authoring Kit 0.2.0
 
 Author one ordinary Godot Package for SDK Edition 2027. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`
@@ -25,7 +25,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.1.1", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.2.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "238339d390ec01873585c002917c164948a0578d", "include": ["rookframe/ui"]})
 ```
 
@@ -74,10 +74,11 @@ Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
 
-The generated facade is a path-addressed `RefCounted`, with documented methods
-visible through Godot completion. Read [API.md](API.md) for the initial interface,
-scoped binding and native lifecycle. No host adapter should be copied or written
-by a Publisher. Dates and notes in Calendar are developed in later slices.
+The generated SDK provides concrete `Rail`, `WindowButton`, and
+`ExtensionSurface` types, with documented members visible through Godot completion.
+Extend its Presentation base and register an authored entry with
+`sdk.rails.left.push(calendar_window_button)`. The SDK owns binding, opening,
+mounting and cleanup. Read [API.md](API.md) for the complete initial interface. Dates and notes in Calendar are developed in later slices.
 
 ## Checks, collisions and builds
 
@@ -85,8 +86,10 @@ by a Publisher. Dates and notes in Calendar are developed in later slices.
 compatible presets. All discovered collisions fail before scaffolding writes.
 It does not migrate an existing Manifest or replace Publisher choices. For a
 revision change, edit the Manifest and lock deliberately, remove only the
-previous generated facade, then run `facade`. The facade command writes only a
-missing generated file; a changed existing facade is diagnosed.
+previous generated `sdk/` directory, then run `facade`. Commit the complete
+generated directory. The command preflights all generated files before filling
+missing ones; changed files are diagnosed without overwrites. When upgrading
+from 0.1.x, also migrate the Presentation to the typed API shown in [API.md](API.md).
 
 `check` is read-only for Publisher inputs. Manifest semantics, namespace,
 dependency pins, facade, SDK minimum revision and profiles are checked first.
