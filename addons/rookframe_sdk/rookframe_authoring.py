@@ -20,8 +20,9 @@ from rookframe_package_build import (BUILD_SCHEMA,
     deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.2.0"
+SDK_VERSION = "0.3.0"
 SDK_EDITION = "2027"
+SDK_EDITIONS = {"2027": 4, "2028": 1}
 UI_VERSION = "v1.0.0-rc.1"
 UI_COMMIT = "238339d390ec01873585c002917c164948a0578d"
 PROFILES = ("desktop", "android", "ios", "dedicated-headless")
@@ -65,7 +66,7 @@ def read_presets(project: Path) -> configparser.ConfigParser:
     return config
 
 
-def initialize(project: Path, name: str, kind: str, profiles: list[str], ui: bool = False) -> None:
+def initialize(project: Path, name: str, kind: str, profiles: list[str], ui: bool = False, edition: str = SDK_EDITION) -> None:
     presets_path = project / "export_presets.cfg"
     if presets_path.exists() and not presets_path.is_file():
         raise AuthoringError("INIT.CONFLICT: export_presets.cfg must be a regular file.")
@@ -73,13 +74,13 @@ def initialize(project: Path, name: str, kind: str, profiles: list[str], ui: boo
     if manifest_path.exists():
         manifest = json.loads(manifest_path.read_text())
         package_id = manifest["id"]
-        if manifest.get("kind") != kind or manifest.get("sdk", {}).get("edition") != SDK_EDITION:
+        if manifest.get("kind") != kind or manifest.get("sdk", {}).get("edition") != edition:
             raise AuthoringError("INIT.CONFLICT: Existing Manifest has a different Kind or SDK Edition.")
     else:
         package_id = str(uuid.uuid4())
         manifest = {"manifestVersion": 1, "id": package_id, "kind": kind,
                     "name": name, "version": "0.1.0", "summary": name,
-                    "sdk": {"edition": SDK_EDITION, "minimumRevision": 1},
+                    "sdk": {"edition": edition, "minimumRevision": 1},
                     "rookframeCompatibility": {"minimum": "0.1.0", "verified": "0.1.0"},
                     "implementation": {"entryPoint": "logic/implementation.gd"}}
     identity = uuid.UUID(package_id)
@@ -87,7 +88,7 @@ def initialize(project: Path, name: str, kind: str, profiles: list[str], ui: boo
         raise AuthoringError("INIT.CONFLICT: Package ID must be a canonical UUIDv4.")
     revision = manifest["sdk"]["minimumRevision"]
     package_root = f"rookframe/packages/{package_id}"
-    lock = {"sdkEdition": SDK_EDITION, "sdkAuthoringKitVersion": SDK_VERSION,
+    lock = {"sdkEdition": edition, "sdkAuthoringKitVersion": SDK_VERSION,
             "minimumRevision": revision,
             "uiKit": {"version": UI_VERSION, "commit": UI_COMMIT}}
     proposed = {
@@ -95,7 +96,7 @@ def initialize(project: Path, name: str, kind: str, profiles: list[str], ui: boo
         ".rookframe/authoring.lock.json": json_text(lock),
     }
     proposed.update({f"{package_root}/sdk/{name}": source
-                     for name, source in facade_sources(package_id, revision, SDK_VERSION).items()})
+                     for name, source in facade_sources(package_id, revision, SDK_VERSION, edition, implementation="implementation" in manifest, presentations=bool(manifest.get("presentations")) or (ui and not manifest_path.exists())).items()})
     if ui and not manifest_path.exists():
         from rookframe_authoring_scenes import presentation, window_scene, rail_scene, window_button
         manifest["presentations"] = [{"id": "default", "experiences": ["desktop", "tablet", "phone"],
@@ -166,14 +167,15 @@ def check_facade(project: Path, *, generate_missing: bool = False) -> dict:
     revision = manifest["sdk"]["minimumRevision"]
     if str(identity) != manifest["id"] or identity.version != 4:
         raise AuthoringError("MANIFEST.ID: Use a canonical UUIDv4 Package identity.")
-    if manifest["sdk"]["edition"] != SDK_EDITION or type(revision) is not int or not 1 <= revision <= 3:
-        raise AuthoringError("SDK.REVISION: SDK Edition 2027 supports additive revisions 1–3.")
+    edition = manifest["sdk"]["edition"]
+    if type(revision) is not int or not 1 <= revision <= SDK_EDITIONS.get(edition, 0):
+        raise AuthoringError("SDK.REVISION: Supported Editions are 2027 revisions 1–4 and 2028 revision 1.")
     lock = json.loads((project / ".rookframe/authoring.lock.json").read_text())
-    if (lock.get("sdkEdition") != SDK_EDITION or lock.get("minimumRevision") != revision
+    if (lock.get("sdkEdition") != edition or lock.get("minimumRevision") != revision
             or lock.get("sdkAuthoringKitVersion") != SDK_VERSION):
         raise AuthoringError("SDK.REVISION: Manifest and exact authoring lock disagree.")
     generated = {project / f"rookframe/packages/{identity}/sdk/{name}": source
-                 for name, source in facade_sources(str(identity), revision, SDK_VERSION).items()}
+                 for name, source in facade_sources(str(identity), revision, SDK_VERSION, edition, implementation="implementation" in manifest, presentations=bool(manifest.get("presentations"))).items()}
     # Preflight the complete generated surface before adding any missing file.
     for path, expected in generated.items():
         if any(parent.exists() and not parent.is_dir() for parent in path.parents):
@@ -238,7 +240,7 @@ def check_project(project: Path, godot: Path, work: Path) -> tuple[dict, list[st
 
 
 def check_revision(manifest: dict, checked: dict) -> None:
-    required = checked.get("minimumSdkRevision", 1)
+    required = 1 if manifest["sdk"]["edition"] == "2028" else checked.get("minimumSdkRevision", 1)
     if manifest["sdk"]["minimumRevision"] < required:
         raise AuthoringError(f"SDK.MINIMUM: These operations require additive revision {required}; update the Manifest, lock and generated facade explicitly.")
 
@@ -287,6 +289,7 @@ def main() -> int:
     parser.add_argument("--name", default="My Package")
     parser.add_argument("--kind", choices=("optional", "system-extension"), default="optional")
     parser.add_argument("--profile", choices=PROFILES, action="append", default=[])
+    parser.add_argument("--edition", choices=tuple(SDK_EDITIONS), default=SDK_EDITION)
     parser.add_argument("--ui", action="store_true", help="Scaffold an authored scene and a Rail-to-window Presentation for a new Package.")
     parser.add_argument("--godot", type=Path, default=Path(os.environ.get("ROOKFRAME_GODOT", "/Applications/Godot_mono.app/Contents/MacOS/Godot")))
     parser.add_argument("--output", type=Path)
@@ -295,7 +298,7 @@ def main() -> int:
     try:
         project = args.project.resolve()
         if args.command == "init":
-            initialize(project, args.name, args.kind, args.profile or ["desktop"], args.ui)
+            initialize(project, args.name, args.kind, args.profile or ["desktop"], args.ui, args.edition)
             result = {"status": "initialized", "project": str(project)}
         elif args.command == "facade":
             check_facade(project, generate_missing=True)

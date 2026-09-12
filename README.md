@@ -1,6 +1,7 @@
-# Rookframe SDK Authoring Kit 0.2.0
+# Rookframe SDK Authoring Kit 0.3.0
 
-Author one ordinary Godot Package for SDK Edition 2027. The kit supplies a
+Author ordinary Godot Packages for SDK Edition 2027 (revisions 1–4) or
+2028 (revision 1). The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`
 and `build` commands. It is an authoring dependency; only the generated facade
 ships in a Package. The UI Kit is a separate source dependency.
@@ -25,7 +26,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.2.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.3.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "238339d390ec01873585c002917c164948a0578d", "include": ["rookframe/ui"]})
 ```
 
@@ -78,7 +79,7 @@ The generated SDK provides concrete `Rail`, `WindowButton`, and
 `ExtensionSurface` types, with documented members visible through Godot completion.
 Extend its Presentation base and register an authored entry with
 `sdk.rails.left.push(calendar_window_button)`. The SDK owns binding, opening,
-mounting and cleanup. Read [API.md](API.md) for the complete initial interface. Dates and notes in Calendar are developed in later slices.
+mounting and cleanup. Read [API.md](API.md) for the complete initial interface. Calendar includes a Gregorian date view and note editor; authoritative date and note actions follow in the domain-data slice.
 
 ## Checks, collisions and builds
 
@@ -121,3 +122,14 @@ The standalone `Rookframe.PackageCheck.dll` is a framework-dependent author tool
 compiled from the production verifier sources, not a Rookframe application or
 private host assembly dependency. .NET is required only by author checking/build.
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
+
+## Content and Package forms
+
+The bounded [conformance projects](examples/package-conformance/README.md) cover
+a 2028 System, 2027 data-only Content and 2027 Presentation-only UI. Install them
+with the separate Calendar example to exercise the mixed-Edition World.
+Data-only Packages receive no executable facade; Presentation-only Packages
+receive no Implementation base. Neither form can register Package Settings.
+Choose `--edition 2028` when initializing a new 2028 project. Existing manifests
+and locks must be changed deliberately; an unsupported Edition/revision fails
+before any Package executes. Both Editions share the independently pinned UI Kit.
