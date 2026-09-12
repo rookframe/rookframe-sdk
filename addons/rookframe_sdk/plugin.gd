@@ -42,4 +42,3 @@ func _run(command: String) -> void:
 		print(line)
 	if status != 0:
 		push_error("Rookframe " + command + " failed. See the Output panel for the corrective diagnostic.")
-	get_editor_interface().get_resource_filesystem().scan()
