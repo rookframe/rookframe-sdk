@@ -20,7 +20,7 @@ from rookframe_package_build import (BUILD_SCHEMA,
     deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.8.0"
+SDK_VERSION = "0.9.0"
 SDK_EDITION = "2029"
 SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 1}
 UI_VERSION = "v1.0.0-rc.1"
@@ -288,6 +288,9 @@ def build_project(project: Path, godot: Path, work: Path, manifest: dict,
 
 
 def main() -> int:
+    if len(sys.argv) > 1 and sys.argv[1] in ("catalogue", "publish-github"):
+        from rookframe_publication import main as publication_main
+        return publication_main(sys.argv[1:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("init", "facade", "check", "build"))
     parser.add_argument("--project", type=Path, default=Path.cwd())

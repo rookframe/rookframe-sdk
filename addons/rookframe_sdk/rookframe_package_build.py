@@ -68,6 +68,7 @@ def source_identity(source: Path) -> str:
                 part
                 in {
                     ".godot",
+                    "__pycache__",
                     ".git",
                     "build",
                     "bin",
