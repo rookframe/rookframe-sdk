@@ -115,6 +115,9 @@ Extension, and open the World. The full selection must pass production admission
 before any Package executes. Reinstalling an archive retains its build identity;
 rebuilding the same version deliberately creates another identity.
 
+See [Package lifecycle and typed authorship](docs/manager-lifecycle.md) for update,
+repair, disable and deletion consequences.
+
 ## Distribution
 
 `release.json` records the exact SDK source revision, shipped file hashes, SDK
