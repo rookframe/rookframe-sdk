@@ -1,7 +1,7 @@
-# Rookframe SDK Authoring Kit 0.4.0
+# Rookframe SDK Authoring Kit 0.5.0
 
-Author ordinary Godot Packages for SDK Edition 2027 (revisions 1–5) or
-2028 (revisions 1–2). The kit supplies a
+Author ordinary Godot Packages for SDK Edition 2027 (revisions 1–6) or
+2028 (revisions 1–3). The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`
 and `build` commands. It is an authoring dependency; only the generated facade
 ships in a Package. The UI Kit is a separate source dependency.
@@ -26,7 +26,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.4.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.5.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "238339d390ec01873585c002917c164948a0578d", "include": ["rookframe/ui"]})
 ```
 
@@ -141,3 +141,12 @@ Edition 2027 revision 5 and Edition 2028 revision 2 add focused, typed capabilit
 Use concrete SDK IDs, ContentReference, entity snapshots and operation results.
 Only a Package's payload remains `Variant`; GDScript has no Package-defined generic return types.
 See [API.md](API.md) for the authorization, persistence and Resource contracts.
+
+## Package Settings
+
+Edition 2027 revision 6 / 2028 revision 3 adds typed descriptors, snapshots,
+validation, migration and custom-view drafts. Rookframe owns the separate User
+and World transactions, ordinary controls, authority checks and deliberate
+restart actions. See [the Settings API](API.md#package-settings--edition-2027-revision-6--2028-revision-3).
+Calendar is the ordinary public example; Workshop supplies a bounded custom
+form with restart-local and restart-world fields.

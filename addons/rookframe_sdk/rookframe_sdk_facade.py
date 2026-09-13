@@ -180,6 +180,25 @@ func cleanup(operation: SDK.Cleanup) -> void:
                 initialization += f'\n\t_{name}.configure("{name}")'
             sdk = sdk.replace("\t_host = host", "\t_host = host" + initialization, 1)
         sources["package_sdk_facade.gd"] = sdk
+    if (edition == "2027" and revision >= 6) or (edition == "2028" and revision >= 3):
+        from rookframe_sdk_settings import settings_sources, implementation_callbacks
+        settings = settings_sources(root)
+        sources.update(settings)
+        sdk = sources["package_sdk_facade.gd"]
+        for filename in settings:
+            type_name = "".join(word.capitalize() for word in filename[:-3].split("_"))
+            sdk += f'\nconst {type_name} = preload("{root}{filename}")'
+        sdk += "\n\nvar _settings: Settings\nvar settings: Settings:\n\tget:\n\t\treturn _settings\n"
+        sdk = sdk.replace("\t_host = host", "\t_host = host\n\t_settings = Settings.new(host)", 1)
+        sources["package_sdk_facade.gd"] = sdk
+        sources["implementation.gd"] += implementation_callbacks()
+        sources["presentation.gd"] += '''
+
+## Optional Presentation-specific form inside Rookframe's settings menu.
+@export var settings_view: SDK.SettingsViewDefinition
+func _rookframe_settings_view() -> PackedScene:
+\treturn settings_view.scene if settings_view != null else null
+'''
     if not implementation:
         sources.pop("implementation.gd", None)
     if not presentations:

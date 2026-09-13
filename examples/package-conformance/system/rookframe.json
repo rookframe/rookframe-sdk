@@ -3,10 +3,10 @@
   "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
   "kind": "system-extension",
   "name": "Workshop System",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "sdk": {
     "edition": "2028",
-    "minimumRevision": 2
+    "minimumRevision": 3
   },
   "rookframeCompatibility": {
     "minimum": "0.1.0",

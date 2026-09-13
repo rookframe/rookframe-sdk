@@ -20,9 +20,9 @@ from rookframe_package_build import (BUILD_SCHEMA,
     deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.4.0"
+SDK_VERSION = "0.5.0"
 SDK_EDITION = "2027"
-SDK_EDITIONS = {"2027": 5, "2028": 2}
+SDK_EDITIONS = {"2027": 6, "2028": 3}
 UI_VERSION = "v1.0.0-rc.1"
 UI_COMMIT = "238339d390ec01873585c002917c164948a0578d"
 PROFILES = ("desktop", "android", "ios", "dedicated-headless")
@@ -169,7 +169,7 @@ def check_facade(project: Path, *, generate_missing: bool = False) -> dict:
         raise AuthoringError("MANIFEST.ID: Use a canonical UUIDv4 Package identity.")
     edition = manifest["sdk"]["edition"]
     if type(revision) is not int or not 1 <= revision <= SDK_EDITIONS.get(edition, 0):
-        raise AuthoringError("SDK.REVISION: Supported Editions are 2027 revisions 1–5 and 2028 revisions 1–2.")
+        raise AuthoringError("SDK.REVISION: Supported Editions are 2027 revisions 1–6 and 2028 revisions 1–3.")
     lock = json.loads((project / ".rookframe/authoring.lock.json").read_text())
     if (lock.get("sdkEdition") != edition or lock.get("minimumRevision") != revision
             or lock.get("sdkAuthoringKitVersion") != SDK_VERSION):
@@ -241,8 +241,6 @@ def check_project(project: Path, godot: Path, work: Path) -> tuple[dict, list[st
 
 def check_revision(manifest: dict, checked: dict) -> None:
     required = checked.get("minimumSdkRevision", 1)
-    if manifest["sdk"]["edition"] == "2028":
-        required = 2 if required >= 5 else 1
     if manifest["sdk"]["minimumRevision"] < required:
         raise AuthoringError(f"SDK.MINIMUM: These operations require additive revision {required}; update the Manifest, lock and generated facade explicitly.")
 

@@ -242,3 +242,86 @@ HP calculation/update, and journal System Records. The separate optional Calenda
 uses only its scoped World value for Gregorian dates and dated notes.
 
 Content entries expose `kind: SDK.ContentKind.Value`, matching `SDK.ContentKind.Value` query constants. Dictionary keys may contain acyclic container graphs; cyclic key dependencies reject before publication or Resource construction.
+
+## Package Settings — Edition 2027 revision 6 / 2028 revision 3
+
+An executable Enabled Package describes its fixed settings from its typed
+Implementation. Rookframe supplies the namespace, including on headless roles.
+Author individual descriptors as ordinary `.tres` Resources and assemble the
+registration with typed GDScript:
+
+```gdscript
+const DATE_FORMAT: SDK.TextSetting = preload("res://rookframe/packages/<id>/logic/date_format.tres")
+const TITLE: SDK.TextSetting = preload("res://rookframe/packages/<id>/logic/title.tres")
+
+func describe_settings() -> SDK.SettingsRegistration:
+    var registration := SDK.SettingsRegistration.new()
+    registration.user = [DATE_FORMAT]
+    registration.world = [TITLE]
+    return registration
+
+func validate_settings(candidate: SDK.SettingsCandidate) -> SDK.SettingsValidation:
+    if candidate.scope == SDK.SettingsScope.Kind.WORLD and candidate.text(TITLE).strip_edges().is_empty():
+        return SDK.SettingsValidation.new("Enter a title with visible text.")
+    return SDK.SettingsValidation.new()
+```
+
+`TextSetting`, `ToggleSetting`, `IntegerSetting`, `NumberSetting`, `ObjectSetting`
+and `ArraySetting` share a local `key`, `title`, `description` and typed
+`Setting.Application`. Text supports choices and length bounds; numbers support
+bounds. Objects contain typed properties; arrays contain an item descriptor.
+Application policy belongs to the containing top-level setting; nested descriptors
+must leave `application` at `LIVE`, or registration rejects.
+The ordinary transaction contains every non-secret field, including nested
+fields. It rejects missing, unknown, duplicate or invalid fields atomically.
+`SecretSetting` declares a protected destination without a default or ordinary
+value. Protected authentication and secret editing use the checked-service
+contract, independently of this form.
+
+`sdk.settings.user` and `.world` return `SettingsValues` snapshots. Read with
+`text(descriptor)`, `toggle`, `integer`, `number`, `object` or `array`. Copies do
+not carry registration Resources or service handles; mutating a local copy does
+not change the accepted values. `sdk.settings.changed(scope)` signals only the
+owning Package after acceptance; read a fresh snapshot to update behavior.
+`read_other(package_id, scope)` permits a non-secret snapshot of another Enabled
+Package. It grants no write, registration or subscription authority.
+
+User settings belong to the installation and exact Package version. World
+settings belong to the World and exact version; saving requires the real current
+World Authority GM. Each scope has its own draft, validation, reset and Save.
+Validators run on a detached fresh Implementation with only the portable
+candidate; they have no bound SDK or live Implementation fields. Keep validators
+pure: admission rejects Resource/Node/container writes, host operations and
+signal effects throughout validation helpers, accessors and evaluator construction.
+Local variables and typed RefCounted calculation/result fields are allowed.
+Rejection displays its message on the containing form and leaves committed
+values unchanged. Package management remains unavailable during a running World.
+
+`Setting.Application.LIVE` updates behavior immediately. User descriptors may
+choose `RESTART_LOCAL`; World descriptors may choose `RESTART_WORLD`. The first
+Save explains the restart. A deliberate second action saves and recreates the
+World activation/session within the same application. Editing the candidate
+requires a new warning before any restart can be accepted.
+
+A Presentation may assign an authored `SettingsViewDefinition` to its inherited
+`settings_view`. Its scene extends the generated `sdk/settings_view.gd` path.
+Override `edit()` to populate controls from the typed `draft` and `scope`.
+Control callbacks use `draft.set_text(descriptor, value)` and the other typed
+setters. Rookframe owns the containing form and complete Save; the custom view
+must not persist changes itself. Different Presentations may choose different
+forms for the same registered settings. Headless activation constructs no form.
+
+Override `migrate_settings(migration: SDK.SettingsMigration) -> SDK.SettingsValues`
+for a new exact version. The migration carries `scope`, `source_version`,
+`target_version` and typed draft setters. The default returns the prior values;
+target defaults fill newly added fields and obsolete fields are dropped before
+validation. An existing target copy is reused. A newly validated copy publishes
+atomically during guarded startup and survives a later unrelated startup failure.
+Migration failure publishes nothing for that scope. Returning to a release
+reuses its prior target; opaque World Data compatibility remains the Package's
+separate responsibility.
+
+Disable retains both copies. Exact-version uninstall removes that version's
+User settings and retains World settings. Explicit Package Deletion removes
+World settings/data and retains User settings. The existing protected-store
+lifetime hooks apply; ordinary descriptor-copy serialization excludes secrets.

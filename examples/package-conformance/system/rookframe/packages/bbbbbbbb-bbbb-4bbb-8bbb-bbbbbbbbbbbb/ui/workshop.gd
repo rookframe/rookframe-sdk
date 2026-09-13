@@ -1,5 +1,6 @@
 extends "res://rookframe/packages/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/sdk/window.gd"
 
+const Settings = preload("res://rookframe/packages/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/logic/settings.gd")
 const HeroData = preload("res://rookframe/packages/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/logic/hero_data.gd")
 const TextField = preload("res://rookframe/ui/components/forms/text_field.gd")
 @onready var actor_name: TextField = get_node("Layout/Body/Fields/ActorName")
@@ -14,6 +15,7 @@ func ready() -> void:
 	show_actors()
 
 func refresh() -> void:
+	get_node("Layout/Header").text = sdk.settings.user.text(Settings.LOCAL_LABEL) + " · " + sdk.settings.world.text(Settings.WORLD_LABEL)
 	var actors: SDK.ActorListResult = sdk.actors.list()
 	var records: SDK.SystemRecordListResult = sdk.system_records.list("journal")
 	if not actors.ok:

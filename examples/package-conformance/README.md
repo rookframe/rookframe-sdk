@@ -25,3 +25,9 @@ World and open the Workshop again; it queries saved Actors and journal entries.
 Delete actions remove only their selected record. Actor creation never places a Rook.
 The sample's `workshop-actor-v1` contract uses `HeroData` with a name and hit points;
 that schema belongs to this System, not to Rookframe.
+
+Workshop also supplies a Presentation-specific typed SettingsView. Its personal
+heading uses restart-local and its shared heading uses restart-world. Edit the
+custom form and Save; the host explains the restart before a deliberate second
+Save recreates the activation/session. Calendar's ordinary User date-display
+preference and GM World title exercise live settings without supplemental features.

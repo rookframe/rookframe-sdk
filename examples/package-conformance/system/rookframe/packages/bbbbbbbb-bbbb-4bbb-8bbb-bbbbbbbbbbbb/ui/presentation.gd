@@ -4,6 +4,7 @@ const ACTOR_CREATION: SDK.Contribution = preload("res://rookframe/packages/bbbbb
 const UI_ROOT: SDK.Contribution = preload("res://rookframe/packages/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/ui/ui_root.tres")
 
 func compose() -> void:
+	settings_view = preload("res://rookframe/packages/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb/ui/settings.tres")
 	sdk.ui_root.push(UI_ROOT)
 	sdk.slots.selected_rook.push(SELECTED_ROOK)
 	sdk.slots.actor_creation.push(ACTOR_CREATION)
