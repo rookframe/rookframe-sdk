@@ -294,7 +294,7 @@ def publish_checked_github(args) -> dict:
     try:
         release = gh_json(f"repos/{repo}/releases/tags/{urllib.parse.quote(tag, safe='')}", optional=True)
         if release is None:
-            release = gh_json(f"repos/{repo}/releases", method="POST", body={"tag_name": tag, "target_commitish": commit, "name": f"{manifest['name']} {manifest['version']}", "body": args.notes.read_text() if args.notes else manifest.get("summary", ""), "draft": True, "prerelease": "-" in manifest["version"]})
+            release = gh_json(f"repos/{repo}/releases", method="POST", body={"tag_name": tag, "target_commitish": commit, "name": f"{manifest['name']} {manifest['version']}", "body": args.notes.read_text() if args.notes else manifest.get("summary", ""), "draft": True, "prerelease": "-" in manifest["version"].split("+", 1)[0]})
         elif release.get("draft") and resolved is None and release.get("target_commitish") != commit:
             raise PublicationError("github-release", "An existing draft has another target commit. It was not changed.")
         progress.update({"releaseId": release["id"], "releaseUrl": release["html_url"], "draft": release["draft"]})
