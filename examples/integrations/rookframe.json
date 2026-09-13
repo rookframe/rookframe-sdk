@@ -3,11 +3,11 @@
   "id": "9f64487d-5a09-48e0-8bdf-8071dd9ef882",
   "kind": "optional",
   "name": "Integration example",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "summary": "Integration example",
   "sdk": {
-    "edition": "2027",
-    "minimumRevision": 8
+    "edition": "2029",
+    "minimumRevision": 1
   },
   "rookframeCompatibility": {
     "minimum": "0.1.0",

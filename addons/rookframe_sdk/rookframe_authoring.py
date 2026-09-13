@@ -20,9 +20,9 @@ from rookframe_package_build import (BUILD_SCHEMA,
     deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.7.0"
-SDK_EDITION = "2027"
-SDK_EDITIONS = {"2027": 8, "2028": 5}
+SDK_VERSION = "0.8.0"
+SDK_EDITION = "2029"
+SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 1}
 UI_VERSION = "v1.0.0-rc.1"
 UI_COMMIT = "238339d390ec01873585c002917c164948a0578d"
 PROFILES = ("desktop", "android", "ios", "dedicated-headless")
@@ -30,6 +30,11 @@ PROFILES = ("desktop", "android", "ios", "dedicated-headless")
 
 class AuthoringError(RuntimeError):
     pass
+
+
+def check_edition(edition: str, revision: int) -> None:
+    if type(revision) is not int or not 1 <= revision <= SDK_EDITIONS.get(edition, 0):
+        raise AuthoringError("SDK.REVISION: This kit authors 2029 revision 1, 2027 revisions 1–7 and 2028 revisions 1–4. Use SDK 0.7.0 to author 2027:8 or 2028:5, or migrate integrations to 2029:1.")
 
 
 def json_text(value: object) -> str:
@@ -87,6 +92,7 @@ def initialize(project: Path, name: str, kind: str, profiles: list[str], ui: boo
     if identity.version != 4 or str(identity) != package_id:
         raise AuthoringError("INIT.CONFLICT: Package ID must be a canonical UUIDv4.")
     revision = manifest["sdk"]["minimumRevision"]
+    check_edition(edition, revision)
     package_root = f"rookframe/packages/{package_id}"
     lock = {"sdkEdition": edition, "sdkAuthoringKitVersion": SDK_VERSION,
             "minimumRevision": revision,
@@ -168,8 +174,7 @@ def check_facade(project: Path, *, generate_missing: bool = False) -> dict:
     if str(identity) != manifest["id"] or identity.version != 4:
         raise AuthoringError("MANIFEST.ID: Use a canonical UUIDv4 Package identity.")
     edition = manifest["sdk"]["edition"]
-    if type(revision) is not int or not 1 <= revision <= SDK_EDITIONS.get(edition, 0):
-        raise AuthoringError("SDK.REVISION: Supported Editions are 2027 revisions 1–6 and 2028 revisions 1–3.")
+    check_edition(edition, revision)
     lock = json.loads((project / ".rookframe/authoring.lock.json").read_text())
     if (lock.get("sdkEdition") != edition or lock.get("minimumRevision") != revision
             or lock.get("sdkAuthoringKitVersion") != SDK_VERSION):

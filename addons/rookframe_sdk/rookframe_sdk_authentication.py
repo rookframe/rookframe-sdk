@@ -79,67 +79,52 @@ func write(value: String) -> IntegrationResult:
 func clear() -> IntegrationResult:
 \treturn IntegrationResult.new(_scope._host.RevokeSecret(_area, _entry))
 ''',
-        "authentication.gd": 'extends RefCounted\n' + imports("AuthenticationProviderDefinition", "AuthenticationProvider") + '''
+        "authentication.gd": 'extends RefCounted\n' + imports("SecretSetting", "SettingsScope", "Account") + '''
 var _scope: ServiceScope
 func _init(scope: ServiceScope) -> void:
 \t_scope = scope
-func provider(definition: AuthenticationProviderDefinition) -> AuthenticationProvider:
-\treturn AuthenticationProvider.new(_scope, definition.name)
+## Bind the configured provider and protected destination once.
+func account(setting: SecretSetting, area: SettingsScope.Kind = SettingsScope.Kind.USER) -> Account:
+\tvar provider: String = setting.authentication.name if setting.authentication != null else ""
+\treturn Account.new(_scope, provider, "world" if area == SettingsScope.Kind.WORLD else "user", setting.key)
 ''',
-        "authentication_provider.gd": 'extends RefCounted\n' + imports("SecretEntry", "AuthenticationOperation", "IntegrationOperation") + '''
-var _scope: ServiceScope
-var _name: String
-func _init(scope: ServiceScope, name: String) -> void:
-\t_scope = scope
-\t_name = name
-## Rookframe confirms Package, destination and purpose before opening any browser.
-func sign_in(destination: SecretEntry) -> AuthenticationOperation:
-\tif destination._scope != _scope:
-\t\treturn AuthenticationOperation.new(_scope, {"ok": false, "code": "scope_mismatch", "message": "Use a secret from this SDK scope."})
-\treturn AuthenticationOperation.new(_scope, _scope._host.StartAuthentication(_name, destination._area, destination._entry))
-func refresh(destination: SecretEntry) -> IntegrationOperation:
-\tif destination._scope != _scope:
-\t\treturn IntegrationOperation.new(_scope, {"ok": false, "code": "scope_mismatch", "message": "Use a secret from this SDK scope."})
-\treturn IntegrationOperation.new(_scope, _scope._host.RefreshSecret(_name, destination._area, destination._entry))
-''',
-        "authentication_result.gd": f'''extends "{root}integration_result.gd"
-enum Phase {{ CONFIRMATION, BROWSER, COMPLETED, FAILED }}
-var phase: Phase
+        "account_status.gd": f'''extends "{root}integration_result.gd"
+enum State {{ UNAVAILABLE, SIGNED_OUT, SIGNED_IN, EXPIRED }}
+var state: State
 func _init(result: Dictionary) -> void:
 \tsuper(result)
-\tphase = Phase.CONFIRMATION
-\tif not ok:
-\t\tphase = Phase.FAILED
-\telif result.get("state", "") == "completed":
-\t\tphase = Phase.COMPLETED
-\telif result.get("state", "") == "pending":
-\t\tphase = Phase.BROWSER
+\tstate = result.get("state", State.UNAVAILABLE)
 ''',
-        "authentication_operation.gd": 'extends RefCounted\n' + imports("PendingOperation", "AuthenticationResult") + '''
+        "account.gd": 'extends RefCounted\n' + imports("IntegrationResult", "ProviderTokenResult", "AccountStatus") + '''
+enum RefreshPolicy { EXPLICIT, WHEN_EXPIRED }
+## Preflight refresh only. HTTP failures never replay a request or launch sign-in.
+var refresh_policy: RefreshPolicy = RefreshPolicy.WHEN_EXPIRED
 var _scope: ServiceScope
-var _launch: PendingOperation
-var _final: AuthenticationResult
-func _init(scope: ServiceScope, started: Dictionary) -> void:
+var _provider: String
+var _area: String
+var _entry: String
+func _init(scope: ServiceScope, provider: String, area: String, entry: String) -> void:
 \t_scope = scope
-\t_launch = PendingOperation.new(scope, started)
-func poll() -> AuthenticationResult:
-\tif _final != null:
-\t\treturn _final
-\tvar result: Dictionary = _launch._consume()
-\tif result.get("ready", true) and result.get("ok", false):
-\t\tvar transaction: String = result.get("text", "")
-\t\tresult = _scope._host.PollAuthentication(transaction)
-\tvar status: AuthenticationResult = AuthenticationResult.new(result)
-\tif status.ready:
-\t\t_final = status
-\treturn status
+\t_provider = provider
+\t_area = area
+\t_entry = entry
+func status() -> AccountStatus:
+\treturn AccountStatus.new(_scope._host.AccountStatus(_provider, _area, _entry))
+func read_tokens() -> ProviderTokenResult:
+\treturn ProviderTokenResult.new(_scope._host.ReadAccountTokens(_provider, _area, _entry))
+func sign_in() -> IntegrationResult:
+\treturn IntegrationResult.new(await _scope._complete(_scope._host.StartAuthentication(_provider, _area, _entry), true))
+func refresh() -> IntegrationResult:
+\treturn IntegrationResult.new(await _scope._complete(_scope._host.RefreshSecret(_provider, _area, _entry)))
+func clear() -> IntegrationResult:
+\treturn IntegrationResult.new(_scope._host.RevokeSecret(_area, _entry))
 ''',
-        "browser.gd": 'extends RefCounted\n' + imports("IntegrationOperation") + '''
+        "browser.gd": 'extends RefCounted\n' + imports("IntegrationResult") + '''
 var _scope: ServiceScope
 func _init(scope: ServiceScope) -> void:
 \t_scope = scope
-func open(url: String) -> IntegrationOperation:
-\treturn IntegrationOperation.new(_scope, _scope._host.OpenBrowserLink(url))
+func open(url: String) -> IntegrationResult:
+\treturn IntegrationResult.new(await _scope._complete(_scope._host.OpenBrowserLink(url)))
 ''',
     }
     return sources

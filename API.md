@@ -1,4 +1,13 @@
-# Edition 2027 — typed Package authoring
+# Typed Package authoring — SDK 0.8.0
+
+Edition 2029 revision 1 includes the typed UI, World, settings and awaitable
+integration APIs below. The earlier Edition/revision headings record when shared
+facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
+from `presentation_experience()`.
+
+SDK 0.8 also authors earlier 2027 revisions 1–7 and 2028 revisions 1–4. For the
+operation-based integration API in 2027:8 / 2028:5, retain immutable SDK 0.7.0.
+Already generated Packages using those Editions remain supported by the host.
 
 Extend the generated Package-local Presentation base. It supplies a typed `sdk`
 before calling `compose()`. A window-opening entry is an authored resource:
@@ -30,7 +39,7 @@ signal connection is required for this standard action.
 | `SDK.ExtensionSurface` | Authored Resource with `scene: PackedScene`. The scene must have a Control root; its internal UI belongs to the Package. |
 | `sdk.package_id() -> String` | Stable Package UUID, independent of builds and installations. |
 | `sdk.package_root() -> String` | Current admitted resource root for this Package. |
-| `sdk.presentation_experience() -> String` | Current `desktop`, `tablet` or `phone` experience. |
+| `sdk.presentation_experience() -> DeviceExperience` | Current experience via `is_desktop`, `is_tablet`, `is_phone` (Edition 2027 returns a String). |
 
 Open `ui/window_button.tres` in the Inspector to choose the button scene and its
 typed window target. Edit those scenes with the ordinary Godot scene editor and
@@ -347,16 +356,26 @@ rows for complex configuration; Calendar 0.6.0 demonstrates month and weekday
 editors. The host retains complete drafts while browsing between Packages and
 owns scope Save/Reset, validation, authorization, restart confirmation, and
 publication. Default object/list editors also use structured controls, not JSON.
-## Checked integrations — Edition 2027 revision 8 / 2028 revision 5
+## Checked integrations — Edition 2029 revision 1
+
+This Edition replaces SDK 0.7 operation objects and polling with completed values.
+To migrate, set the Manifest and authoring lock to Edition `2029`, minimum revision
+`1`, pin SDK `0.8.0`, and regenerate the entire `sdk/` directory. Replace operation
+creation/polling with `await`, bind an `Account` from the `SecretSetting` once, and
+pass it to `network.service`. Device experience is typed as in Edition 2028.
 
 The concrete SDK capabilities are `files`, `clipboard`, `network`, `secrets`,
-`authentication` and `browser`. Author code uses typed values and operations;
-native transport dictionaries, IDs and host bindings are implementation details.
-All `IntegrationResult` subtypes expose `ready: bool`, `ok: bool`, `code: String`,
-`message: String` and `retry_after: int`. For asynchronous operations, call `poll()`
-from the live scene until `ready`, then inspect `ok`. Polling a completed operation
-retains its result. A pending result is not completion. No Package callback is
-retained by the host, and stopped scopes refuse new work with `caller_stopped`.
+`authentication` and `browser`. Asynchronous methods return their completed typed
+result through ordinary GDScript `await`. Package scenes do not retain operation
+IDs, poll in `_process`, or coordinate completion flags. `IntegrationResult`
+subtypes expose `ok`, `code`, `message` and `retry_after`; they never represent pending work.
+
+Rookframe owns main-thread completion delivery. Immediate failures return the same
+typed result. A pending operation resumes its caller once while its SDK is active.
+Stopping disposes the native completion signals without resuming suspended Package
+code, and cancels ordinary transport. New work on a stopped scope is refused.
+A launched browser flow may still finish its protected write independently, as
+specified below. Window close normally hides the live scene; World teardown ends it.
 
 ### Files, selection, portraits and clipboard
 
@@ -366,7 +385,7 @@ var saved: SDK.IntegrationResult = file.write_text("Reached the gate.")
 var read: SDK.TextResult = file.read_text()
 var remembered: SDK.InternalFileReference = file.to_reference()
 var reopened: SDK.ScopedFile = sdk.files.open(remembered)
-var selection: SDK.FileSelection = sdk.files.user.select_file()
+var selection: SDK.FileSelectionResult = await sdk.files.user.select_file()
 var copy: SDK.IntegrationResult = sdk.clipboard.write_text(read.text)
 ```
 
@@ -381,8 +400,7 @@ Manager data, other Worlds, recovery and protected secrets remain outside these 
 | --- | --- |
 | `ScopedFile` | `read_text() -> TextResult`, `read_bytes() -> BytesResult`, `write_text(String)`, `write_bytes(PackedByteArray)`, `read_portrait() -> PortraitResult`, `to_reference()` |
 | `ScopedFolder` | `file(relative_name) -> ScopedFile`, `to_reference() -> InternalFolderReference` |
-| `FileSelection` | `poll() -> FileSelectionResult`; successful `.file: ScopedFile` |
-| `FolderSelection` | `poll() -> FolderSelectionResult`; successful `.folder: ScopedFolder` |
+| `FileArea` | `await select_file() -> FileSelectionResult`, `await select_folder() -> FolderSelectionResult` |
 | `Clipboard` | `read_text() -> TextResult`, `write_text(String) -> IntegrationResult` |
 
 `FileArea.select_file()` and `select_folder()` open host-owned selection within
@@ -411,11 +429,9 @@ in the Package's `services.json`, then use `sdk.network.service(definition)`.
 ```gdscript
 var headers: SDK.RequestHeaders = SDK.RequestHeaders.new()
 headers.accept = "application/json"
-var pending: SDK.RequestOperation = sdk.network.service(API).request(
+var response: SDK.ResponseResult = await sdk.network.service(API).request(
     "identity", SDK.HttpMethod.Value.GET, "", headers)
-# Later, while this scene is active:
-var response: SDK.ResponseResult = pending.poll()
-if response.ready and response.ok:
+if response.ok:
     status.text = "HTTP %d" % response.status
 ```
 
@@ -425,13 +441,23 @@ text and bytes. Transport success is separate from HTTP success; inspect `status
 the declaration still restricts allowed methods. `RequestHeaders` allows only
 authorization, accept, content_type, if_match, if_none_match and api_key.
 
-`open_stream(path) -> StreamOperation` yields `StreamResult.stream: ScopedStream`.
-Use `read(maximum_bytes = 65536) -> BytesOperation` and `close()`; an empty completed
-chunk is end-of-stream. `download(path, target: ScopedFile) -> IntegrationOperation`
-publishes a bounded internal file. `upload(path, source: ScopedFile, method = POST)`
-returns `RequestOperation`. Streams and transfers use the declaration's permissions
-and current transport contract; they do not accept request-only header overrides.
-Cross-SDK file/secret values are refused with `scope_mismatch`.
+`await open_stream(path) -> StreamResult` supplies `.stream: ScopedStream`.
+Use `await stream.read(maximum_bytes = 65536) -> BytesResult` and `stream.close()`;
+an empty successful chunk is end-of-stream. `await download(path, target: ScopedFile)`
+returns `IntegrationResult` after publishing the internal file. `await upload(path,
+source: ScopedFile, method = POST)` returns `ResponseResult`. Streams and transfers
+retain their declaration permissions and bounds. A bound account supplies their
+authorization too; request-specific custom headers remain on `request()`.
+Cross-SDK file/account values are refused with `scope_mismatch`.
+
+```gdscript
+var opened: SDK.StreamResult = await service.open_stream("messages")
+if opened.ok:
+    var chunk: SDK.BytesResult = await opened.stream.read(1024)
+    opened.stream.close()
+    if chunk.ok:
+        status.text = "Read %d bytes" % chunk.data.size()
+```
 
 Declarations do not authorize private network access. The application-owned
 destination checks, DNS/private-address checks, redirect rules, byte limits and
@@ -458,15 +484,36 @@ The provider Resource's `name` must match admitted `authentication.json`.
 Neither Resource contains a confidential client credential.
 
 ```gdscript
-var account: SDK.SecretEntry = sdk.secrets.user.setting(ACCOUNT)
-var login: SDK.AuthenticationOperation = sdk.authentication.provider(IDENTITY).sign_in(account)
-# After successful completion:
-var stored: SDK.ProviderTokenResult = account.read_tokens()
-if stored.ok and stored.found:
-    var headers: SDK.RequestHeaders = SDK.RequestHeaders.new()
-    headers.authorization = stored.tokens.token_type + " " + stored.tokens.access_token
-    request = sdk.network.service(API).request("identity", SDK.HttpMethod.Value.GET, "", headers)
+var account: SDK.Account = sdk.authentication.account(ACCOUNT)
+var service: SDK.NamedService = sdk.network.service(API, account)
+
+# A deliberate sign-in action:
+var signed_in: SDK.IntegrationResult = await account.sign_in()
+if signed_in.ok:
+    var response: SDK.ResponseResult = await service.request("identity")
+    if response.ok:
+        status.text = "HTTP %d" % response.status
 ```
+
+`authentication.account(setting, area = SDK.SettingsScope.Kind.USER)` binds the
+setting's configured provider and protected key once. Use `WORLD` for a GM World
+account. The handle never rebinds to another SDK or World. `account.status()`
+returns `AccountStatus`: check `ok`, then `state` (`SIGNED_OUT`, `SIGNED_IN` or
+`EXPIRED`). Errors use `UNAVAILABLE` and a sanitized `code`/`message`.
+
+`network.service(definition, account = null)` binds authentication for requests,
+streams, downloads and uploads. It reads current credentials for each operation,
+validates their provider, and applies Authorization without exposing tokens to
+the ordinary workflow. Caller-supplied Authorization conflicts are refused.
+
+`account.refresh_policy` is typed `Account.RefreshPolicy`. `WHEN_EXPIRED` (default)
+refreshes expired credentials before sending. `EXPLICIT` returns `refresh_required`
+instead; the Package can call `await account.refresh()`. Missing credentials return
+`sign_in_required`. A refresh already in progress may return `refresh_busy` under
+the existing protected rotation lease. HTTP responses are never automatically
+replayed, including 401 and non-idempotent requests, and a request never opens a
+browser. The Package owns decisions about the provider's HTTP response and account
+meaning. `account.clear()` revokes the stored credential.
 
 `SecretArea.entry(name)` accesses a named protected entry without a settings
 descriptor; `.setting(descriptor)` uses its key. `SecretEntry.read()` returns
@@ -475,14 +522,15 @@ descriptor; `.setting(descriptor)` uses its key. `SecretEntry.read()` returns
 and typed `ProviderTokens`: access_token, token_type, refresh_token, scope,
 has_expiry and expires_at (Unix seconds). Missing credentials are a successful
 `found = false`; malformed token material yields sanitized `secret_format`.
+`account.read_tokens()` supplies the same typed raw credentials with an additional
+provider identity check when an advanced integration needs them.
 Only the owning Package receives these raw credentials for its checked API use.
 Keep them out of ordinary data and diagnostics. Rookframe does not define provider
 membership, entitlements or store acquisition credentials.
 
-`sign_in(destination)` returns `AuthenticationOperation`; `poll()` produces an
-`AuthenticationResult` with Phase.CONFIRMATION, BROWSER, COMPLETED or FAILED.
-The host confirms the original Package/version, provider origin and destination
-before opening the browser. Cancel/World exit before confirmation opens nothing.
+`await account.sign_in()` returns a completed `IntegrationResult`. Rookframe
+confirms the original Package/version, provider origin and destination before
+opening the browser. Cancel/World exit before confirmation opens nothing.
 Replacement/revocation while confirmation is open invalidates its captured
 destination generation. Headless launches return `browser_unavailable`.
 
@@ -494,9 +542,9 @@ secret edits invalidate stale completion. Callback URLs contain a one-use code,
 state and issuer, never provider tokens. Flows expire after ten minutes and do not
 survive application termination.
 
-`provider.refresh(destination) -> IntegrationOperation` refreshes using the same
+`await account.refresh() -> IntegrationResult` refreshes using the same
 protected exchange, rotation lease, provider identity and conditional write.
-`sdk.browser.open(https_url) -> IntegrationOperation` confirms a deliberate web
+`await sdk.browser.open(https_url) -> IntegrationResult` confirms a deliberate web
 link without creating credentials. Public native clients must support the native
 redirect, PKCE and issuer contract. With `publisher-transfer`, the Publisher's
 backend owns confidential exchange and refresh; its client secret never ships in

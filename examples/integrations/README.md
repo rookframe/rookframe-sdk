@@ -1,6 +1,6 @@
 # Integration example
 
-A separate ordinary optional Package for SDK 0.7.0 (Edition 2027 revision 8).
+A separate ordinary optional Package for SDK 0.8.0 (Edition 2029 revision 1).
 It uses authored scenes, generated concrete SDK types and the independently
 pinned UI Kit. It imports no application assembly or private host API. Calendar
 does not depend on this example and has no provider account requirement.
@@ -23,9 +23,9 @@ System Extension. Open **Integration example** from the left Rail.
   an internal file, or upload the selected internal file.
 - Use Package Settings to enter a protected API key or World key. Provider
   account settings expose host-owned Sign in, Refresh and Clear actions.
-- Sign in from the scene or settings, then call the service. The scene retrieves
-  its raw typed access token and sends the authorization header through the checked
-  request API. Status text never displays credentials or response bodies.
+- Sign in from the scene or settings, then call the service. A bound typed account supplies
+  credentials and preflight expiry refresh to the checked service. The scene awaits
+  the completed result without a polling loop. Status text never displays credentials or response bodies.
 
 The shipped `.invalid` service/provider URLs deliberately require configuration.
 File controls work independently. To connect your deployment, edit the Package's
@@ -41,7 +41,7 @@ the original World Address and Package ID and contain `services` and optional
 `authentication` arrays in the declaration formats. A paired destination additionally
 requires `companionAddress` and `companionCertificateSha256`; changing the port
 alone does not grant access. Restart the World after changing host configuration.
-See the [integration API](../../API.md#checked-integrations--edition-2027-revision-8--2028-revision-5)
+See the [integration API](../../API.md#checked-integrations--edition-2029-revision-1)
 for lifetimes, protected storage, provider responsibilities and explicit failures.
 
 This project configures desktop export. The responsive scene and host settings

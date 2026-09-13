@@ -1,7 +1,8 @@
-# Rookframe SDK Authoring Kit 0.7.0
+# Rookframe SDK Authoring Kit 0.8.0
 
-Author ordinary Godot Packages for SDK Edition 2027 (revisions 1–8) or
-2028 (revisions 1–5). The kit supplies a
+Author ordinary Godot Packages for SDK Edition 2029 (revision 1). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
+by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`
 and `build` commands. It is an authoring dependency; only the generated facade
 ships in a Package. The UI Kit is a separate source dependency.
@@ -26,7 +27,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.7.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.8.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "238339d390ec01873585c002917c164948a0578d", "include": ["rookframe/ui"]})
 ```
 
@@ -157,8 +158,8 @@ a dedicated Package Settings journey with complex Calendar configuration.
 
 ## Checked integrations and protected authentication
 
-Edition 2027 revision 8 / 2028 revision 5 exposes typed `files`, `clipboard`,
+Edition 2029 revision 1 exposes typed `files`, `clipboard`,
 `network`, `secrets`, `authentication` and `browser` capabilities. The
 [Integration example](examples/integrations/README.md) is a separate ordinary
 optional Package; Calendar uses only clipboard copying and remains offline.
-See [the integration API](API.md#checked-integrations--edition-2027-revision-8--2028-revision-5).
+See [the integration API](API.md#checked-integrations--edition-2029-revision-1).

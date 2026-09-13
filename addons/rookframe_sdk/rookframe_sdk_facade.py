@@ -130,7 +130,7 @@ func start() -> void:
 \tpass
 ''',
     }
-    if revision >= 4 or edition == "2028":
+    if revision >= 4 or edition in ("2028", "2029"):
         from rookframe_sdk_ui import ui_sources
         sources.update(ui_sources(root))
         sdk = sources["package_sdk_facade.gd"]
@@ -146,7 +146,7 @@ func start() -> void:
 \t_slots = Slots.new(host)
 \t_feedback = Feedback.new(host)
 \t_translations = Translations.new(host)''')
-        if edition == "2028":
+        if edition in ("2028", "2029"):
             sdk = sdk.replace("func presentation_experience() -> String:\n\treturn _host.PresentationExperience()",
                 "func presentation_experience() -> DeviceExperience:\n\treturn DeviceExperience.new(_host.PresentationDevice())")
         sources["package_sdk_facade.gd"] = sdk
@@ -160,7 +160,7 @@ func cleanup_world(completed: Callable) -> void:
 func cleanup(operation: SDK.Cleanup) -> void:
 \toperation.complete()
 '''
-    if (edition == "2027" and revision >= 5) or (edition == "2028" and revision >= 2):
+    if (edition == "2027" and revision >= 5) or (edition == "2028" and revision >= 2) or edition == "2029":
         from rookframe_sdk_world import world_sources
         world = world_sources(root)
         sources.update(world)
@@ -180,9 +180,9 @@ func cleanup(operation: SDK.Cleanup) -> void:
                 initialization += f'\n\t_{name}.configure("{name}")'
             sdk = sdk.replace("\t_host = host", "\t_host = host" + initialization, 1)
         sources["package_sdk_facade.gd"] = sdk
-    if (edition == "2027" and revision >= 6) or (edition == "2028" and revision >= 3):
+    if (edition == "2027" and revision >= 6) or (edition == "2028" and revision >= 3) or edition == "2029":
         from rookframe_sdk_settings import settings_sources, implementation_callbacks
-        settings = settings_sources(root, typed_lists=(revision >= (7 if edition == "2027" else 4)))
+        settings = settings_sources(root, typed_lists=(edition == "2029" or revision >= (7 if edition == "2027" else 4)))
         sources.update(settings)
         sdk = sources["package_sdk_facade.gd"]
         for filename in settings:
@@ -199,7 +199,7 @@ func cleanup(operation: SDK.Cleanup) -> void:
 func _rookframe_settings_view() -> PackedScene:
 \treturn settings_view.scene if settings_view != null else null
 '''
-    if (edition == "2027" and revision >= 8) or (edition == "2028" and revision >= 5):
+    if edition == "2029":
         from rookframe_sdk_services import service_sources
         services = service_sources(root)
         sources.update(services)
@@ -210,9 +210,11 @@ const AuthenticationProviderDefinition = preload("{root}authentication_provider_
 '''
         sdk = sources["package_sdk_facade.gd"]
         for filename in services:
+            if filename == "service_scope.gd":
+                continue
             type_name = "".join(word.capitalize() for word in filename[:-3].split("_"))
             sdk += f'\nconst {type_name} = preload("{root}{filename}")'
-        sdk += "\nvar _service_scope: ServiceScope\n"
+        sdk += f'\nconst ServiceScope = preload("{root}service_scope.gd")\nvar _service_scope: ServiceScope\n'
         for name, type_name in (("files", "Files"), ("clipboard", "Clipboard"), ("network", "Network"),
                                 ("secrets", "Secrets"), ("authentication", "Authentication"), ("browser", "Browser")):
             sdk += f"\nvar _{name}: {type_name}\nvar {name}: {type_name}:\n\tget:\n\t\treturn _{name}\n"

@@ -9,14 +9,23 @@ def service_sources(root: str) -> dict[str, str]:
     def imports(*names):
         return "".join(f'const {name} = preload("{root}{path(name)}")\n' for name in names)
 
+    def start_request(anonymous: str, authenticated: str, arguments: str) -> str:
+        # Keep the native account binding and scope check in one generator seam.
+        return f'''\tvar started: Dictionary
+\tif _account == null:
+\t\tstarted = _scope._host.{anonymous}({arguments})
+\telif _account._scope != _scope:
+\t\tstarted = {{"ok": false, "code": "scope_mismatch", "message": "Use an account from this SDK scope."}}
+\telse:
+\t\tstarted = _scope._host.{authenticated}(_account._provider, _account._area, _account._entry, {arguments}, _account.refresh_policy)
+'''
+
     sources = {
         "integration_result.gd": f'''extends "{root}operation_result.gd"
-## ready=false means pending, not successful completion. No native handle escapes.
-var ready: bool
+## A completed outcome; pending state belongs to Rookframe.
 var retry_after: int
 func _init(result: Dictionary) -> void:
 \tsuper(result)
-\tready = result.get("ready", true)
 \tretry_after = result.get("retry_after", 0)
 ''',
         "text_result.gd": f'''extends "{root}integration_result.gd"
@@ -101,20 +110,6 @@ func file(relative_name: String) -> ScopedFile:
 ''',
     }
     sources.update({
-        "pending_operation.gd": '''extends RefCounted
-## Internal polling bridge. Completed results are retained; native IDs are consumed once.
-var _scope: ServiceScope
-var _last: Dictionary
-var _id: int
-func _init(scope: ServiceScope, started: Dictionary) -> void:
-\t_scope = scope
-\t_last = started
-\t_id = started.get("id", 0)
-func _consume() -> Dictionary:
-\tif not _last.get("ready", true):
-\t\t_last = _scope._host.PollService(_id)
-\treturn _last
-''',
         "response_result.gd": f'''extends "{root}bytes_result.gd"
 ## Transport success is separate from the provider's HTTP status.
 var status: int
@@ -123,13 +118,6 @@ func _init(result: Dictionary) -> void:
 \tsuper(result)
 \tstatus = result.get("status", 0)
 \ttext = result.get("text", "")
-''',
-        "request_operation.gd": 'extends RefCounted\n' + imports("PendingOperation", "ResponseResult") + '''
-var _pending: PendingOperation
-func _init(scope: ServiceScope, started: Dictionary) -> void:
-\t_pending = PendingOperation.new(scope, started)
-func poll() -> ResponseResult:
-\treturn ResponseResult.new(_pending._consume())
 ''',
         "service_definition.gd": '''extends Resource
 ## Matches one admitted services.json declaration; never grants private access.
@@ -178,32 +166,27 @@ func _copy() -> Dictionary:
 \t\theaders["X-Api-Key"] = api_key
 \treturn headers
 ''',
-        "network.gd": 'extends RefCounted\n' + imports("ServiceDefinition", "NamedService") + '''
+        "network.gd": 'extends RefCounted\n' + imports("ServiceDefinition", "NamedService", "Account") + '''
 var _scope: ServiceScope
 func _init(scope: ServiceScope) -> void:
 \t_scope = scope
-func service(definition: ServiceDefinition) -> NamedService:
-\treturn NamedService.new(_scope, definition.name)
+func service(definition: ServiceDefinition, account: Account = null) -> NamedService:
+\treturn NamedService.new(_scope, definition.name, account)
 ''',
-        "named_service.gd": 'extends RefCounted\n' + imports("HttpMethod", "RequestHeaders", "RequestOperation") + '''
+        "named_service.gd": 'extends RefCounted\n' + imports("HttpMethod", "RequestHeaders", "ResponseResult", "Account") + '''
 var _scope: ServiceScope
 var _name: String
-func _init(scope: ServiceScope, name: String) -> void:
+var _account: Account
+func _init(scope: ServiceScope, name: String, account: Account = null) -> void:
 \t_scope = scope
 \t_name = name
-func request(path: String, method: HttpMethod.Value = HttpMethod.Value.GET, body: String = "", headers: RequestHeaders = null) -> RequestOperation:
+\t_account = account
+func request(path: String, method: HttpMethod.Value = HttpMethod.Value.GET, body: String = "", headers: RequestHeaders = null) -> ResponseResult:
 \tvar provider_headers: RequestHeaders = headers if headers != null else RequestHeaders.new()
-\treturn RequestOperation.new(_scope, _scope._host.RequestServiceWithHeaders(_name, path, HttpMethod.new()._text(method), body, provider_headers._copy()))
+''' + start_request('RequestServiceWithHeaders', 'RequestAccountService', '_name, path, HttpMethod.new()._text(method), body, provider_headers._copy()') + '''
+\treturn ResponseResult.new(await _scope._complete(started))
 ''',
     })
-    for name, result in (("integration_operation", "IntegrationResult"), ("bytes_operation", "BytesResult")):
-        sources[name + ".gd"] = 'extends RefCounted\n' + imports("PendingOperation", result) + f'''
-var _pending: PendingOperation
-func _init(scope: ServiceScope, started: Dictionary) -> void:
-\t_pending = PendingOperation.new(scope, started)
-func poll() -> {result}:
-\treturn {result}.new(_pending._consume())
-'''
     sources["portrait_result.gd"] = f'''extends "{root}integration_result.gd"
 ## A decoded, fitted 512 x 512 native image. No Script/Resource file is evaluated.
 var texture: Texture2D
@@ -215,9 +198,9 @@ func _init(result: Dictionary) -> void:
 func read_portrait() -> PortraitResult:
 \treturn PortraitResult.new(_scope._host.DecodePortrait(_area, _path))
 '''
-    for kind, selected, result, operation in (
-        ("file", "ScopedFile", "FileSelectionResult", "FileSelection"),
-        ("folder", "ScopedFolder", "FolderSelectionResult", "FolderSelection"),
+    for kind, selected, result in (
+        ("file", "ScopedFile", "FileSelectionResult"),
+        ("folder", "ScopedFolder", "FolderSelectionResult"),
     ):
         sources[path(result)] = f'extends "{root}integration_result.gd"\n' + imports(selected) + f'''
 var {kind}: {selected}
@@ -225,33 +208,22 @@ func _init(result: Dictionary, selection: {selected}) -> void:
 \tsuper(result)
 \t{kind} = selection
 '''
-        sources[path(operation)] = 'extends RefCounted\n' + imports("PendingOperation", selected, result) + f'''
-var _pending: PendingOperation
-var _scope: ServiceScope
-var _area: String
-var _selection: {selected}
-func _init(scope: ServiceScope, area: String, started: Dictionary) -> void:
-\t_scope = scope
-\t_area = area
-\t_pending = PendingOperation.new(scope, started)
-func poll() -> {result}:
-\tvar result: Dictionary = _pending._consume()
-\tif _selection == null and result.get("ready", true) and result.get("ok", false):
-\t\t_selection = {selected}.new(_scope, _area, result.get("text", ""))
-\treturn {result}.new(result, _selection)
+        sources["file_area.gd"] += imports(result) + f'''
+func select_{kind}() -> {result}:
+\tvar result: Dictionary = await _scope._complete(_scope._host.SelectFile(_area, {str(kind == 'folder').lower()}))
+\tvar selected: {selected}
+\tif result.get("ok", false):
+\t\tselected = {selected}.new(_scope, _area, result.get("text", ""))
+\treturn {result}.new(result, selected)
 '''
-        sources["file_area.gd"] += imports(operation) + f'''
-func select_{kind}() -> {operation}:
-\treturn {operation}.new(_scope, _area, _scope._host.SelectFile(_area, {str(kind == 'folder').lower()}))
-'''
-    sources["scoped_stream.gd"] = 'extends RefCounted\n' + imports("BytesOperation", "IntegrationResult") + '''
+    sources["scoped_stream.gd"] = 'extends RefCounted\n' + imports("BytesResult", "IntegrationResult") + '''
 var _scope: ServiceScope
 var _id: int
 func _init(scope: ServiceScope, id: int) -> void:
 \t_scope = scope
 \t_id = id
-func read(maximum_bytes: int = 65536) -> BytesOperation:
-\treturn BytesOperation.new(_scope, _scope._host.ReadServiceStream(_id, maximum_bytes))
+func read(maximum_bytes: int = 65536) -> BytesResult:
+\treturn BytesResult.new(await _scope._complete(_scope._host.ReadServiceStream(_id, maximum_bytes)))
 func close() -> IntegrationResult:
 \treturn IntegrationResult.new(_scope._host.CloseServiceStream(_id))
 '''
@@ -261,30 +233,24 @@ func _init(result: Dictionary, opened: ScopedStream) -> void:
 \tsuper(result)
 \tstream = opened
 '''
-    sources["stream_operation.gd"] = 'extends RefCounted\n' + imports("PendingOperation", "StreamResult", "ScopedStream") + '''
-var _scope: ServiceScope
-var _pending: PendingOperation
-var _stream: ScopedStream
-func _init(scope: ServiceScope, started: Dictionary) -> void:
-\t_scope = scope
-\t_pending = PendingOperation.new(scope, started)
-func poll() -> StreamResult:
-\tvar result: Dictionary = _pending._consume()
-\tif _stream == null and result.get("ready", true) and result.get("ok", false):
-\t\t_stream = ScopedStream.new(_scope, result.get("id", 0))
-\treturn StreamResult.new(result, _stream)
-'''
-    sources["named_service.gd"] += imports("StreamOperation", "ScopedFile", "IntegrationOperation") + '''
-func open_stream(path: String) -> StreamOperation:
-\treturn StreamOperation.new(_scope, _scope._host.OpenServiceStream(_name, path))
-func download(path: String, target: ScopedFile) -> IntegrationOperation:
+    sources["named_service.gd"] += imports("StreamResult", "ScopedStream", "ScopedFile", "IntegrationResult") + '''
+func open_stream(path: String) -> StreamResult:
+''' + start_request('OpenServiceStream', 'OpenAccountStream', '_name, path') + '''
+\tvar result: Dictionary = await _scope._complete(started)
+\tvar stream: ScopedStream
+\tif result.get("ok", false):
+\t\tstream = ScopedStream.new(_scope, result.get("id", 0))
+\treturn StreamResult.new(result, stream)
+func download(path: String, target: ScopedFile) -> IntegrationResult:
 \tif target._scope != _scope:
-\t\treturn IntegrationOperation.new(_scope, {"ok": false, "code": "scope_mismatch", "message": "Use a file from this SDK scope."})
-\treturn IntegrationOperation.new(_scope, _scope._host.DownloadFile(_name, path, target._area, target._path))
-func upload(path: String, source: ScopedFile, method: HttpMethod.Value = HttpMethod.Value.POST) -> RequestOperation:
+\t\treturn IntegrationResult.new({"ok": false, "code": "scope_mismatch", "message": "Use a file from this SDK scope."})
+''' + start_request('DownloadFile', 'DownloadAccountFile', '_name, path, target._area, target._path') + '''
+\treturn IntegrationResult.new(await _scope._complete(started))
+func upload(path: String, source: ScopedFile, method: HttpMethod.Value = HttpMethod.Value.POST) -> ResponseResult:
 \tif source._scope != _scope:
-\t\treturn RequestOperation.new(_scope, {"ok": false, "code": "scope_mismatch", "message": "Use a file from this SDK scope."})
-\treturn RequestOperation.new(_scope, _scope._host.UploadFile(_name, path, HttpMethod.new()._text(method), source._area, source._path))
+\t\treturn ResponseResult.new({"ok": false, "code": "scope_mismatch", "message": "Use a file from this SDK scope."})
+''' + start_request('UploadFile', 'UploadAccountFile', '_name, path, HttpMethod.new()._text(method), source._area, source._path') + '''
+\treturn ResponseResult.new(await _scope._complete(started))
 '''
     sources["file_location.gd"] = '''extends RefCounted
 enum Area { PACKAGE, USER, WORLD }
@@ -331,6 +297,11 @@ func {"open" if kind == "file" else "open_folder"}(reference: {reference}) -> {s
 var _host: Object
 func _init(host: Object) -> void:
 \t_host = host
+## Native signal ownership handles main-thread delivery and discards continuations at stop.
+func _complete(started: Dictionary, authentication: bool = false) -> Dictionary:
+\tif started.get("ready", true):
+\t\treturn started
+\treturn await _host.ServiceCompletion(started.get("id", 0), authentication)
 '''
     for name, source in sources.items():
         if "scope: ServiceScope" in source:
