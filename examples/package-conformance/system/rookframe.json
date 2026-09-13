@@ -3,10 +3,10 @@
   "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
   "kind": "system-extension",
   "name": "Workshop System",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "sdk": {
     "edition": "2028",
-    "minimumRevision": 1
+    "minimumRevision": 2
   },
   "rookframeCompatibility": {
     "minimum": "0.1.0",
@@ -24,6 +24,22 @@
         "phone"
       ],
       "entryPoint": "ui/presentation.gd"
+    }
+  ],
+  "content": [
+    {
+      "kind": "system",
+      "entries": [
+        {
+          "id": "hero",
+          "type": "actor_definition",
+          "payload": "content/hero.tres",
+          "displayName": "Workshop hero"
+        }
+      ],
+      "targetSystemPackageId": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      "targetContractId": "workshop-actor-v1",
+      "compatibleVersions": ">=0.4.0 <1.0.0"
     }
   ]
 }

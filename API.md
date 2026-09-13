@@ -64,8 +64,8 @@ metadata binding; Publisher code receives the typed facade directly.
 All files in the generated `sdk/` directory ship with the Package. They are
 checked against the exact authoring kit and receive the same production source
 and resource verification as other Package code. No generated file is exempt
-from admission. These facilities require Edition 2027 revision 1; broader
-Content and domain APIs continue in later Project 02 work.
+from admission. These UI facilities require Edition 2027 revision 1.
+The typed World and Content scopes below require revision 5 (Edition 2028 revision 2).
 
 Direct Godot behavior within authored Package UI and the independently versioned
 UI Kit remain their existing contracts. Use public component properties and
@@ -133,3 +133,112 @@ preserve the Implementation and World Session. A window with the same declared
 scene retains its native Control instance, text draft, selection and scroll state;
 closing/reopening also retains it until World shutdown. Failed preparation leaves
 the live view and settings intact and displays a diagnostic.
+
+
+## World game data — Edition 2027 revision 5 / 2028 revision 2
+
+`SDK` exposes concrete `ActorId`, `SystemRecordId`, `RookId`, `SceneId`,
+`ContentReference`, snapshot and result classes. No caller supplies a Participant,
+peer identity, authority flag, World path or another Package's data-slot identity.
+`SDK.context()` returns an `SDK.WorldContext` containing the host-bound Participant
+and current authority/GM status. IDs identify records; they never grant access.
+Current foreground admission is the existing local GM session. Remote Participant
+admission and managed connectivity remain owned by their later project.
+
+All mutation results extend `SDK.OperationResult` (`ok`, `code`, `message`).
+An accepted result means the whole World save completed. Payload interpretation
+errors return `invalid_data`; unavailable authority and insufficient access return
+explicit failures. A durable publication failure returns no success and terminates
+the affected World Application. Reopening uses the last coherent save.
+
+### One Package World data value
+
+```gdscript
+var read: SDK.DataResult = sdk.world_data.read()
+if not read.ok:
+    return
+# A short-lived Package helper interprets read.value and calculates a new value.
+var calculated: Variant = calculate(read.value)
+var saved: SDK.OperationResult = sdk.world_data.replace(calculated)
+if saved.ok:
+    refresh_from(sdk.world_data.read().value)
+```
+
+The handle is automatically scoped to this Package and World. It exposes the
+one live authority-owned Variant; only the admitted GM may read or commit this
+additional World data in the current foreground session. `null` means never
+committed and cannot be committed as a root. `replace(value)` commits implicitly;
+mutating a live Dictionary, Array or Resource requires `commit()` explicitly.
+An unrelated domain save preserves the last explicitly committed representation.
+Submissions are sequential; nested operations are rejected. Do not mirror Actors,
+Rooks or System Records in this slot or retain a second synchronized entity tree.
+
+The codec supports ordinary scalar/math values, strings, packed arrays, Arrays,
+Dictionaries and plain or Package-scripted `Resource` data. It preserves shared
+container/Resource identities and typed container contracts. Native asset Resources
+such as textures and meshes use stable Content References instead. Nodes, arbitrary
+non-Resource Objects, Callables, Signals and RIDs reject. Bounds are 8 MiB encoded,
+4096 graph objects and 64 levels while encoding. Container types cannot embed
+runtime-only handles. Typed helpers may validate/calculate on temporary values.
+
+Custom Resources use storage properties and their Package-relative script path.
+The entire current Package selection is admitted before execution; every saved
+script and typed-container dependency must resolve in that admission before any
+Resource is reconstructed. No retained build path is loaded as a fallback. Authors
+own the compatibility of their Resource scripts, constructors and stored properties
+across releases. Prefer pure values for release-independent schemas, as Calendar does.
+Failed interpretation preserves the opaque bytes and cannot silently replace them.
+
+New releases, disabled/unavailable/uninstalled code, unrelated saves, host Copy
+and recovery export/import preserve opaque data without executing its scripts.
+Explicit Package Deletion removes only that Package's slot and settings. Protected
+secrets are excluded from the portable World; supplementary checked files remain
+separate from its coherent data value.
+
+### Actors and System Records
+
+The selected System Extension owns these operations and payload meaning.
+`actors.list()` returns `ActorListResult.items`; `read(id)`, `create(definition,
+choices)` and `update(id, data)` return `ActorResult.actor`. An `Actor` has a typed
+`id` and generic `data`. `delete(id)` returns `OperationResult`. The host filters
+Actor discovery/read by Actor Access and requires Owner access (or GM authority)
+for mutation. Creating from a declared, available `actor_definition` invokes its
+`create_data(choices)` method, assigns a fresh Actor identity, and grants the
+bound confirming human creator Owner access. It never creates a Rook.
+
+Author definitions by extending `SDK.ActorDefinition` through its generated script
+path and declaring the Resource in a System Content group. Use an Actor Creation
+contribution to open an `SDK.ExtensionSurface` with `sdk.windows.open(surface)`;
+the final authored confirmation button calls `sdk.actors.create(...)`.
+Repeated definition execution produces independent Actors.
+
+`system_records.list(type_name)` optionally filters the Package-defined type;
+`read(id)`, `create(type_name, data)`, `update(id, data)` and `delete(id)` use typed
+`SystemRecordId` and results. `SystemRecord` contains `id`, `type_name`, and generic
+`data`. The host owns identity, World membership and persistence; the System owns
+its schema. Mutation currently requires the admitted GM. Reads require the selected
+System and an admitted Participant. Actor/Record reads are supplied values for
+calculation; submit changes explicitly through their owners.
+
+### Tabletop and integration boundaries
+
+- `content.list(SDK.ContentKind.Value.MINIATURE)` / `read(ContentReference)` return typed
+  metadata with stable Package/local references. Resource/build paths stay private.
+- `scenes.current()` returns a typed Scene. `scenes.distance(from, to)` uses committed
+  Rook centers in the same current Scene's logical coordinates; it does not predict
+  collision, physical movement or a Roll result.
+- `rooks.list/read/create/move/link/unlink/delete` use typed IDs and `Vector2` poses.
+  Current Scene and available Miniature requirements, placement bounds and holder
+  rules remain enforced by the established Rooks/Rook owners. Creation requires GM
+  authority; control uses Actor ownership or GM authority. Multiple Rooks may link
+  to one Actor. Deleting an Actor removes its links/access but preserves Rooks;
+  deleting a Rook preserves the Actor. No combined Actor-plus-Rook operation is added.
+- `builder.status()`, `targeting.status()` and `dice.status()` explicitly return
+  unavailable. Managed connectivity/Targeting and physical Throws/Rolls retain
+  their existing project boundaries; this SDK adds no transport or replication model.
+
+The Workshop System example demonstrates authored Actor creation, a typed Resource
+HP calculation/update, and journal System Records. The separate optional Calendar
+uses only its scoped World value for Gregorian dates and dated notes.
+
+Content entries expose `kind: SDK.ContentKind.Value`, matching `SDK.ContentKind.Value` query constants. Dictionary keys may contain acyclic container graphs; cyclic key dependencies reject before publication or Resource construction.

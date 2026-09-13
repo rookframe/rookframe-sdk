@@ -1,8 +1,8 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "editions": {
-    "2027": 4,
-    "2028": 1
+    "2027": 5,
+    "2028": 2
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
@@ -12,16 +12,17 @@
     "checker/GDSHRAPT-LICENSE.txt": "6b64bd26bd90c9981ebb91b99c20ef595209767ae33583d44e3a3b6aa7025571",
     "checker/GDShrapt.Reader.dll": "576831f6f96c6cd3727bd783dd0cc7259f0741d49155abda5999d87af0d1859f",
     "checker/Rookframe.PackageCheck.deps.json": "273950442406babfc0693f093eefb958e33ece5af42de57e62ba68e8c4a12f21",
-    "checker/Rookframe.PackageCheck.dll": "a602ff83ed11c6be031a958cc32208dd6ff5e364072b75c9c6c01e6b01416a81",
+    "checker/Rookframe.PackageCheck.dll": "72b53203688c32bf6d505375c2296a02ad1451aabdfd4c06c0f275e59047808f",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
     "plugin.cfg": "280ddf1ea04b4fa495008426e92df1476a4fb63c5318d2a55786e6b71ad3ae92",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "33f3e78edbceab6377817e6d7d6ab32c52b0d66c4c7eb9a08d32550d2436c8d0",
+    "rookframe_authoring.py": "4291e0cd2728177b23669fea22356dee8ca67956739923cef0893536b129d5b3",
     "rookframe_authoring_checks.py": "4ba7864ad9af82b59870a72f10d97023dbad82490f615768cc21df3ffb76f737",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "b8ffd8d5f2ad95dcbbd06c3ac565667607e3703a9291585a053bb7ade45c9012",
-    "rookframe_sdk_facade.py": "7e175aea611de32a70d3f770a0661af21a7f02dd72a8d7062ca65245be1d93e9",
-    "rookframe_sdk_ui.py": "fdbcc04305a57e07941f89c680f1b1f58827cceaf6c3608cf4dd488fc2e4e3be"
+    "rookframe_sdk_facade.py": "d7ea92424b43617c6f3cfa1af75e6cca5fa7d3086961b79a827a5416d0771185",
+    "rookframe_sdk_ui.py": "fdbcc04305a57e07941f89c680f1b1f58827cceaf6c3608cf4dd488fc2e4e3be",
+    "rookframe_sdk_world.py": "872d9f417267e072ef79f7eb9d65c8e453a6eb816ddca7a6bc3863fe2e876caa"
   },
   "uiFiles": {
     "README.md": "15b90e8e0ae983f4b763584017f0499e71006266a948eb7542cd3642098a577e",
@@ -204,5 +205,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "481bc34af93c8c3ce4890afbe81bae305981d878"
+  "sourceRevision": "ff7942a4ff687de81d113e83e4e119ac629b7731"
 }

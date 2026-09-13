@@ -160,6 +160,26 @@ func cleanup_world(completed: Callable) -> void:
 func cleanup(operation: SDK.Cleanup) -> void:
 \toperation.complete()
 '''
+    if (edition == "2027" and revision >= 5) or (edition == "2028" and revision >= 2):
+        from rookframe_sdk_world import world_sources
+        world = world_sources(root)
+        sources.update(world)
+        sdk = sources["package_sdk_facade.gd"]
+        for filename in world:
+            type_name = "".join(word.capitalize() for word in filename[:-3].split("_"))
+            sdk += f'\nconst {type_name} = preload("{root}{filename}")'
+        sdk += "\n\nfunc context() -> WorldContext:\n\treturn WorldContext.new(_host.WorldContext())\n"
+        for name, type_name in (("world_data", "WorldData"), ("actors", "Actors"),
+                                ("system_records", "SystemRecords"), ("rooks", "Rooks"),
+                                ("scenes", "Scenes"), ("content", "Content"), ("windows", "Windows"),
+                                ("builder", "UnavailableCapability"), ("targeting", "UnavailableCapability"),
+                                ("dice", "UnavailableCapability")):
+            sdk += f"\nvar _{name}: {type_name}\nvar {name}: {type_name}:\n\tget:\n\t\treturn _{name}\n"
+            initialization = f"\n\t_{name} = {type_name}.new(host)"
+            if type_name == "UnavailableCapability":
+                initialization += f'\n\t_{name}.configure("{name}")'
+            sdk = sdk.replace("\t_host = host", "\t_host = host" + initialization, 1)
+        sources["package_sdk_facade.gd"] = sdk
     if not implementation:
         sources.pop("implementation.gd", None)
     if not presentations:

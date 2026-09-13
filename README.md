@@ -1,7 +1,7 @@
-# Rookframe SDK Authoring Kit 0.3.0
+# Rookframe SDK Authoring Kit 0.4.0
 
-Author ordinary Godot Packages for SDK Edition 2027 (revisions 1–4) or
-2028 (revision 1). The kit supplies a
+Author ordinary Godot Packages for SDK Edition 2027 (revisions 1–5) or
+2028 (revisions 1–2). The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`
 and `build` commands. It is an authoring dependency; only the generated facade
 ships in a Package. The UI Kit is a separate source dependency.
@@ -26,7 +26,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.3.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.4.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "238339d390ec01873585c002917c164948a0578d", "include": ["rookframe/ui"]})
 ```
 
@@ -133,3 +133,11 @@ receive no Implementation base. Neither form can register Package Settings.
 Choose `--edition 2028` when initializing a new 2028 project. Existing manifests
 and locks must be changed deliberately; an unsupported Edition/revision fails
 before any Package executes. Both Editions share the independently pinned UI Kit.
+
+## World data and game logic
+
+Edition 2027 revision 5 and Edition 2028 revision 2 add focused, typed capabilities:
+`world_data`, `actors`, `system_records`, `rooks`, `scenes`, `content`, and `windows`.
+Use concrete SDK IDs, ContentReference, entity snapshots and operation results.
+Only a Package's payload remains `Variant`; GDScript has no Package-defined generic return types.
+See [API.md](API.md) for the authorization, persistence and Resource contracts.
