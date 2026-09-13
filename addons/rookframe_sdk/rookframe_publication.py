@@ -317,7 +317,7 @@ def publish_checked_github(args) -> dict:
                 progress["assets"].append(name)
         if release["draft"]:
             release = gh_json(f"repos/{repo}/releases/{release['id']}", method="PATCH", body={"draft": False})
-        progress["draft"] = release["draft"]
+        progress.update(draft=release["draft"], releaseUrl=release["html_url"])
         if tag_commit(repo, tag) != commit:
             raise PublicationError("github-readback", "The published tag does not match the selected source commit.")
         # Public, unauthenticated readback proves the actual hosted handoff source.
