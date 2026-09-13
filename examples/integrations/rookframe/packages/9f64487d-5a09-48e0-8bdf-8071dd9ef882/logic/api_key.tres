@@ -1,0 +1,7 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+[ext_resource type="Script" path="res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/sdk/secret_setting.gd" id="1"]
+[resource]
+script = ExtResource("1")
+key = "api_key"
+title = "API key"
+description = "Optional key for checked requests from this device."

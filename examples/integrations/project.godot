@@ -1,0 +1,8 @@
+config_version=5
+[application]
+config/name="Integration example"
+run/main_scene="res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/ui/window.tscn"
+[editor_plugins]
+enabled=PackedStringArray("res://addons/rookframe_sdk/plugin.cfg")
+[rendering]
+renderer/rendering_method="gl_compatibility"

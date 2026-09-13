@@ -1,0 +1,12 @@
+[
+  {
+    "name": "integration-api",
+    "baseUri": "https://integration.example.invalid/",
+    "methods": [
+      "GET",
+      "POST"
+    ],
+    "streams": true,
+    "transfers": true
+  }
+]

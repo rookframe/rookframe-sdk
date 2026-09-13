@@ -1,0 +1,30 @@
+{
+  "manifestVersion": 1,
+  "id": "9f64487d-5a09-48e0-8bdf-8071dd9ef882",
+  "kind": "optional",
+  "name": "Integration example",
+  "version": "0.7.0",
+  "summary": "Integration example",
+  "sdk": {
+    "edition": "2027",
+    "minimumRevision": 8
+  },
+  "rookframeCompatibility": {
+    "minimum": "0.1.0",
+    "verified": "0.1.0"
+  },
+  "implementation": {
+    "entryPoint": "logic/implementation.gd"
+  },
+  "presentations": [
+    {
+      "id": "default",
+      "experiences": [
+        "desktop",
+        "tablet",
+        "phone"
+      ],
+      "entryPoint": "ui/presentation.gd"
+    }
+  ]
+}

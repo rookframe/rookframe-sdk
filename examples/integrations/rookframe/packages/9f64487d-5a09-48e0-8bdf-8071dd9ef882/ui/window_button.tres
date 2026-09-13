@@ -1,0 +1,15 @@
+[gd_resource type="Resource" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/sdk/window_button.gd" id="entry"]
+[ext_resource type="Script" path="res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/sdk/extension_surface.gd" id="surface"]
+[ext_resource type="PackedScene" path="res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/ui/window_button.tscn" id="button"]
+[ext_resource type="PackedScene" path="res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/ui/window.tscn" id="window"]
+
+[sub_resource type="Resource" id="ExtensionWindow"]
+script = ExtResource("surface")
+scene = ExtResource("window")
+
+[resource]
+script = ExtResource("entry")
+button_scene = ExtResource("button")
+window = SubResource("ExtensionWindow")

@@ -199,6 +199,26 @@ func cleanup(operation: SDK.Cleanup) -> void:
 func _rookframe_settings_view() -> PackedScene:
 \treturn settings_view.scene if settings_view != null else null
 '''
+    if (edition == "2027" and revision >= 8) or (edition == "2028" and revision >= 5):
+        from rookframe_sdk_services import service_sources
+        services = service_sources(root)
+        sources.update(services)
+        sources["secret_setting.gd"] += f'''
+const AuthenticationProviderDefinition = preload("{root}authentication_provider_definition.gd")
+## Optional provider for Rookframe-owned sign-in/refresh/clear controls.
+@export var authentication: AuthenticationProviderDefinition
+'''
+        sdk = sources["package_sdk_facade.gd"]
+        for filename in services:
+            type_name = "".join(word.capitalize() for word in filename[:-3].split("_"))
+            sdk += f'\nconst {type_name} = preload("{root}{filename}")'
+        sdk += "\nvar _service_scope: ServiceScope\n"
+        for name, type_name in (("files", "Files"), ("clipboard", "Clipboard"), ("network", "Network"),
+                                ("secrets", "Secrets"), ("authentication", "Authentication"), ("browser", "Browser")):
+            sdk += f"\nvar _{name}: {type_name}\nvar {name}: {type_name}:\n\tget:\n\t\treturn _{name}\n"
+            sdk = sdk.replace("\t_host = host", f"\t_host = host\n\t_{name} = {type_name}.new(_service_scope)", 1)
+        sdk = sdk.replace("\t_host = host", "\t_host = host\n\t_service_scope = ServiceScope.new(host)", 1)
+        sources["package_sdk_facade.gd"] = sdk
     if not implementation:
         sources.pop("implementation.gd", None)
     if not presentations:

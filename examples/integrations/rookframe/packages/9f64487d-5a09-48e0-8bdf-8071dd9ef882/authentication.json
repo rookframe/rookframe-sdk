@@ -1,0 +1,19 @@
+[
+  {
+    "name": "identity",
+    "model": "public-native",
+    "issuer": "https://identity.example.invalid/",
+    "authorizationUri": "https://identity.example.invalid/authorize",
+    "clientId": "register-your-native-client",
+    "scopes": "identity",
+    "exchange": {
+      "name": "identity-exchange",
+      "baseUri": "https://identity.example.invalid/",
+      "methods": [
+        "POST"
+      ]
+    },
+    "tokenPath": "token",
+    "refreshPath": "token"
+  }
+]

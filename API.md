@@ -347,3 +347,159 @@ rows for complex configuration; Calendar 0.6.0 demonstrates month and weekday
 editors. The host retains complete drafts while browsing between Packages and
 owns scope Save/Reset, validation, authorization, restart confirmation, and
 publication. Default object/list editors also use structured controls, not JSON.
+## Checked integrations — Edition 2027 revision 8 / 2028 revision 5
+
+The concrete SDK capabilities are `files`, `clipboard`, `network`, `secrets`,
+`authentication` and `browser`. Author code uses typed values and operations;
+native transport dictionaries, IDs and host bindings are implementation details.
+All `IntegrationResult` subtypes expose `ready: bool`, `ok: bool`, `code: String`,
+`message: String` and `retry_after: int`. For asynchronous operations, call `poll()`
+from the live scene until `ready`, then inspect `ok`. Polling a completed operation
+retains its result. A pending result is not completion. No Package callback is
+retained by the host, and stopped scopes refuse new work with `caller_stopped`.
+
+### Files, selection, portraits and clipboard
+
+```gdscript
+var file: SDK.ScopedFile = sdk.files.user.file("notes/session.txt")
+var saved: SDK.IntegrationResult = file.write_text("Reached the gate.")
+var read: SDK.TextResult = file.read_text()
+var remembered: SDK.InternalFileReference = file.to_reference()
+var reopened: SDK.ScopedFile = sdk.files.open(remembered)
+var selection: SDK.FileSelection = sdk.files.user.select_file()
+var copy: SDK.IntegrationResult = sdk.clipboard.write_text(read.text)
+```
+
+`files.package`, `.user` and `.world` are `FileArea` values. `file(relative_name)`
+and `folder(relative_name)` produce scoped values, never absolute OS paths.
+Package content is immutable; World writes require the existing authority.
+User files belong to this Package on this installation. Every operation checks
+the live caller, area, traversal, links and approved backing before access.
+Manager data, other Worlds, recovery and protected secrets remain outside these areas.
+
+| Typed value | Operations |
+| --- | --- |
+| `ScopedFile` | `read_text() -> TextResult`, `read_bytes() -> BytesResult`, `write_text(String)`, `write_bytes(PackedByteArray)`, `read_portrait() -> PortraitResult`, `to_reference()` |
+| `ScopedFolder` | `file(relative_name) -> ScopedFile`, `to_reference() -> InternalFolderReference` |
+| `FileSelection` | `poll() -> FileSelectionResult`; successful `.file: ScopedFile` |
+| `FolderSelection` | `poll() -> FolderSelectionResult`; successful `.folder: ScopedFolder` |
+| `Clipboard` | `read_text() -> TextResult`, `write_text(String) -> IntegrationResult` |
+
+`FileArea.select_file()` and `select_folder()` open host-owned selection within
+the requested area. They remain distinct choices. Remember an internal reference
+to reopen an already authorized internal file without prompting again. References
+contain only `FileLocation.Area` and a relative `name`; store those fields in your
+Package data or an authored Resource and reopen with the current SDK's `files.open`
+or `open_folder`. They confer no new access. A retained old `ScopedFile` keeps its
+old lifetime and cannot be rebound to a later World.
+
+`BytesResult.data` is `PackedByteArray`; `TextResult.text` is `String`.
+`read_portrait()` decodes PNG/JPEG/WebP through the host into a fitted 512 × 512
+`Texture2D`, exposed as `PortraitResult.texture`. Encoded input is limited to
+8 MiB; arbitrary scene/Resource files are never evaluated as images. Decoding
+retains the existing native decoder's memory limits. Clipboard text is limited
+to 1 MiB of UTF-8. Check outcomes such as `display_unavailable`,
+`clipboard_unavailable`, `clipboard_denied`, `portrait_invalid` and `portrait_limit`.
+An OS that silently supplies an empty clipboard cannot always distinguish denial
+from genuinely empty text. A GM cannot grant another device permission.
+
+### Named network operations
+
+Create an authored `ServiceDefinition` Resource with `name` matching a declaration
+in the Package's `services.json`, then use `sdk.network.service(definition)`.
+
+```gdscript
+var headers: SDK.RequestHeaders = SDK.RequestHeaders.new()
+headers.accept = "application/json"
+var pending: SDK.RequestOperation = sdk.network.service(API).request(
+    "identity", SDK.HttpMethod.Value.GET, "", headers)
+# Later, while this scene is active:
+var response: SDK.ResponseResult = pending.poll()
+if response.ready and response.ok:
+    status.text = "HTTP %d" % response.status
+```
+
+`request(path, method = GET, body = "", headers = null)` returns typed status,
+text and bytes. Transport success is separate from HTTP success; inspect `status`.
+`HttpMethod.Value` includes GET, POST, PUT, PATCH, DELETE, HEAD and OPTIONS;
+the declaration still restricts allowed methods. `RequestHeaders` allows only
+authorization, accept, content_type, if_match, if_none_match and api_key.
+
+`open_stream(path) -> StreamOperation` yields `StreamResult.stream: ScopedStream`.
+Use `read(maximum_bytes = 65536) -> BytesOperation` and `close()`; an empty completed
+chunk is end-of-stream. `download(path, target: ScopedFile) -> IntegrationOperation`
+publishes a bounded internal file. `upload(path, source: ScopedFile, method = POST)`
+returns `RequestOperation`. Streams and transfers use the declaration's permissions
+and current transport contract; they do not accept request-only header overrides.
+Cross-SDK file/secret values are refused with `scope_mismatch`.
+
+Declarations do not authorize private network access. The application-owned
+destination checks, DNS/private-address checks, redirect rules, byte limits and
+per-Package/destination traffic and concurrency budgets apply to every adapter
+and survive World switches. Trusted companion pairing comes only from explicit
+host configuration with its actual address and certificate fingerprint. A port
+number or Package declaration is insufficient. Stopping/revoking cancels ordinary
+requests, streams and transfers; Package code is never called after stop.
+
+### Protected settings and provider authentication
+
+Register top-level `SecretSetting` descriptors in User or World settings as usual.
+The host renders password input plus immediate save/clear actions separately from
+ordinary drafts. Secret values never appear in settings snapshots, migration,
+replication, World copies, exports or backups. World controls require the current
+GM World Authority. User secrets are exact Package/version on this installation;
+World secrets are exact Package/version at the original World Address. Dedicated
+authorities have no installation-user scope. Protected keys are at most 64
+characters and cannot be nested or request an ordinary settings restart.
+
+Set a descriptor's optional `authentication: AuthenticationProviderDefinition`
+to expose host-owned Sign in, Refresh and Clear actions instead of manual input.
+The provider Resource's `name` must match admitted `authentication.json`.
+Neither Resource contains a confidential client credential.
+
+```gdscript
+var account: SDK.SecretEntry = sdk.secrets.user.setting(ACCOUNT)
+var login: SDK.AuthenticationOperation = sdk.authentication.provider(IDENTITY).sign_in(account)
+# After successful completion:
+var stored: SDK.ProviderTokenResult = account.read_tokens()
+if stored.ok and stored.found:
+    var headers: SDK.RequestHeaders = SDK.RequestHeaders.new()
+    headers.authorization = stored.tokens.token_type + " " + stored.tokens.access_token
+    request = sdk.network.service(API).request("identity", SDK.HttpMethod.Value.GET, "", headers)
+```
+
+`SecretArea.entry(name)` accesses a named protected entry without a settings
+descriptor; `.setting(descriptor)` uses its key. `SecretEntry.read()` returns
+`SecretResult` with `found` and raw `text`; `write(String)` and `clear()` return
+`IntegrationResult`. `read_tokens()` returns `ProviderTokenResult` with `found`
+and typed `ProviderTokens`: access_token, token_type, refresh_token, scope,
+has_expiry and expires_at (Unix seconds). Missing credentials are a successful
+`found = false`; malformed token material yields sanitized `secret_format`.
+Only the owning Package receives these raw credentials for its checked API use.
+Keep them out of ordinary data and diagnostics. Rookframe does not define provider
+membership, entitlements or store acquisition credentials.
+
+`sign_in(destination)` returns `AuthenticationOperation`; `poll()` produces an
+`AuthenticationResult` with Phase.CONFIRMATION, BROWSER, COMPLETED or FAILED.
+The host confirms the original Package/version, provider origin and destination
+before opening the browser. Cancel/World exit before confirmation opens nothing.
+Replacement/revocation while confirmation is open invalidates its captured
+destination generation. Headless launches return `browser_unavailable`.
+
+After launch, the application owns the native return, state/issuer validation,
+PKCE proof, checked exchange and conditional protected write. It may finish after
+World exit without retaining Package code, invoking a stopped callback or changing
+the destination to a newly opened World. Uninstall/deletion/revocation/intervening
+secret edits invalidate stale completion. Callback URLs contain a one-use code,
+state and issuer, never provider tokens. Flows expire after ten minutes and do not
+survive application termination.
+
+`provider.refresh(destination) -> IntegrationOperation` refreshes using the same
+protected exchange, rotation lease, provider identity and conditional write.
+`sdk.browser.open(https_url) -> IntegrationOperation` confirms a deliberate web
+link without creating credentials. Public native clients must support the native
+redirect, PKCE and issuer contract. With `publisher-transfer`, the Publisher's
+backend owns confidential exchange and refresh; its client secret never ships in
+a Package. New compatible provider declarations need no per-provider app build.
+The shipped example uses placeholder providers. Controlled evidence is not live
+provider certification; deployment still requires the provider's registration.

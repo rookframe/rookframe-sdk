@@ -1,0 +1,173 @@
+[gd_scene load_steps=4 format=3]
+[ext_resource type="Script" path="res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/ui/integrations.gd" id="script"]
+[ext_resource type="Theme" path="res://rookframe/ui/theme/rookframe_theme.tres" id="theme"]
+[ext_resource type="PackedScene" path="res://rookframe/ui/components/forms/text_area.tscn" id="note"]
+
+[node name="IntegrationExample" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("theme")
+theme_override_constants/separation = 16
+script = ExtResource("script")
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+theme_type_variation = &"RookframeHeading"
+text = "Integration example"
+autowrap_mode = 2
+
+[node name="Help" type="Label" parent="."]
+layout_mode = 2
+theme_type_variation = &"RookframeMeta"
+text = "Internal files work offline. Service and sign-in actions use the configured demonstration provider. Protected values are managed in Package Settings."
+autowrap_mode = 2
+
+[node name="Body" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+follow_focus = true
+
+[node name="Fields" type="VBoxContainer" parent="Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+
+[node name="Note" parent="Body/Fields" instance=ExtResource("note")]
+layout_mode = 2
+label_text = "Internal file contents"
+value = "A note from the Integration example."
+
+[node name="Files" type="HFlowContainer" parent="Body/Fields"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="Save" type="Button" parent="Body/Fields/Files"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Save note"
+
+[node name="Read" type="Button" parent="Body/Fields/Files"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Read file"
+
+[node name="Content" type="Button" parent="Body/Fields/Files"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Read Package content"
+
+[node name="Choose" type="Button" parent="Body/Fields/Files"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Choose file…"
+
+[node name="Folder" type="Button" parent="Body/Fields/Files"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Choose folder…"
+
+[node name="Portrait" type="Button" parent="Body/Fields/Files"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Choose portrait…"
+
+[node name="ServiceTitle" type="Label" parent="Body/Fields"]
+layout_mode = 2
+theme_type_variation = &"RookframeHeading"
+text = "Service"
+
+[node name="Service" type="HFlowContainer" parent="Body/Fields"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="Request" type="Button" parent="Body/Fields/Service"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Call service"
+
+[node name="Stream" type="Button" parent="Body/Fields/Service"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Read stream"
+
+[node name="Download" type="Button" parent="Body/Fields/Service"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Download file"
+
+[node name="Upload" type="Button" parent="Body/Fields/Service"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Upload file"
+
+[node name="AccountTitle" type="Label" parent="Body/Fields"]
+layout_mode = 2
+theme_type_variation = &"RookframeHeading"
+text = "Account"
+
+[node name="Account" type="HFlowContainer" parent="Body/Fields"]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="Status" type="Button" parent="Body/Fields/Account"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Account status"
+
+[node name="SignIn" type="Button" parent="Body/Fields/Account"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Sign in…"
+
+[node name="Refresh" type="Button" parent="Body/Fields/Account"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 44)
+theme_type_variation = &"RookframeSecondaryButton"
+text = "Refresh credentials"
+
+[node name="Portrait" type="TextureRect" parent="Body/Fields"]
+layout_mode = 2
+custom_minimum_size = Vector2(128, 128)
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Status" type="Label" parent="."]
+layout_mode = 2
+theme_type_variation = &"RookframeBody"
+text = "Choose an operation."
+autowrap_mode = 2
+
+[connection signal="pressed" from="Body/Fields/Files/Save" to="." method="save_note"]
+[connection signal="pressed" from="Body/Fields/Files/Read" to="." method="read_note"]
+[connection signal="pressed" from="Body/Fields/Files/Content" to="." method="read_content"]
+[connection signal="pressed" from="Body/Fields/Files/Choose" to="." method="choose_file"]
+[connection signal="pressed" from="Body/Fields/Files/Folder" to="." method="choose_folder"]
+[connection signal="pressed" from="Body/Fields/Files/Portrait" to="." method="choose_portrait"]
+[connection signal="pressed" from="Body/Fields/Service/Request" to="." method="call_service"]
+[connection signal="pressed" from="Body/Fields/Service/Stream" to="." method="read_stream"]
+[connection signal="pressed" from="Body/Fields/Service/Download" to="." method="download_file"]
+[connection signal="pressed" from="Body/Fields/Service/Upload" to="." method="upload_file"]
+[connection signal="pressed" from="Body/Fields/Account/Status" to="." method="account_status"]
+[connection signal="pressed" from="Body/Fields/Account/SignIn" to="." method="sign_in"]
+[connection signal="pressed" from="Body/Fields/Account/Refresh" to="." method="refresh_account"]
