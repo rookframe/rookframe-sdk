@@ -182,7 +182,7 @@ func cleanup(operation: SDK.Cleanup) -> void:
         sources["package_sdk_facade.gd"] = sdk
     if (edition == "2027" and revision >= 6) or (edition == "2028" and revision >= 3):
         from rookframe_sdk_settings import settings_sources, implementation_callbacks
-        settings = settings_sources(root)
+        settings = settings_sources(root, typed_lists=(revision >= (7 if edition == "2027" else 4)))
         sources.update(settings)
         sdk = sources["package_sdk_facade.gd"]
         for filename in settings:

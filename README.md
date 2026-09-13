@@ -1,7 +1,7 @@
-# Rookframe SDK Authoring Kit 0.5.0
+# Rookframe SDK Authoring Kit 0.6.0
 
-Author ordinary Godot Packages for SDK Edition 2027 (revisions 1–6) or
-2028 (revisions 1–3). The kit supplies a
+Author ordinary Godot Packages for SDK Edition 2027 (revisions 1–7) or
+2028 (revisions 1–4). The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`
 and `build` commands. It is an authoring dependency; only the generated facade
 ships in a Package. The UI Kit is a separate source dependency.
@@ -26,7 +26,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.5.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.6.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "238339d390ec01873585c002917c164948a0578d", "include": ["rookframe/ui"]})
 ```
 
@@ -79,7 +79,7 @@ The generated SDK provides concrete `Rail`, `WindowButton`, and
 `ExtensionSurface` types, with documented members visible through Godot completion.
 Extend its Presentation base and register an authored entry with
 `sdk.rails.left.push(calendar_window_button)`. The SDK owns binding, opening,
-mounting and cleanup. Read [API.md](API.md) for the complete initial interface. Calendar includes a Gregorian date view and note editor; authoritative date and note actions follow in the domain-data slice.
+mounting and cleanup. Read [API.md](API.md) for the complete initial interface. Calendar includes authoritative date and note actions and dedicated settings for classic or custom calendar rules.
 
 ## Checks, collisions and builds
 
@@ -150,3 +150,6 @@ and World transactions, ordinary controls, authority checks and deliberate
 restart actions. See [the Settings API](API.md#package-settings--edition-2027-revision-6--2028-revision-3).
 Calendar is the ordinary public example; Workshop supplies a bounded custom
 form with restart-local and restart-world fields.
+
+Edition 2027 revision 7 / 2028 revision 4 adds typed text and integer lists and
+a dedicated Package Settings journey with complex Calendar configuration.

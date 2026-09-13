@@ -325,3 +325,25 @@ Disable retains both copies. Exact-version uninstall removes that version's
 User settings and retains World settings. Explicit Package Deletion removes
 World settings/data and retains User settings. The existing protected-store
 lifetime hooks apply; ordinary descriptor-copy serialization excludes secrets.
+
+### Typed lists and dedicated Package Settings pages (0.6.0)
+
+Edition 2027 revision 7 / Edition 2028 revision 4 add `TextListSetting` and
+`IntegerListSetting`. Both declare bounded defaults and minimum/maximum item
+counts; text lists also bound each name's length, integer lists each number's
+range. Register them alongside scalar settings in `SettingsRegistration`.
+
+`SettingsValues.text_list(descriptor)` returns a detached `TextList`;
+`integer_list(descriptor)` returns an `IntegerList`. Their `size()`, `is_empty()`,
+and `at(index)` methods are typed. Build a new list with `TextList.new()` or
+`IntegerList.new()` and typed `append(value)`, then stage it with
+`SettingsDraft.set_text_list` or `set_integer_list`. Reading or building a list
+does not publish settings. Validation reads the candidate through the same types.
+
+The host opens a package browser, then a dedicated page for the selected Package.
+World Settings, My Settings, and Presentation have separate sections. A custom
+`SettingsView` can use authored sections, conditional fields, and dynamic repeated
+rows for complex configuration; Calendar 0.6.0 demonstrates month and weekday
+editors. The host retains complete drafts while browsing between Packages and
+owns scope Save/Reset, validation, authorization, restart confirmation, and
+publication. Default object/list editors also use structured controls, not JSON.

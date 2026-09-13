@@ -3,7 +3,7 @@
   "id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
   "kind": "system-extension",
   "name": "Workshop System",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "sdk": {
     "edition": "2028",
     "minimumRevision": 3

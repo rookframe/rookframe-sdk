@@ -1,7 +1,7 @@
 """Typed Package Settings descriptors, snapshots and Rookframe-owned edit drafts."""
 
 
-def settings_sources(root: str) -> dict[str, str]:
+def settings_sources(root: str, *, typed_lists: bool = False) -> dict[str, str]:
     sources = {
         "settings_scope.gd": '''extends RefCounted
 enum Kind { USER, WORLD }
@@ -81,6 +81,43 @@ func _copy() -> Dictionary:
             values += f'\nfunc {name}(setting: {type_name}) -> {value_type}:\n\treturn {expression}\n'
         value = 'value.duplicate(true)' if value_type in ("Dictionary", "Array") else 'value'
         draft += f'\nfunc set_{name}(setting: {type_name}, value: {value_type}) -> void:\n\t_values[setting.key] = {value}\n'
+    if typed_lists:
+        for name, type_name, element, packed, bounds in (
+            ("text_list", "TextListSetting", "String", "PackedStringArray", '@export var minimum_length: int = 0\n@export var maximum_length: int = 4096'),
+            ("integer_list", "IntegerListSetting", "int", "PackedInt64Array", '@export var minimum: int = -1000000\n@export var maximum: int = 1000000'),
+        ):
+            sources[f"{name}_setting.gd"] = f'''extends "{root}setting.gd"
+@export var default_value: {packed} = []
+@export var minimum_items: int = 0
+@export var maximum_items: int = 256
+{bounds}
+'''
+            list_type = type_name.removesuffix("Setting")
+            sources[f"{name}.gd"] = f'''extends RefCounted
+## A detached typed list. Mutations affect this draft helper only.
+var _source: Array
+var _added: Array = []
+func _init(values: Array = []) -> void:
+\t_source = values.duplicate(true)
+func size() -> int:
+\treturn _source.size() + _added.size()
+func is_empty() -> bool:
+\treturn size() == 0
+func at(index: int) -> {element}:
+\tvar value: {element} = _source[index] if index < _source.size() else _added[index - _source.size()]
+\treturn value
+func append(value: {element}) -> void:
+\t_added.append(value)
+func _copy() -> Array:
+\tvar values: Array = []
+\tfor index in range(size()):
+\t\tvalues.append(at(index))
+\treturn values
+'''
+            values = values.replace("var _values: Dictionary", f'const {list_type} = preload("{root}{name}.gd")\nvar _values: Dictionary')
+            values = values.replace("var _values: Dictionary", f'const {type_name} = preload("{root}{name}_setting.gd")\nvar _values: Dictionary')
+            values += f'\nfunc {name}(setting: {type_name}) -> {list_type}:\n\treturn {list_type}.new(_values.get(setting.key, []))\n'
+            draft += f'\nfunc set_{name}(setting: {type_name}, value: {list_type}) -> void:\n\t_values[setting.key] = value._copy()\n'
     sources["settings_values.gd"] = values
     sources["settings_draft.gd"] = draft
     sources["settings_candidate.gd"] = f'''extends "{root}settings_values.gd"

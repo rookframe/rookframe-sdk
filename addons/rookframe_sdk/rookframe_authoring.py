@@ -20,9 +20,9 @@ from rookframe_package_build import (BUILD_SCHEMA,
     deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.5.0"
+SDK_VERSION = "0.6.0"
 SDK_EDITION = "2027"
-SDK_EDITIONS = {"2027": 6, "2028": 3}
+SDK_EDITIONS = {"2027": 7, "2028": 4}
 UI_VERSION = "v1.0.0-rc.1"
 UI_COMMIT = "238339d390ec01873585c002917c164948a0578d"
 PROFILES = ("desktop", "android", "ios", "dedicated-headless")

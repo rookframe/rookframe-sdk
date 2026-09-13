@@ -3,7 +3,7 @@
   "id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
   "kind": "optional",
   "name": "Table Help",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "sdk": {
     "edition": "2027",
     "minimumRevision": 4
