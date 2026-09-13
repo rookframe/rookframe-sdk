@@ -13,7 +13,7 @@ Choose an exact new version and the authoritative public HTTPS `manifest` and
 `download` URLs in `rookframe.json` before building. Preserve the Package ID.
 Commit and push the clean author project, including sources, scenes, generated
 facade, exact dependency lock, presets, documentation and tests. Run the normal
-`check` and `build` commands. Keep the one checked profile-complete output; a
+`check` and `build` commands. Keep the one checked complete output; a
 retry uploads those same bytes without rebuilding.
 
 Any public HTTPS host works. Upload the exact `rookframe.json` bytes and the
@@ -45,7 +45,7 @@ python3 addons/rookframe_sdk/rookframe_authoring.py publish-github \
 Repeat with `--confirm` to create a draft, upload and read back the exact
 Manifest and archive, then publish. Optional `--notes release-notes.md` supplies
 the release description. The tool verifies the production artifact, configured
-profiles, source identity, clean local commit, remote commit, public repository,
+shared artifact, source identity, clean local commit, remote commit, public repository,
 and the version tag. Existing assets are downloaded and compared byte for byte
 before retry decisions. Different bytes, ambiguous assets, or a moved tag stop
 the operation. It does not overwrite or delete anything.

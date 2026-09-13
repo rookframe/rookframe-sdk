@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.9.1
+# Rookframe SDK Authoring Kit 0.9.2
 
 Author ordinary Godot Packages for SDK Edition 2029 (revision 1). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -10,7 +10,7 @@ ships in a Package. The UI Kit is a separate source dependency.
 ## Install the two dependencies
 
 Use Godot **4.7.2**, Python **3.10+**, Git and the **.NET 8 runtime** on PATH.
-Godot's matching export templates must be installed for your configured profiles.
+Install Godot's matching export templates for the local authoring host. The exporter produces a shared PCK, not an OS application.
 Rookframe currently tests this authoring path on macOS with Godot Mono; the tools
 accept an explicit Godot executable on every host.
 
@@ -27,8 +27,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.9.1", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "238339d390ec01873585c002917c164948a0578d", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.9.2", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -46,9 +46,15 @@ python3 addons/rookframe_sdk/rookframe_authoring.py build --project . --godot /p
 `init` also works in an empty directory when invoked from an installed kit.
 Install the resulting `plug.gd` dependencies before opening Godot. `--ui` adds
 an authored scene, a Rail entry and its Presentation for a new Package. Without
-it the initial Package has an Implementation only. `--profile` can be repeated
-for `desktop`, `android`, `ios` or `dedicated-headless`; desktop is the default.
-Only configured Rookframe profiles are required, and every one must succeed.
+it the initial Package has an Implementation only. Packages have no OS dependency
+or target: one `package` export produces the same code and resources for iOS,
+Android, Linux, macOS and Windows. There is no OS target command-line option.
+The export automatically includes the required Godot texture format alternatives.
+Phone/tablet/desktop variation belongs to Presentations: phone → tablet → desktop,
+tablet → desktop → phone, and desktop → tablet → phone. Fallback is visible and
+non-blocking; no Presentations means the Package runs without Package UI.
+Existing published archives remain usable without rebuilding; legacy member
+labels do not declare OS support.
 A build requires no account, GitHub publication or Catalogue entry.
 
 Commit the Manifest, Package source/scenes, generated facade, `.rookframe/authoring.lock.json`,
@@ -71,7 +77,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/238339d390ec01873585c002917c164948a0578d/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/9de97beeede7f9d803e6ea0abef67730cdc84692/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
@@ -94,29 +100,26 @@ missing ones; changed files are diagnosed without overwrites. When upgrading
 from 0.1.x, also migrate the Presentation to the typed API shown in [API.md](API.md).
 
 `check` is read-only for Publisher inputs. Manifest semantics, namespace,
-dependency pins, facade, SDK minimum revision and profiles are checked first.
+dependency pins, facade, SDK minimum revision and shared resource export are checked first.
 Godot import, binary normalization and Publisher tool scripts execute only in
 disposable copies of the trusted author project. This is not a sandbox for
 untrusted projects. Source results explicitly do not constitute runtime admission.
 Unsupported effects and incomplete analysis fail through the same GDShrapt-based
 production verifier used by Rookframe; there is no author bypass.
 
-`build` creates one fresh UUID and distinct profile roots. It preserves the exact
+`build` creates one fresh UUID and one shared resource root. It preserves the exact
 Manifest, native relative references and importer parameters while preparing
-static references, UIDs, imports and remaps. It verifies actual prepared profile
-members and one common textual script set through the production checker.
+static references, UIDs, imports and remaps. It verifies all prepared artifact
+members and the shared textual script set through the production checker.
 Output includes Package content/private libraries/facade and excludes the SDK,
 UI Kit, kit imports and author project registries. Only a complete checked archive
 is atomically published. Existing output paths are never replaced; a failed
-profile or final check leaves no successful-looking partial archive.
+export or final check leaves no successful-looking partial archive.
 
 Use Manager's existing file import, select Calendar with exactly one System
 Extension, and open the World. The full selection must pass production admission
 before any Package executes. Reinstalling an archive retains its build identity;
 rebuilding the same version deliberately creates another identity.
-
-See [Package lifecycle and typed authorship](docs/manager-lifecycle.md) for update,
-repair, disable and deletion consequences.
 
 ## Distribution
 

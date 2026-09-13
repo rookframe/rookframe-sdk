@@ -477,11 +477,11 @@ def export_prepared_profile(godot: Path, project: Path, work: Path, profile: str
     # Keep native text resources inspectable in finished Packages. Imported
     # assets still use the selected profile's native Godot importer/output.
     with (project / "project.godot").open("a") as config:
-        compression = "etc2_astc" if profile in {"android", "ios"} else "s3tc_bptc"
-        config.write(
-            "\n[rendering]\ntextures/vram_compression/import_"
-            + compression + "=true\n"
-        )
+        compressions = ("s3tc_bptc", "etc2_astc") if profile == "package" else (
+            "etc2_astc" if profile in {"android", "ios"} else "s3tc_bptc",)
+        config.write("\n[rendering]\n")
+        for compression in compressions:
+            config.write("textures/vram_compression/import_" + compression + "=true\n")
         config.write("\n[editor]\nexport/convert_text_resources_to_binary=false\n")
     run_godot(godot, project, "--editor", "--import")
     validate_global_class_references(project / runtime_root.removeprefix("res://"))
