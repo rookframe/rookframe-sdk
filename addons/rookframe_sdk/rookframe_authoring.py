@@ -20,12 +20,12 @@ from rookframe_package_build import (BUILD_SCHEMA,
     deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.8.0"
+SDK_VERSION = "0.9.2"
 SDK_EDITION = "2029"
 SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 1}
 UI_VERSION = "v1.0.0-rc.1"
-UI_COMMIT = "238339d390ec01873585c002917c164948a0578d"
-PROFILES = ("desktop", "android", "ios", "dedicated-headless")
+UI_COMMIT = "9de97beeede7f9d803e6ea0abef67730cdc84692"
+RESOURCE_EXPORT = "package"
 
 
 class AuthoringError(RuntimeError):
@@ -43,12 +43,13 @@ def json_text(value: object) -> str:
 
 def preset(index: int, profile: str, package_id: str) -> str:
     desktop_platform = {"darwin": "macOS", "win32": "Windows Desktop"}.get(sys.platform, "Linux")
-    platform = {"android": "Android", "ios": "iOS"}.get(profile, desktop_platform)
+    platform = desktop_platform
     return f'''[preset.{index}]
 name="{profile}"
 platform="{platform}"
+custom_features="s3tc,bptc,etc2,astc"
 runnable=false
-dedicated_server={str(profile == "dedicated-headless").lower()}
+dedicated_server=false
 export_filter="selected_resources"
 include_filter="rookframe/packages/{package_id}/**"
 exclude_filter="rookframe.json,rookframe/ui/**,addons/**,.rookframe/**,.plugged/**,plug.gd,README.md,presentation/**"
@@ -71,7 +72,7 @@ def read_presets(project: Path) -> configparser.ConfigParser:
     return config
 
 
-def initialize(project: Path, name: str, kind: str, profiles: list[str], ui: bool = False, edition: str = SDK_EDITION) -> None:
+def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: str = SDK_EDITION) -> None:
     presets_path = project / "export_presets.cfg"
     if presets_path.exists() and not presets_path.is_file():
         raise AuthoringError("INIT.CONFLICT: export_presets.cfg must be a regular file.")
@@ -138,7 +139,7 @@ func _plugging() -> void:
     additions = []
     indices = [int(s.split(".")[1]) for s in config.sections() if s.startswith("preset.") and not s.endswith(".options")]
     index = max(indices, default=-1) + 1
-    for profile in dict.fromkeys(profiles):
+    for profile in [RESOURCE_EXPORT]:
         if profile in existing_names:
             section = config[existing_names[profile]]
             if section.get("script_export_mode") != "0" or package_root not in section.get("include_filter", ""):
@@ -288,12 +289,14 @@ def build_project(project: Path, godot: Path, work: Path, manifest: dict,
 
 
 def main() -> int:
+    if len(sys.argv) > 1 and sys.argv[1] in ("catalogue", "publish-github"):
+        from rookframe_publication import main as publication_main
+        return publication_main(sys.argv[1:])
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("init", "facade", "check", "build"))
     parser.add_argument("--project", type=Path, default=Path.cwd())
     parser.add_argument("--name", default="My Package")
     parser.add_argument("--kind", choices=("optional", "system-extension"), default="optional")
-    parser.add_argument("--profile", choices=PROFILES, action="append", default=[])
     parser.add_argument("--edition", choices=tuple(SDK_EDITIONS), default=SDK_EDITION)
     parser.add_argument("--ui", action="store_true", help="Scaffold an authored scene and a Rail-to-window Presentation for a new Package.")
     parser.add_argument("--godot", type=Path, default=Path(os.environ.get("ROOKFRAME_GODOT", "/Applications/Godot_mono.app/Contents/MacOS/Godot")))
@@ -303,7 +306,7 @@ def main() -> int:
     try:
         project = args.project.resolve()
         if args.command == "init":
-            initialize(project, args.name, args.kind, args.profile or ["desktop"], args.ui, args.edition)
+            initialize(project, args.name, args.kind, args.ui, args.edition)
             result = {"status": "initialized", "project": str(project)}
         elif args.command == "facade":
             check_facade(project, generate_missing=True)

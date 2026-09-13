@@ -15,7 +15,7 @@ through Manager, and select Workshop System, Tabletop Pieces, Table Help and Cal
   its persisted Gregorian date/note workflow and three Presentations are maintained there.
 
 The optional examples use direct Workshop System compatibility only. They do not load or call
-one another. Calendar remains System-neutral. Every profile and every unused source is checked
+one another. Calendar remains System-neutral. The complete shared artifact and every unused source is checked
 by production admission. These examples use the independently pinned public UI Kit without
 introducing another Kit release or copying it into a built Package.
 

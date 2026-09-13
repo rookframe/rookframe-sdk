@@ -11,9 +11,9 @@ from pathlib import Path
 import re
 import subprocess
 
-PROFILES = {"desktop": {"macOS", "Windows Desktop", "Linux"},
-            "android": {"Android"}, "ios": {"iOS"},
-            "dedicated-headless": {"macOS", "Windows Desktop", "Linux"}}
+# The Godot exporter runs on the authoring host. This is not a Package OS target.
+RESOURCE_EXPORT = "package"
+EXPORT_PLATFORMS = {"macOS", "Windows Desktop", "Linux"}
 
 
 def configured_profiles(project: Path) -> list[str]:
@@ -25,19 +25,24 @@ def configured_profiles(project: Path) -> list[str]:
             continue
         values = config[section]
         name = values.get("name", "").strip('"')
-        if name not in PROFILES:
+        if name != RESOURCE_EXPORT:
             continue
         if name in profiles:
-            raise RuntimeError(f"PROFILE.DUPLICATE: {name} is configured more than once.")
-        if values.get("platform", "").strip('"') not in PROFILES[name]:
-            raise RuntimeError(f"PROFILE.PLATFORM: {name} has an incompatible Godot platform.")
+            raise RuntimeError(f"EXPORT.DUPLICATE: {name} is configured more than once.")
+        if values.get("platform", "").strip('"') not in EXPORT_PLATFORMS:
+            raise RuntimeError(f"EXPORT.PLATFORM: {name} must use the local Godot desktop exporter for the shared PCK, not an app export.")
         if values.get("script_export_mode") != "0":
-            raise RuntimeError(f"PROFILE.SCRIPT: {name} must export textual GDScript (script_export_mode=0).")
+            raise RuntimeError(f"EXPORT.SCRIPT: {name} must export textual GDScript (script_export_mode=0).")
+        if values.get("dedicated_server", "false") != "false":
+            raise RuntimeError("EXPORT.CONTENTS: The shared Package export must retain graphical resources (dedicated_server=false).")
+        features = set(values.get("custom_features", "").strip('"').split(","))
+        if not {"s3tc", "bptc", "etc2", "astc"}.issubset(features):
+            raise RuntimeError("EXPORT.TEXTURES: The shared Package export must include s3tc,bptc,etc2,astc texture formats.")
         if values.get("encrypt_pck", "false") != "false" or values.get("encrypt_directory", "false") != "false":
-            raise RuntimeError(f"PROFILE.ENCRYPTION: {name} must remain inspectable.")
+            raise RuntimeError(f"EXPORT.ENCRYPTION: {name} must remain inspectable.")
         profiles.append(name)
     if not profiles:
-        raise RuntimeError("PROFILE.MISSING: Configure at least one Rookframe export preset.")
+        raise RuntimeError("EXPORT.MISSING: Run init to add the single package resource export preset; Packages have no OS targets.")
     return profiles
 
 
