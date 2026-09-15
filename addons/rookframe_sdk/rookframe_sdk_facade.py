@@ -162,7 +162,8 @@ func cleanup(operation: SDK.Cleanup) -> void:
 '''
     if (edition == "2027" and revision >= 5) or (edition == "2028" and revision >= 2) or edition == "2029":
         from rookframe_sdk_world import world_sources
-        world = world_sources(root)
+        shared_actions = edition == "2029" and revision >= 2
+        world = world_sources(root, shared_actions=shared_actions)
         sources.update(world)
         sdk = sources["package_sdk_facade.gd"]
         for filename in world:
@@ -172,13 +173,16 @@ func cleanup(operation: SDK.Cleanup) -> void:
         for name, type_name in (("world_data", "WorldData"), ("actors", "Actors"),
                                 ("system_records", "SystemRecords"), ("rooks", "Rooks"),
                                 ("scenes", "Scenes"), ("content", "Content"), ("windows", "Windows"),
-                                ("builder", "UnavailableCapability"), ("targeting", "UnavailableCapability"),
+                                ("builder", "UnavailableCapability"), ("targeting", "Targeting" if shared_actions else "UnavailableCapability"),
                                 ("dice", "UnavailableCapability")):
             sdk += f"\nvar _{name}: {type_name}\nvar {name}: {type_name}:\n\tget:\n\t\treturn _{name}\n"
             initialization = f"\n\t_{name} = {type_name}.new(host)"
             if type_name == "UnavailableCapability":
                 initialization += f'\n\t_{name}.configure("{name}")'
             sdk = sdk.replace("\t_host = host", "\t_host = host" + initialization, 1)
+        if shared_actions:
+            sdk += "\nsignal world_changed\nfunc _world_changed() -> void:\n\tworld_changed.emit()\n"
+            sdk = sdk.replace("\t_host = host", "\t_host = host\n\t_host.WorldChanged.connect(_world_changed)", 1)
         sources["package_sdk_facade.gd"] = sdk
     if (edition == "2027" and revision >= 6) or (edition == "2028" and revision >= 3) or edition == "2029":
         from rookframe_sdk_settings import settings_sources, implementation_callbacks

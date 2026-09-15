@@ -2,10 +2,12 @@
 
 These three small, ordinary author projects complement the separate Calendar repository.
 Install the SDK and UI Kit from each project's exact pins using the normal gd-plug bootstrap
-and commands in the SDK README. Run `check` and `build` in each project, import the outputs
-through Manager, and select Workshop System, Tabletop Pieces, Table Help and Calendar.
+and commands in the SDK README. Run `check` and `build` in each project and publish each release before application QA.
+Install through Manager using the public Manifest URL; invited Players acquire the
+World’s required releases automatically. Local archive imports are prohibited for QA.
+Catalogue listing is optional. Select the published Packages needed by the World.
 
-- **Workshop System:** executable Edition 2028; typed selected-Rook and System-only Actor Creation
+- **Workshop System:** executable Edition 2029 revision 2; typed selected-Rook and System-only Actor Creation
   slots, a managed Workshop window, Actor Definitions and typed HeroData Resources. Confirming creates an independent Actor; Train queries its current data, adds one HP, and submits an update. The same window creates, updates and deletes journal System Records.
 - **Tabletop Pieces:** data-only Edition 2027; semantic Miniature, Prop, Surface Finish and Wall Style
   entries. No Implementation, Presentation or Settings callbacks run.
@@ -31,3 +33,18 @@ heading uses restart-local and its shared heading uses restart-world. Edit the
 custom form and Save; the host explains the restart before a deliberate second
 Save recreates the activation/session. Calendar's ordinary User date-display
 preference and GM World title exercise live settings without supplemental features.
+
+For remote action QA, install Workshop System and Tabletop Pieces on the GM endpoint
+using their public Manifest URLs. Select those releases for the World so invited
+Players acquire the exact same published releases automatically.
+Create an Actor explicitly on the Player endpoint, then Train to calculate and
+submit +1 HP. On the GM endpoint use Next Actor and its Player access row to grant
+Viewer, Owner, and None. Viewer shows VIEW ONLY; None clears the displayed Actor
+and disables its actions while the Actor and linked Rooks remain. Point at a Rook and press T on desktop; the Workshop displays the accepted count. The target snapshot is
+awaited before training. Named cursors and targets belong to each active Session.
+Journal mutations remain GM-only, and Package World Data remains Authority-only.
+
+Published releases for the remote action QA World:
+
+- [Workshop System 0.8.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.8.0/Workshop-System-0.8.0.json)
+- [Tabletop Pieces 0.7.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.7.0/Tabletop-Pieces-0.7.0.json)

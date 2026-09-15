@@ -1,11 +1,11 @@
-# Typed Package authoring — SDK 0.8.0
+# Typed Package authoring — SDK 0.10.0
 
-Edition 2029 revision 1 includes the typed UI, World, settings and awaitable
+Edition 2029 revision 2 includes the typed UI, World, settings and awaitable
 integration APIs below. The earlier Edition/revision headings record when shared
 facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
 from `presentation_experience()`.
 
-SDK 0.8 also authors earlier 2027 revisions 1–7 and 2028 revisions 1–4. For the
+SDK 0.10 also authors earlier 2027 revisions 1–7 and 2028 revisions 1–4. For the
 operation-based integration API in 2027:8 / 2028:5, retain immutable SDK 0.7.0.
 Already generated Packages using those Editions remain supported by the host.
 
@@ -151,8 +151,9 @@ the live view and settings intact and displays a diagnostic.
 peer identity, authority flag, World path or another Package's data-slot identity.
 `SDK.context()` returns an `SDK.WorldContext` containing the host-bound Participant
 and current authority/GM status. IDs identify records; they never grant access.
-Current foreground admission is the existing local GM session. Remote Participant
-admission and managed connectivity remain owned by their later project.
+The host binds the active Package, authenticated Participant and current Session.
+`context().session_id` identifies that Session; an old facade never inherits a new
+Session. Read-only context fields and supplied IDs convey no additional authority.
 
 All mutation results extend `SDK.OperationResult` (`ok`, `code`, `message`).
 An accepted result means the whole World save completed. Payload interpretation
@@ -174,8 +175,9 @@ if saved.ok:
 ```
 
 The handle is automatically scoped to this Package and World. It exposes the
-one live authority-owned Variant; only the admitted GM may read or commit this
-additional World data in the current foreground session. `null` means never
+one live authority-owned Variant; only the World Authority GM may read or commit
+this additional World data. Remote Participants, including remote GMs, cannot
+read the opaque slot or World secret settings. `null` means never
 committed and cannot be committed as a root. `replace(value)` commits implicitly;
 mutating a live Dictionary, Array or Resource requires `commit()` explicitly.
 An unrelated domain save preserves the last explicitly committed representation.
@@ -209,7 +211,7 @@ separate from its coherent data value.
 The selected System Extension owns these operations and payload meaning.
 `actors.list()` returns `ActorListResult.items`; `read(id)`, `create(definition,
 choices)` and `update(id, data)` return `ActorResult.actor`. An `Actor` has a typed
-`id` and generic `data`. `delete(id)` returns `OperationResult`. The host filters
+`id`, generic `data`, and current `access_level` (`Viewer` or `Owner`). `delete(id)` returns `OperationResult`. The host filters
 Actor discovery/read by Actor Access and requires Owner access (or GM authority)
 for mutation. Creating from a declared, available `actor_definition` invokes its
 `create_data(choices)` method, assigns a fresh Actor identity, and grants the
@@ -219,7 +221,25 @@ Author definitions by extending `SDK.ActorDefinition` through its generated scri
 path and declaring the Resource in a System Content group. Use an Actor Creation
 contribution to open an `SDK.ExtensionSurface` with `sdk.windows.open(surface)`;
 the final authored confirmation button calls `sdk.actors.create(...)`.
-Repeated definition execution produces independent Actors.
+Repeated definition execution produces independent Actors. Await all Actor and
+System Record mutations, including creation and deletion. Success follows the
+single durable publication and arrival of coherent authorized state. Queries stay
+synchronous. Disable repeated submission while awaiting and display refusals
+without changing the displayed accepted data. Package calculations remain shared
+textual GDScript; Rookframe interprets no game rules.
+
+In Edition 2029 revision 2, `actors.access(id) -> ActorAccessListResult` lets the
+GM list Player entries (`participant_id`, `display_name`, `access_level`).
+`await actors.set_access(id, participant_id, level) -> OperationResult` accepts
+`None`, `Viewer`, or `Owner`. The Participant argument identifies the grant's
+subject; the caller always comes from the authenticated Session. GMs have
+inherent Owner access. Viewer permits reading; Owner permits Actor changes and
+control of every linked Rook. Unlinked Rooks require GM control.
+
+Connect `sdk.world_changed` and re-query current data to refresh a Package
+surface. When `read(id)` returns `access_denied`, discard the displayed Actor and
+close its actions. Revocation retains the Actor, its Rooks and accepted data.
+A completion re-checks current access so it cannot reopen a revoked Actor.
 
 `system_records.list(type_name)` optionally filters the Package-defined type;
 `read(id)`, `create(type_name, data)`, `update(id, data)` and `delete(id)` use typed
@@ -242,9 +262,42 @@ calculation; submit changes explicitly through their owners.
   authority; control uses Actor ownership or GM authority. Multiple Rooks may link
   to one Actor. Deleting an Actor removes its links/access but preserves Rooks;
   deleting a Rook preserves the Actor. No combined Actor-plus-Rook operation is added.
-- `builder.status()`, `targeting.status()` and `dice.status()` explicitly return
-  unavailable. Managed connectivity/Targeting and physical Throws/Rolls retain
-  their existing project boundaries; this SDK adds no transport or replication model.
+  Await mutations: `var result = await sdk.rooks.move(id, position)` (also
+  `create`, `link`, `unlink`, and `delete`). Local and remote calls return the same
+  final result contract; success follows durable Authority publication and coherent
+  local state. Remote completion uses a stock Godot signal. Reads remain synchronous.
+- `builder.status()` and `dice.status()` explicitly return unavailable. Physical
+  Throws/Rolls retain their project boundary. Earlier facade revisions retain
+  `targeting.status()` as unavailable.
+
+### Shared Targeting — Edition 2029 revision 2
+
+On desktop, point at a Rook and press **T**. **Shift+T** adds another target;
+pressing **T** over an existing target removes it. **T** over empty tabletop clears
+the set. On phone/tablet, the contextual crosshair toggles one Rook while retaining
+other targets. The rail crosshair enters targeting mode: tap Rooks to add/remove,
+drag to pan, Done to retain the set, or Clear to empty it. Selection and hover stay
+local. Any current-Scene Rook may be targeted, including
+an unlinked Rook; Targeting grants no Actor Access and applies no game rule.
+
+`await sdk.targeting.snapshot() -> TargetSnapshotResult` returns the current
+Session's accepted set after earlier targeting commands on the same reliable
+channel. `.snapshot` contains `participant_id`, `session_id`, `display_name`,
+`scene: SceneId`, `revision`, and `rooks: Array[RookId]` (unique, sorted, at most 64).
+Snapshot failure is explicit; never calculate against a predicted target set.
+`sdk.targeting.changed(snapshot: TargetSnapshot)` reports complete accepted sets
+for visible Sessions, including an empty set when a Session departs. Use
+`context().session_id` to distinguish your own set. Observe future changes from
+the signal and query your snapshot when opening a surface or starting an action.
+The host owns the target picker and named Presence Cursors. Packages observe
+Targeting; they do not send cursor positions or acquire native multiplayer Nodes.
+Targets and cursors disappear with their owning Session and never enter the save.
+
+To adopt these additions, pin SDK `0.10.0`, declare Edition `2029` minimum revision
+`2` in the Manifest and authoring lock, and regenerate the complete facade. Earlier
+Editions retain their existing contract and reject these new operations. The
+bounded Workshop uses the query → shared Hero calculation → awaited submission
+path; it also demonstrates Viewer presentation and GM access changes.
 
 The Workshop System example demonstrates authored Actor creation, a typed Resource
 HP calculation/update, and journal System Records. The separate optional Calendar
