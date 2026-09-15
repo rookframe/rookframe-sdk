@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.10.0
+# Rookframe SDK Authoring Kit 0.10.1
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–2). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -27,7 +27,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.10.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.10.1", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
 ```
 
@@ -131,6 +131,13 @@ private host assembly dependency. .NET is required only by author checking/build
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Content and Package forms
+
+Miniatures may use native `Node3D` scenes with `ArrayMesh` geometry and
+`StandardMaterial3D` textures. Save imported static models as Godot text scenes
+before including them in the Package namespace. Both text formats 3 and 4 are
+inspected, including format 4's base64 mesh buffers; normal dependency and size
+checks still apply. The Tabletop Pieces example includes the Bevy Amber Warden
+and Goblin Raider in this form.
 
 The bounded [conformance projects](examples/package-conformance/README.md) cover
 a 2028 System, 2027 data-only Content and 2027 Presentation-only UI. Install them
