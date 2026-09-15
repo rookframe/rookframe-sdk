@@ -91,7 +91,8 @@ const ExtensionSurface = preload("{root}extension_surface.gd")
         "extension_surface.gd": '''extends Resource
 
 ## Authored Control scene hosted by Rookframe's managed window.
-## Its live content is retained across close/reopen and Presentation changes.
+## windows.open retains live content across close/reopen.
+## windows.open_actor binds one Actor and releases the sheet on close or lost access.
 @export var scene: PackedScene
 ''',
         "presentation.gd": f'''extends Control
@@ -163,7 +164,8 @@ func cleanup(operation: SDK.Cleanup) -> void:
     if (edition == "2027" and revision >= 5) or (edition == "2028" and revision >= 2) or edition == "2029":
         from rookframe_sdk_world import world_sources
         shared_actions = edition == "2029" and revision >= 2
-        world = world_sources(root, shared_actions=shared_actions)
+        world = world_sources(root, shared_actions=shared_actions,
+                              actor_inspection=edition == "2029" and revision >= 3)
         sources.update(world)
         sdk = sources["package_sdk_facade.gd"]
         for filename in world:
@@ -225,6 +227,17 @@ const AuthenticationProviderDefinition = preload("{root}authentication_provider_
             sdk = sdk.replace("\t_host = host", f"\t_host = host\n\t_{name} = {type_name}.new(_service_scope)", 1)
         sdk = sdk.replace("\t_host = host", "\t_host = host\n\t_service_scope = ServiceScope.new(host)", 1)
         sources["package_sdk_facade.gd"] = sdk
+    if edition == "2029" and revision >= 3:
+        sources["window.gd"] += '''
+
+## Rookframe delivers the requested Actor on every explicit inspection.
+func _rookframe_open_actor(actor_id: String) -> void:
+\topened(SDK.ActorId.new(actor_id))
+
+## Query this Actor through sdk.actors.read(actor) and render the returned data.
+func opened(actor: SDK.ActorId) -> void:
+\tpass
+'''
     if not implementation:
         sources.pop("implementation.gd", None)
     if not presentations:

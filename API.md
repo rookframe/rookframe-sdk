@@ -1,6 +1,6 @@
-# Typed Package authoring — SDK 0.10.0
+# Typed Package authoring — SDK 0.11.0
 
-Edition 2029 revision 2 includes the typed UI, World, settings and awaitable
+Edition 2029 revision 3 includes the typed UI, World, settings and awaitable
 integration APIs below. The earlier Edition/revision headings record when shared
 facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
 from `presentation_experience()`.
@@ -240,6 +240,42 @@ Connect `sdk.world_changed` and re-query current data to refresh a Package
 surface. When `read(id)` returns `access_denied`, discard the displayed Actor and
 close its actions. Revocation retains the Actor, its Rooks and accepted data.
 A completion re-checks current access so it cannot reopen a revoked Actor.
+
+Edition 2029 revision 3 adds explicit Actor inspection:
+
+- `sdk.rooks.selected() -> SDK.RookId` returns this Participant's local Selection,
+  or null. Read the Rook through `sdk.rooks.read(id)` to resolve its current Actor
+  link. Selection conveys no Actor Access.
+- `sdk.windows.open_actor(surface, actor_id) -> SDK.OperationResult` checks current
+  access and opens an Actor-specific Extension Surface. Its SDK Window receives
+  `opened(actor: SDK.ActorId)` on every explicit opening. The extension queries
+  that Actor and renders the returned data using normal Godot UI and signals.
+- An Actor sheet keeps the requested identity. Switching Actors calls
+  `open_actor` again; Actor browsing and creation use separate ordinary windows.
+  Opening another Actor replaces the previous instance of that sheet. Closing
+  an Actor sheet releases it, and reopening queries fresh data. Docking, resizing,
+  minimizing and restoring preserve the live sheet. Generic `windows.open`
+  retains its existing window-state contract.
+- Rookframe closes and releases inaccessible Actor sheets after current World
+  state changes, including hidden sheets, without removing Actors or Rooks.
+  Extension code continues to re-query on `sdk.world_changed` for Viewer/Owner
+  changes and accepted data updates; the SDK does not render game data.
+
+```gdscript
+func opened(actor: SDK.ActorId) -> void:
+    actor_id = actor
+    refresh()
+
+func refresh() -> void:
+    var result: SDK.ActorResult = sdk.actors.read(actor_id)
+    if result.ok:
+        var hero: HeroData = result.actor.data
+        name_label.text = hero.display_name
+```
+
+Current caller context also supplies `display_name`; Actor Access entries supply
+`is_connected` for identity/status presentation. These are domain values, not
+native Participant Nodes.
 
 `system_records.list(type_name)` optionally filters the Package-defined type;
 `read(id)`, `create(type_name, data)`, `update(id, data)` and `delete(id)` use typed

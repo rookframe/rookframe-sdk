@@ -2,7 +2,8 @@
 import re
 
 
-def world_sources(root: str, *, shared_actions: bool = False) -> dict[str, str]:
+def world_sources(root: str, *, shared_actions: bool = False,
+                  actor_inspection: bool = False) -> dict[str, str]:
     def path(name):
         return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower() + ".gd"
 
@@ -38,6 +39,7 @@ func _init(result: Dictionary) -> void:
 ''',
         "world_context.gd": f'''extends "{root}operation_result.gd"
 
+var display_name: String = ""
 var is_authority: bool = false
 var is_gm: bool = false
 var participant_id: String = ""
@@ -45,6 +47,7 @@ var session_id: String = ""
 func _init(result: Dictionary) -> void:
 \tsuper(result)
 \tif ok:
+\t\tdisplay_name = result.value.get("display_name", "")
 \t\tis_authority = result.value.is_authority
 \t\tis_gm = result.value.is_gm
 \t\tparticipant_id = result.value.participant_id
@@ -188,6 +191,21 @@ enum Value { UNKNOWN = -1, ALL, ACTOR_DEFINITION, MINIATURE, PROP, SURFACE_FINIS
 func open(surface: ExtensionSurface) -> void:
 \t_host.OpenWindow(surface.scene)
 ''', ("ExtensionSurface",))
+    if actor_inspection:
+        sources["rooks.gd"] += '''
+## This Participant's local selection; it conveys no Actor Access.
+func selected() -> RookId:
+\tvar context: Dictionary = _host.SelectedRookContext()
+\tvar id: String = context.get("id", "")
+\treturn RookId.new(id) if id != "" else null
+'''
+        sources["windows.gd"] += imports("ActorId", "OperationResult") + '''
+
+## Open this Actor's view and deliver its identity to Window.opened(actor).
+## Rookframe closes Actor views when access is lost; ordinary UI stays authored.
+func open_actor(surface: ExtensionSurface, actor: ActorId) -> OperationResult:
+\treturn OperationResult.new(_host.OpenActorWindow(surface.scene, actor.value))
+'''
     sources["world_capability.gd"] = """extends RefCounted
 
 ## Stock Godot signal completion; callers await mutating operations.
@@ -236,10 +254,12 @@ func snapshot() -> TargetSnapshotResult:
 var participant_id: String
 var display_name: String
 var access_level: String
+var is_connected: bool
 func _init(value: Dictionary) -> void:
 \tparticipant_id = value.participant_id
 \tdisplay_name = value.display_name
 \taccess_level = value.access_level
+\tis_connected = value.get("is_connected", false)
 """
     sources["actor_access_list_result.gd"] = f'extends "{root}operation_result.gd"\n\n' + imports("ActorAccessEntry") + """
 var items: Array[ActorAccessEntry] = []
