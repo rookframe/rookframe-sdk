@@ -1,6 +1,6 @@
-# Typed Package authoring — SDK 0.11.0
+# Typed Package authoring — SDK 0.12.0
 
-Edition 2029 revision 3 includes the typed UI, World, settings and awaitable
+Edition 2029 revision 4 includes the typed UI, World, settings and awaitable
 integration APIs below. The earlier Edition/revision headings record when shared
 facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
 from `presentation_experience()`.
@@ -272,6 +272,29 @@ func refresh() -> void:
         var hero: HeroData = result.actor.data
         name_label.text = hero.display_name
 ```
+
+Edition 2029 revision 4 connects the native Actors list to the selected System's
+active Presentation. Override these ordinary callbacks:
+
+```gdscript
+func describe_actor(actor: SDK.Actor) -> SDK.ActorSummary:
+    var hero: HeroData = actor.data
+    return SDK.ActorSummary.new(hero.display_name)
+
+func inspect_actor(actor: SDK.ActorId) -> void:
+    sdk.windows.open_actor(SHEET, actor)
+```
+
+`ActorSummary` contains `display_name` and an optional `Texture2D` portrait.
+Rookframe reads only currently accessible Actors through the bound SDK, calls
+`describe_actor`, and sorts the native list by name then Actor ID. Missing
+portraits use the neutral UI Kit icon. The projection is local presentation,
+not an extra durable Actor schema. Names refresh after accepted World changes
+and Presentation replacement. Row activation rechecks access before delivering
+`inspect_actor`; the sheet still queries current data in `Window.opened`.
+Only the selected System's active Presentation provides these callbacks.
+Actor creation stays a Package-authored action in `sdk.slots.actor_creation`;
+it opens a creation form rather than another Actor browser.
 
 Current caller context also supplies `display_name`; Actor Access entries supply
 `is_connected` for identity/status presentation. These are domain values, not

@@ -238,6 +238,39 @@ func _rookframe_open_actor(actor_id: String) -> void:
 func opened(actor: SDK.ActorId) -> void:
 \tpass
 '''
+    if edition == "2029" and revision >= 4:
+        sources["actor_summary.gd"] = '''extends RefCounted
+
+## Presentation-only identity for Rookframe's native Actor list.
+var display_name: String
+var portrait: Texture2D
+func _init(name: String = "", image: Texture2D = null) -> void:
+\tdisplay_name = name
+\tportrait = image
+'''
+        sources["package_sdk_facade.gd"] += f'\nconst ActorSummary = preload("{root}actor_summary.gd")\n'
+        sources["presentation.gd"] += '''
+
+## The selected System supplies identity; Rookframe owns listing and access.
+func describe_actor(actor: SDK.Actor) -> SDK.ActorSummary:
+\treturn SDK.ActorSummary.new()
+
+## Called when a native Actor row is activated. Open a suitable Actor sheet.
+func inspect_actor(actor: SDK.ActorId) -> void:
+\tpass
+
+func _rookframe_describe_actor(actor_id: String) -> Dictionary:
+\tvar result: SDK.ActorResult = sdk.actors.read(SDK.ActorId.new(actor_id))
+\tif not result.ok:
+\t\treturn {}
+\tvar summary: SDK.ActorSummary = describe_actor(result.actor)
+\treturn {"displayName": summary.display_name, "portrait": summary.portrait}
+
+func _rookframe_inspect_actor(actor_id: String) -> void:
+\tvar actor: SDK.ActorId = SDK.ActorId.new(actor_id)
+\tif sdk.actors.read(actor).ok:
+\t\tinspect_actor(actor)
+'''
     if not implementation:
         sources.pop("implementation.gd", None)
     if not presentations:
