@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.12.0
+# Rookframe SDK Authoring Kit 0.12.1
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–4). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.12.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.12.1", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
 ```
 
@@ -135,6 +135,13 @@ The standalone `Rookframe.PackageCheck.dll` is a framework-dependent author tool
 compiled from the production verifier sources, not a Rookframe application or
 private host assembly dependency. .NET is required only by author checking/build.
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
+
+## Imported architectural materials
+
+SDK 0.12.1 includes the production admission rules for stock
+`BaseMaterial3D.cull_mode` and `normal_scale`. These preserve the original
+double-sided faces and normal-map strength of imported Builder assets. The
+complete resource closure and all other setter rules are still checked.
 
 ## Content and Package forms
 

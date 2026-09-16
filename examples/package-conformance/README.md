@@ -25,6 +25,9 @@ Open Actors → Create Actor for the creation form. Confirm two names to observe
 independent Actors in the native list. Click a row to inspect and train that
 Actor; the Rook's contextual Inspect action opens its linked Actor through the
 same SDK Actor-window contract. World journal has its own rail entry.
+The Actor-creation and journal forms retain unsent text across an explicit
+Reconnect using the optional private-draft callbacks. Restoring a form never
+submits it; its next deliberate action uses a fresh Session capability.
 Delete actions remove only their selected record. Actor creation never places a Rook.
 The sample's `workshop-actor-v1` contract uses `HeroData` with a name and hit points;
 that schema belongs to this System, not to Rookframe.
@@ -46,5 +49,5 @@ Journal mutations remain GM-only, and Package World Data remains Authority-only.
 
 Published releases for the remote action QA World:
 
-- [Workshop System 0.11.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.11.0/Workshop-System-0.11.0.json)
+- [Workshop System 0.12.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.12.0/Workshop-System-0.12.0.json)
 - [Tabletop Pieces 0.9.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.9.0/Tabletop-Pieces-0.9.0.json)

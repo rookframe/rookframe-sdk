@@ -130,6 +130,38 @@ admission is closed first; SDK/loading/UI authority is revoked after that window
 Timeout warnings name the Package and possible retained work; they do not claim
 blocked-thread preemption or universal job cleanup.
 
+After connection loss the application offers explicit Reconnect/Leave and revokes
+the ended Session's commands, services and callbacks. Reconnect authenticates a
+new Session and loads current shared state before making the workspace interactive.
+Package instances and adapters are fresh; never retain an adapter or retry an old
+command. The selected Presentation experience is kept when the exact requirements
+still match. Changed requirements return through stopped Manager preparation.
+
+An Implementation, Presentation, or currently open SDK Window may opt in to
+private draft preservation with ordinary GDScript callbacks:
+
+```gdscript
+func capture_reconnect_state() -> Dictionary:
+    return {"name": actor_name.value}
+
+func restore_reconnect_state(state: Dictionary) -> void:
+    var saved_name: String = state.get("name", "")
+    actor_name.value = saved_name
+```
+
+Both callbacks are required. Return only local form values: null, booleans,
+numbers, strings, arrays, and dictionaries with string keys. Each root is bounded
+to 64 KiB, 4096 values and 32 nesting levels; unsupported state is discarded with
+a diagnostic. Nodes, Resources, capabilities, Callables, pending operation IDs,
+gesture state and queued commands are not private drafts. Capture runs after
+Session revocation. Restore runs on the fresh instance after normal setup and
+current-state bootstrap, with shared operations disabled during the callback.
+It must only populate local UI, never submit or schedule actions. The user acts
+again in the new Session; query current Actor Access and values when they do.
+An Actor window is reopened only if it remains readable. Leaving or application
+termination discards these in-memory drafts. This does not promise static/cache
+reset or preemption of arbitrary Package code.
+
 Content is declared semantically in the Manifest, rather than pushed from an
 Implementation. The host projects Library metadata before readiness and resolves
 payloads/previews through checked loading on demand. A Content Reference uses
