@@ -173,7 +173,7 @@ func cleanup(operation: SDK.Cleanup) -> void:
         immediate_dice = edition == "2029" and revision >= 6
         if immediate_dice:
             from rookframe_sdk_dice import dice_sources
-            world.update(dice_sources(root))
+            world.update(dice_sources(root, requested_throws=revision >= 7))
         sources.update(world)
         sdk = sources["package_sdk_facade.gd"]
         for filename in world:

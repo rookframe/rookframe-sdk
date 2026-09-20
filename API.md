@@ -1,11 +1,11 @@
-# Typed Package authoring — SDK 0.14.0
+# Typed Package authoring — SDK 0.15.0
 
-Edition 2029 revision 6 includes the typed UI, World, settings and awaitable
+Edition 2029 revision 7 includes the typed UI, World, settings and physical-Throw
 integration APIs below. The earlier Edition/revision headings record when shared
 facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
 from `presentation_experience()`.
 
-SDK 0.10 also authors earlier 2027 revisions 1–7 and 2028 revisions 1–4. For the
+SDK 0.15.0 also authors 2027 revisions 1–7 and 2028 revisions 1–4. For the
 operation-based integration API in 2027:8 / 2028:5, retain immutable SDK 0.7.0.
 Already generated Packages using those Editions remain supported by the host.
 
@@ -790,3 +790,76 @@ Extension, a headless caller without a graphical tabletop, a World that is not
 ready, and an ended or revoked World Session. A pending await is World Session-bound:
 teardown discards its completion, and it cannot attach to a later World Session or
 another World. Invalid requests create no Throw or Action Log entry.
+
+## Requested human Throws (2029 revision 7)
+
+The selected System Extension can request an immutable physical Throw from one
+World Participant. The request is durable World state; the dice bodies and their
+motion are ordinary transient Godot nodes. A disconnect removes old motion while
+the same pending request remains available to the target's fresh Session.
+
+```gdscript
+var request_id: String = sdk.dice.new_request_id()
+var waiting := await sdk.system_records.create("requested-throw-action", {
+    "request_id": request_id,
+    "participant_id": target_participant_id,
+    "reason": "Waiting for the target Participant's attack Throw."
+})
+if not waiting.ok:
+    show_failure(waiting.message)
+    return
+
+var planned := SDK.HumanThrowRequest.new(request_id, target_participant_id, [
+    SDK.DiceTerm.new("attack", 20),
+    SDK.DiceTerm.new("damage", 6, 2)
+])
+var current: SDK.HumanThrowResult = await sdk.dice.request_throw(planned)
+if not current.ok:
+    show_failure(current.message)
+    await sdk.system_records.delete(waiting.system_record.id)
+    return
+```
+
+`new_request_id()` allocates the UUID before the Extension records why its action
+is waiting, so a fresh binding can safely submit or recover the exact same request.
+An empty `request_id` also asks Rookframe to assign a UUID on first acceptance,
+but that form is intended for callers that do not need to persist work first.
+Every retry must use the accepted identity, the same target, and the same ordered
+terms. Reusing an identity with a different target or plan is a `request_conflict`.
+A successful snapshot has `status` `pending`, `rolled`, or `cancelled`, plus
+`request_id`, `participant_id`, the immutable `plan`, terminal `terms`, and the
+raw Roll `sequence` (zero until rolled).
+
+This operation does not wait for the human. Listen for `sdk.world_changed`, or
+reconcile after Package activation/reconnect, and call it again:
+
+```gdscript
+var retry := SDK.HumanThrowRequest.new(saved_request_id, saved_participant_id,
+    saved_terms)
+var current: SDK.HumanThrowResult = await sdk.dice.request_throw(retry)
+if current.ok and current.status == "rolled":
+    var report := SDK.ActionLogMessage.new("Attack resolved")
+    report.text = [SDK.ActionLogText.new(
+        "The Extension interpreted the completed human Throw.")]
+    report.result = "HIT"
+    report.tone = "success"
+    await sdk.action_log.publish(report)
+    await sdk.system_records.delete(waiting.id)
+elif current.ok and current.status == "cancelled":
+    var report := SDK.ActionLogMessage.new("Attack cancelled")
+    report.text = [SDK.ActionLogText.new("The requested human Throw was cancelled.")]
+    report.result = "CANCELLED"
+    report.tone = "attention"
+    var published := await sdk.action_log.publish(report)
+    if published.ok:
+        await sdk.system_records.delete(waiting.id)
+```
+
+The target sees the existing native Dice Tray with the requested pool prefilled
+and editing locked. Dragging and releasing uses the normal physical dice path.
+Back, closing the tray, right-click, or releasing outside the tabletop is an
+explicit cancellation and creates no Roll report; transient interruption is not
+cancellation. Rookframe appends the raw Roll once, independently of the retained
+latest-twenty Action Log window. The Extension owns all meaning and publishes any
+separate resolution explicitly. Optional Packages and non-selected Systems cannot
+request Throws.

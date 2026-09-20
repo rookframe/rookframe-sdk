@@ -1,6 +1,6 @@
-# Rookframe SDK Authoring Kit 0.14.0
+# Rookframe SDK Authoring Kit 0.15.0
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–6). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–7). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.14.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.15.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
 ```
 
@@ -138,7 +138,7 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Imported architectural materials
 
-SDK 0.14.0 includes the production admission rules for stock
+SDK 0.15.0 includes the production admission rules for stock
 `BaseMaterial3D.cull_mode` and `normal_scale`. These preserve the original
 double-sided faces and normal-map strength of imported Builder assets. The
 complete resource closure and all other setter rules are still checked.
@@ -189,6 +189,18 @@ Rookframe returns the raw faces and results after the shipped dice settle and
 automatically appends the raw Roll to the shared Action Log. The System Extension owns all
 game meaning and deliberately publishes its separate interpreted report through
 `sdk.action_log.publish`. See [the complete contract and example](API.md#immediate-named-dice-2029-revision-6).
+
+## Requested human Throws
+
+Edition 2029 revision 7 lets the selected System Extension ask a specific
+Participant to complete an immutable physical Throw through the native Dice Tray.
+`sdk.dice.new_request_id()` allocates the stable identity so the Extension can
+persist why the action is waiting before `sdk.dice.request_throw(request)` submits
+it. The request call returns the current durable snapshot immediately; it never
+keeps an await suspended while a human acts. Retry after `sdk.world_changed` or a
+fresh binding. A terminal Roll already has Rookframe's raw Action Log entry; the
+Extension explicitly publishes its rolled or cancelled game interpretation.
+See [the complete contract and recovery example](API.md#requested-human-throws-2029-revision-7).
 
 
 ## Checked integrations and protected authentication
