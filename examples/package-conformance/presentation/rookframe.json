@@ -29,6 +29,6 @@
       "entryPoint": "ui/presentation.gd"
     }
   ],
-  "manifest": "https://github.com/rookframe/rookframe-godot/releases/download/table-help-v0.7.0/rookframe.json",
-  "download": "https://github.com/rookframe/rookframe-godot/releases/download/table-help-v0.7.0/table-help-0.7.0.rookpackage"
+  "manifest": "https://github.com/rookframe/rookframe-fixtures/releases/download/v0.13.0/Table-Help-0.7.0.json",
+  "download": "https://github.com/rookframe/rookframe-fixtures/releases/download/v0.13.0/Table-Help-0.7.0.rookpackage"
 }

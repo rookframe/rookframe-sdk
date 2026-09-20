@@ -42,6 +42,6 @@
       "compatibleVersions": ">=0.4.0 <1.0.0"
     }
   ],
-  "manifest": "https://github.com/rookframe/rookframe-godot/releases/download/workshop-system-v0.13.0/rookframe.json",
-  "download": "https://github.com/rookframe/rookframe-godot/releases/download/workshop-system-v0.13.0/workshop-system-0.13.0.rookpackage"
+  "manifest": "https://github.com/rookframe/rookframe-fixtures/releases/download/v0.13.0/Workshop-System-0.13.0.json",
+  "download": "https://github.com/rookframe/rookframe-fixtures/releases/download/v0.13.0/Workshop-System-0.13.0.rookpackage"
 }
