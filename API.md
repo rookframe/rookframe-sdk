@@ -1,6 +1,6 @@
-# Typed Package authoring — SDK 0.12.0
+# Typed Package authoring — SDK 0.14.0
 
-Edition 2029 revision 5 includes the typed UI, World, settings and awaitable
+Edition 2029 revision 6 includes the typed UI, World, settings and awaitable
 integration APIs below. The earlier Edition/revision headings record when shared
 facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
 from `presentation_experience()`.
@@ -357,8 +357,10 @@ calculation; submit changes explicitly through their owners.
   `create`, `link`, `unlink`, and `delete`). Local and remote calls return the same
   final result contract; success follows durable Authority publication and coherent
   local state. Remote completion uses a stock Godot signal. Reads remain synchronous.
-- `builder.status()` and `dice.status()` explicitly return unavailable. Physical
-  Throws/Rolls retain their project boundary. Earlier facade revisions retain
+- `builder.status()` explicitly returns unavailable. Through Edition 2029
+  revision 5, `dice.status()` also returns unavailable; revision 6 replaces it
+  with the narrow immediate named-roll capability documented below. Physical
+  Throws/Rolls retain their Rookframe-owned boundary. Earlier facade revisions retain
   `targeting.status()` as unavailable.
 
 ### Shared Targeting — Edition 2029 revision 2
@@ -701,9 +703,9 @@ provider certification; deployment still requires the provider's registration.
 Deliberately publish a completed outcome through `sdk.action_log.publish` from
 an Implementation or Presentation. Both System Extensions and enabled optional
 Packages use the same capability. Await its `SDK.ActionLogResult`: `ok` means the
-World Authority accepted and broadcast the entry; `sequence` is its authoritative
-order within this running World. Success does not guarantee every Participant received it.
-Attribution is supplied by the host from the authenticated Participant and bound
+World Authority accepted, saved locally and broadcast the entry; `sequence` is its authoritative
+order. Success does not guarantee every Participant received or saved it.
+Attribution is supplied by Rookframe from the authenticated Participant and bound
 Package. Publishing does not roll dice or infer outcomes from other SDK calls.
 
 ```gdscript
@@ -728,10 +730,63 @@ text. Links, buttons, callbacks and embedded UI are not message fields.
 Each Participant locally retains the latest twenty received entries, newest at the bottom.
 The host viewer shows four by default and expands into a scrollable retained
 window. Reading state is local to each Participant. Evicted entries have no
-archive. Joining, reconnecting and reopening do not recover earlier entries;
-histories may differ between Participants. Reports are sent one at a time and
-are never saved in or synchronized with the World document.
+archive. Each application saves its received window locally and restores it when
+reconnecting or reopening that World. It does not recover missed entries from peers;
+histories may differ between Participants. Reports are sent one at a time by
+reliable Godot RPC. Local log storage is separate from the World document.
 World revision and durable entity validity do not depend on log history.
 Malformed messages, unavailable sessions and disabled Packages are refused;
-no durable save is required to publish a report. Do not retry an
+local save failures are reported. Do not retry an
 uncertain publication automatically: an intentional second call is a new entry.
+
+## Immediate named dice (2029 revision 6)
+
+The selected System Extension may request a physical Roll with ordered, named
+terms. Rookframe uses the same native dice bodies, collision, settling,
+Participant identity, World Authority, replication, and Action Log path as the
+human Dice Tray. The originating graphical Participant runs the natural physics;
+when the World Authority is remote or dedicated, it validates and commits
+the reported upward faces. There is no predicted result, success calculation,
+modifier, or separate Package network path.
+
+```gdscript
+var request := SDK.DiceRequest.new([
+    SDK.DiceTerm.new("attack", 20),
+    SDK.DiceTerm.new("damage", 6, 2)
+])
+var rolled: SDK.DiceRollResult = await sdk.dice.roll(request)
+if not rolled.ok:
+    show_failure(rolled.message)
+    return
+
+var report := SDK.ActionLogMessage.new("Blade strikes")
+report.text = [SDK.ActionLogText.new(
+    "The attack connects; damage is resolved by the Extension.")]
+for term in rolled.terms:
+    for value in term.results:
+        report.dice.append(SDK.ActionLogDie.new(term.faces, value))
+report.result = "HIT"
+report.tone = "success"
+var published: SDK.ActionLogResult = await sdk.action_log.publish(report)
+```
+
+`SDK.DiceTerm` contains `name: String`, `faces: int`, and `count: int`.
+Names are trimmed, printable, unique within the request, and at most 64
+characters. `faces` accepts the shipped d4, d6, d8, d10, d12, or d20; `count`
+is positive; the complete request contains at most sixteen dice.
+`SDK.DiceRequest.terms` preserves caller order.
+
+Successful `SDK.DiceRollResult` values contain `terms:
+Array[SDK.DiceTermResult]` in the same order. Each result exposes the unchanged
+`name`, `faces`, and ordered `results: Array[int]`. `sequence` identifies
+Rookframe's built-in raw Roll entry, which is already committed to the shared
+Action Log before the await completes. The System Extension decides attack,
+defence, damage, armor, tables, and every other game meaning. It must explicitly
+publish a separate message when that interpretation belongs in the Action Log;
+the dice capability never opens a dialog or invents a game outcome.
+
+Immediate dice are unavailable to optional Packages, an unselected System
+Extension, a headless caller without a graphical tabletop, a World that is not
+ready, and an ended or revoked World Session. A pending await is World Session-bound:
+teardown discards its completion, and it cannot attach to a later World Session or
+another World. Invalid requests create no Throw or Action Log entry.

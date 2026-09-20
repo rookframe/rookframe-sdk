@@ -7,7 +7,7 @@ Install through Manager using the public Manifest URL; invited Players acquire t
 World’s required releases automatically. Local archive imports are prohibited for QA.
 Catalogue listing is optional. Select the published Packages needed by the World.
 
-- **Workshop System:** executable Edition 2029 revision 5; typed selected-Rook and System-only Actor Creation
+- **Workshop System:** executable Edition 2029 revision 6; typed selected-Rook and System-only Actor Creation
   slots, native Actor-list presentation hooks, dedicated Actor creation and inspection windows, Actor Definitions and typed HeroData Resources. Confirming creates an independent Actor; Train queries its current data, adds one HP, and submits an update. A separate World journal rail entry creates, updates and deletes journal System Records.
 - **Tabletop Pieces:** data-only Edition 2027; semantic Miniature, Prop, Surface Finish and Wall Style
   entries. No Implementation, Presentation or Settings callbacks run.
@@ -37,6 +37,12 @@ the typed Action Log capability after the journal record is saved. Neither
 example embeds controls in a log entry. Each Participant keeps only the latest
 twenty reports they receive; joining or reconnecting does not replay history.
 
+Workshop's **Resolve attack** action requests named `attack` d20 and `damage`
+2d6 terms. The normal physical dice determine the raw results and Rookframe
+shares its built-in Roll entry. Workshop then applies its own DR 12 rule and
+explicitly publishes a separate HIT/MISS report for every Participant. No
+Package dialog, predicted result, Rookframe game rule, or secondary dice path is used.
+
 Workshop also supplies a Presentation-specific typed SettingsView. Its personal
 heading uses restart-local and its shared heading uses restart-world. Edit the
 custom form and Save; the host explains the restart before a deliberate second
@@ -54,5 +60,5 @@ Journal mutations remain GM-only, and Package World Data remains Authority-only.
 
 Published releases for the remote action QA World:
 
-- [Workshop System 0.12.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.12.0/Workshop-System-0.12.0.json)
+- [Workshop System 0.14.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.14.0/Workshop-System-0.14.0.json)
 - [Tabletop Pieces 0.9.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.9.0/Tabletop-Pieces-0.9.0.json)
