@@ -166,6 +166,10 @@ func cleanup(operation: SDK.Cleanup) -> void:
         shared_actions = edition == "2029" and revision >= 2
         world = world_sources(root, shared_actions=shared_actions,
                               actor_inspection=edition == "2029" and revision >= 3)
+        action_log = edition == "2029" and revision >= 5
+        if action_log:
+            from rookframe_sdk_action_log import action_log_sources
+            world.update(action_log_sources(root))
         sources.update(world)
         sdk = sources["package_sdk_facade.gd"]
         for filename in world:
@@ -176,7 +180,7 @@ func cleanup(operation: SDK.Cleanup) -> void:
                                 ("system_records", "SystemRecords"), ("rooks", "Rooks"),
                                 ("scenes", "Scenes"), ("content", "Content"), ("windows", "Windows"),
                                 ("builder", "UnavailableCapability"), ("targeting", "Targeting" if shared_actions else "UnavailableCapability"),
-                                ("dice", "UnavailableCapability")):
+                                ("dice", "UnavailableCapability")) + ((("action_log", "ActionLog"),) if action_log else ()):
             sdk += f"\nvar _{name}: {type_name}\nvar {name}: {type_name}:\n\tget:\n\t\treturn _{name}\n"
             initialization = f"\n\t_{name} = {type_name}.new(host)"
             if type_name == "UnavailableCapability":

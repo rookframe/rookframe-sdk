@@ -1,6 +1,6 @@
-# Rookframe SDK Authoring Kit 0.12.1
+# Rookframe SDK Authoring Kit 0.13.0
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–4). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–5). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.12.1", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.13.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
 ```
 
@@ -138,7 +138,7 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Imported architectural materials
 
-SDK 0.12.1 includes the production admission rules for stock
+SDK 0.13.0 includes the production admission rules for stock
 `BaseMaterial3D.cull_mode` and `normal_scale`. These preserve the original
 double-sided faces and normal-map strength of imported Builder assets. The
 complete resource closure and all other setter rules are still checked.
@@ -153,7 +153,7 @@ checks still apply. The Tabletop Pieces example includes the Bevy Amber Warden
 and Goblin Raider in this form.
 
 The bounded [conformance projects](examples/package-conformance/README.md) cover
-a 2028 System, 2027 data-only Content and 2027 Presentation-only UI. Install them
+a 2029 System, 2027 data-only Content and 2029 Presentation-only UI. Install them
 with the separate Calendar example to exercise the mixed-Edition World.
 Data-only Packages receive no executable facade; Presentation-only Packages
 receive no Implementation base. Neither form can register Package Settings.

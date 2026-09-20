@@ -7,12 +7,12 @@ Install through Manager using the public Manifest URL; invited Players acquire t
 World’s required releases automatically. Local archive imports are prohibited for QA.
 Catalogue listing is optional. Select the published Packages needed by the World.
 
-- **Workshop System:** executable Edition 2029 revision 4; typed selected-Rook and System-only Actor Creation
+- **Workshop System:** executable Edition 2029 revision 5; typed selected-Rook and System-only Actor Creation
   slots, native Actor-list presentation hooks, dedicated Actor creation and inspection windows, Actor Definitions and typed HeroData Resources. Confirming creates an independent Actor; Train queries its current data, adds one HP, and submits an update. A separate World journal rail entry creates, updates and deletes journal System Records.
 - **Tabletop Pieces:** data-only Edition 2027; semantic Miniature, Prop, Surface Finish and Wall Style
   entries. No Implementation, Presentation or Settings callbacks run.
-- **Table Help:** Presentation-only Edition 2027; one responsive Package UI Root contribution,
-  with no Implementation or Package Settings.
+- **Table Help:** Presentation-only Edition 2029 revision 5; one responsive Package UI Root contribution,
+  with no Implementation or Package Settings. Share a table tip deliberately publishes a typed Action Log report.
 - **Calendar:** independent executable Edition 2027 optional Package in `rookframe/rookframe-calendar`;
   its persisted Gregorian date/note workflow and three Presentations are maintained there.
 
@@ -31,6 +31,11 @@ submits it; its next deliberate action uses a fresh Session capability.
 Delete actions remove only their selected record. Actor creation never places a Rook.
 The sample's `workshop-actor-v1` contract uses `HeroData` with a name and hit points;
 that schema belongs to this System, not to Rookframe.
+
+Creating a Workshop journal entry also deliberately reports its title through
+the typed Action Log capability after the journal record is saved. Neither
+example embeds controls in a log entry. Each Participant keeps only the latest
+twenty reports they receive; joining or reconnecting does not replay history.
 
 Workshop also supplies a Presentation-specific typed SettingsView. Its personal
 heading uses restart-local and its shared heading uses restart-world. Edit the

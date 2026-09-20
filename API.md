@@ -1,6 +1,6 @@
 # Typed Package authoring — SDK 0.12.0
 
-Edition 2029 revision 4 includes the typed UI, World, settings and awaitable
+Edition 2029 revision 5 includes the typed UI, World, settings and awaitable
 integration APIs below. The earlier Edition/revision headings record when shared
 facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
 from `presentation_experience()`.
@@ -188,7 +188,7 @@ The host binds the active Package, authenticated Participant and current Session
 Session. Read-only context fields and supplied IDs convey no additional authority.
 
 All mutation results extend `SDK.OperationResult` (`ok`, `code`, `message`).
-An accepted result means the whole World save completed. Payload interpretation
+For durable World mutations, an accepted result means the whole World save completed. Action Log reports instead acknowledge authority acceptance and broadcast without saving the World. Payload interpretation
 errors return `invalid_data`; unavailable authority and insufficient access return
 explicit failures. A durable publication failure returns no success and terminates
 the affected World Application. Reopening uses the last coherent save.
@@ -695,3 +695,43 @@ backend owns confidential exchange and refresh; its client secret never ships in
 a Package. New compatible provider declarations need no per-provider app build.
 The shipped example uses placeholder providers. Controlled evidence is not live
 provider certification; deployment still requires the provider's registration.
+
+## Shared Action Log (2029 revision 5)
+
+Deliberately publish a completed outcome through `sdk.action_log.publish` from
+an Implementation or Presentation. Both System Extensions and enabled optional
+Packages use the same capability. Await its `SDK.ActionLogResult`: `ok` means the
+World Authority accepted and broadcast the entry; `sequence` is its authoritative
+order within this running World. Success does not guarantee every Participant received it.
+Attribution is supplied by the host from the authenticated Participant and bound
+Package. Publishing does not roll dice or infer outcomes from other SDK calls.
+
+```gdscript
+var message := SDK.ActionLogMessage.new("Watch begins")
+message.text = [SDK.ActionLogText.new("The northern gate", "strong"),
+    SDK.ActionLogText.new(" falls silent.")]
+message.dice = [SDK.ActionLogDie.new(20, 17)]
+message.result = "READY"
+message.tone = "success"
+var outcome: SDK.ActionLogResult = await sdk.action_log.publish(message)
+if not outcome.ok:
+    show_failure(outcome.message)
+```
+
+The title accepts 1–72 printable characters. Text contains at most eight runs
+and 512 characters in total, using `normal`, `strong`, or `emphasis`; newlines
+are allowed in runs. Dice preserve caller order, up to sixteen raw faces with
+2–1000 sides and values within those sides. `result` allows 32 printable
+characters; `tone` is `info`, `success`, `attention`, or `roll`. Markup is literal
+text. Links, buttons, callbacks and embedded UI are not message fields.
+
+Each Participant locally retains the latest twenty received entries, newest at the bottom.
+The host viewer shows four by default and expands into a scrollable retained
+window. Reading state is local to each Participant. Evicted entries have no
+archive. Joining, reconnecting and reopening do not recover earlier entries;
+histories may differ between Participants. Reports are sent one at a time and
+are never saved in or synchronized with the World document.
+World revision and durable entity validity do not depend on log history.
+Malformed messages, unavailable sessions and disabled Packages are refused;
+no durable save is required to publish a report. Do not retry an
+uncertain publication automatically: an intentional second call is a new entry.

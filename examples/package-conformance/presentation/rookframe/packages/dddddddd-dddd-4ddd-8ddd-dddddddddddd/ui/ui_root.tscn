@@ -1,9 +1,16 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 [ext_resource type="Theme" path="res://rookframe/ui/theme/rookframe_theme.tres" id="theme"]
-[node name="Hint" type="Label"]
+[ext_resource type="Script" path="res://rookframe/packages/dddddddd-dddd-4ddd-8ddd-dddddddddddd/ui/share_tip.gd" id="script"]
+[node name="TableHelp" type="Control"]
 offset_left = 88.0
 offset_top = 108.0
 theme = ExtResource("theme")
-theme_type_variation = &"RookframeMeta"
-text = "Escape opens the Game Menu"
+script = ExtResource("script")
 mouse_filter = 2
+
+[node name="ShareTip" type="Button" parent="."]
+custom_minimum_size = Vector2(160, 44)
+theme_type_variation = &"RookframeQuietButton"
+text = "Share a table tip"
+
+[connection signal="pressed" from="ShareTip" to="." method="share_tip"]

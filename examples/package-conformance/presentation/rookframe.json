@@ -3,10 +3,10 @@
   "id": "dddddddd-dddd-4ddd-8ddd-dddddddddddd",
   "kind": "optional",
   "name": "Table Help",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "sdk": {
-    "edition": "2027",
-    "minimumRevision": 4
+    "edition": "2029",
+    "minimumRevision": 5
   },
   "rookframeCompatibility": {
     "minimum": "0.1.0",
@@ -28,5 +28,7 @@
       ],
       "entryPoint": "ui/presentation.gd"
     }
-  ]
+  ],
+  "manifest": "https://github.com/rookframe/rookframe-godot/releases/download/table-help-v0.7.0/rookframe.json",
+  "download": "https://github.com/rookframe/rookframe-godot/releases/download/table-help-v0.7.0/table-help-0.7.0.rookpackage"
 }

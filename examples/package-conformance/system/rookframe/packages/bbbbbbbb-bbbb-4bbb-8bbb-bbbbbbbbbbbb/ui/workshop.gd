@@ -40,6 +40,13 @@ func create_entry() -> void:
 	var result: SDK.SystemRecordResult = await sdk.system_records.create("journal", {"title": journal_title.value.strip_edges()})
 	if result.ok:
 		selected_record = result.system_record.id
+		var report := SDK.ActionLogMessage.new("Journal entry added")
+		report.text = [SDK.ActionLogText.new(journal_title.value.strip_edges(), "strong")]
+		report.tone = "success"
+		var published: SDK.ActionLogResult = await sdk.action_log.publish(report)
+		if not published.ok:
+			finish(published, "")
+			return
 	finish(result, "Journal entry saved.")
 
 func save_entry() -> void:
