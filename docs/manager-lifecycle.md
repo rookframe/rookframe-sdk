@@ -17,7 +17,7 @@ a second persistent model or synchronize a Node tree with stored data.
 | Select a new release / Update All | The next activation receives the accepted release and retained World data/settings. Optional enabled state is preserved. |
 | Disable / re-enable | Disabled code does not run. Its exact selection, World data and settings remain retained. |
 | Exact repair | Restores the retained Manifest and fingerprint; the next activation sees the same retained data. |
-| Package Deletion | Removes the optional selection and its World data/settings. Selecting it again starts without that data. Installed files and User settings remain. |
+| Package Deletion | Removes the optional selection and its World data/settings. Selecting it again starts without that data. |
 | Uninstall | Blocked while any local World selects the exact version, including disabled entries. Its User settings and protected destinations are removed by Rookframe. |
 
 A later activation failure keeps the accepted selection current. Manager offers

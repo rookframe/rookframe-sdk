@@ -1,11 +1,12 @@
-# Typed Package authoring — SDK 0.15.0
+# Typed Package authoring — SDK 0.16.0
 
-Edition 2029 revision 7 includes the typed UI, World, settings and physical-Throw
+Edition 2029 revision 8 includes the typed UI, World, settings, physical-Throw,
+and initial managed-window presentation
 integration APIs below. The earlier Edition/revision headings record when shared
 facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
 from `presentation_experience()`.
 
-SDK 0.15.0 also authors 2027 revisions 1–7 and 2028 revisions 1–4. For the
+SDK 0.16.0 also authors 2027 revisions 1–7 and 2028 revisions 1–4. For the
 operation-based integration API in 2027:8 / 2028:5, retain immutable SDK 0.7.0.
 Already generated Packages using those Editions remain supported by the host.
 
@@ -79,6 +80,25 @@ The typed World and Content scopes below require revision 5 (Edition 2028 revisi
 Direct Godot behavior within authored Package UI and the independently versioned
 UI Kit remain their existing contracts. Use public component properties and
 signals for Package-internal behavior, without depending on private child paths.
+
+## Initial managed-window presentation — 2029 revision 8
+
+The Publisher may configure these ordinary exported fields on an
+`SDK.ExtensionSurface` Resource:
+
+- `initial_placement`: `"left"`, `"right"`, or `"floating"`; the default is
+  `"right"`.
+- `initial_dock_width`: an optional logical-pixel width. Zero asks Rookframe for
+  its responsive default.
+- `initial_floating_rect`: an optional `Rect2`. An empty rectangle asks
+  Rookframe for its responsive default.
+
+The generated `Rail.push`, `sdk.windows.open`, and `sdk.windows.open_actor`
+operations submit that portable first-open presentation to Rookframe. It is an
+initial author preference, not World state: the Participant may move or redock
+the retained window, and Rookframe owns safe-area clamping and responsive
+fallbacks. Facades generated for earlier revisions call their original host
+operations and expose no initial-presentation fields.
 
 ## Migrating the initial 0.1.x example
 

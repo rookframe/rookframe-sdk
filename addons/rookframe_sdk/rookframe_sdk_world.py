@@ -3,7 +3,8 @@ import re
 
 
 def world_sources(root: str, *, shared_actions: bool = False,
-                  actor_inspection: bool = False) -> dict[str, str]:
+                  actor_inspection: bool = False,
+                  initial_presentations: bool = False) -> dict[str, str]:
     def path(name):
         return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower() + ".gd"
 
@@ -187,10 +188,14 @@ func read(reference: ContentReference) -> ContentEntryResult:
 
 enum Value { UNKNOWN = -1, ALL, ACTOR_DEFINITION, MINIATURE, PROP, SURFACE_FINISH, WALL_STYLE }
 '''
-    sources["windows.gd"] = capability("Windows", '''
+    open_window = '''
+func open(surface: ExtensionSurface) -> void:
+\t_host.OpenWindowWithPresentation(surface.scene, surface.initial_presentation())
+''' if initial_presentations else '''
 func open(surface: ExtensionSurface) -> void:
 \t_host.OpenWindow(surface.scene)
-''', ("ExtensionSurface",))
+'''
+    sources["windows.gd"] = capability("Windows", open_window, ("ExtensionSurface",))
     if actor_inspection:
         sources["rooks.gd"] += '''
 ## This Participant's local selection; it conveys no Actor Access.
@@ -199,13 +204,24 @@ func selected() -> RookId:
 \tvar id: String = context.get("id", "")
 \treturn RookId.new(id) if id != "" else null
 '''
-        sources["windows.gd"] += imports("ActorId", "OperationResult") + '''
+        open_actor = '''
+
+## Open this Actor's view and deliver its identity to Window.opened(actor).
+## Rookframe closes Actor views when access is lost; ordinary UI stays authored.
+func open_actor(surface: ExtensionSurface, actor: ActorId) -> OperationResult:
+\treturn OperationResult.new(_host.OpenActorWindowWithPresentation(
+\t\tsurface.scene,
+\t\tactor.value,
+\t\tsurface.initial_presentation()
+\t))
+''' if initial_presentations else '''
 
 ## Open this Actor's view and deliver its identity to Window.opened(actor).
 ## Rookframe closes Actor views when access is lost; ordinary UI stays authored.
 func open_actor(surface: ExtensionSurface, actor: ActorId) -> OperationResult:
 \treturn OperationResult.new(_host.OpenActorWindow(surface.scene, actor.value))
 '''
+        sources["windows.gd"] += imports("ActorId", "OperationResult") + open_actor
     sources["world_capability.gd"] = """extends RefCounted
 
 ## Stock Godot signal completion; callers await mutating operations.

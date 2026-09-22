@@ -1,6 +1,6 @@
-# Rookframe SDK Authoring Kit 0.15.0
+# Rookframe SDK Authoring Kit 0.16.0
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–7). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–8). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.15.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.16.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
 ```
 
@@ -138,7 +138,7 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Imported architectural materials
 
-SDK 0.15.0 includes the production admission rules for stock
+SDK 0.16.0 includes the production admission rules for stock
 `BaseMaterial3D.cull_mode` and `normal_scale`. These preserve the original
 double-sided faces and normal-map strength of imported Builder assets. The
 complete resource closure and all other setter rules are still checked.
@@ -201,6 +201,15 @@ keeps an await suspended while a human acts. Retry after `sdk.world_changed` or 
 fresh binding. A terminal Roll already has Rookframe's raw Action Log entry; the
 Extension explicitly publishes its rolled or cancelled game interpretation.
 See [the complete contract and recovery example](API.md#requested-human-throws-2029-revision-7).
+
+## Initial managed-window presentation
+
+Edition 2029 revision 8 lets a Publisher declare a managed window's first-open
+placement, optional dock width, and optional floating rectangle on its ordinary
+`ExtensionSurface` Resource. Rookframe still owns responsive geometry, retained
+window state, redocking, and every later Participant layout choice. Older facade
+revisions retain their existing responsive default. See
+[the complete contract](API.md#initial-managed-window-presentation-2029-revision-8).
 
 
 ## Checked integrations and protected authentication

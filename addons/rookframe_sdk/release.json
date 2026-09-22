@@ -1,9 +1,9 @@
 {
-  "version": "0.15.0",
+  "version": "0.16.0",
   "editions": {
     "2027": 7,
     "2028": 4,
-    "2029": 7
+    "2029": 8
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
@@ -13,11 +13,11 @@
     "checker/GDSHRAPT-LICENSE.txt": "7f75f118c690572a959bbc0836169ad39ba7f38116e84d008857dd6368fe1017",
     "checker/GDShrapt.Reader.dll": "576831f6f96c6cd3727bd783dd0cc7259f0741d49155abda5999d87af0d1859f",
     "checker/Rookframe.PackageCheck.deps.json": "273950442406babfc0693f093eefb958e33ece5af42de57e62ba68e8c4a12f21",
-    "checker/Rookframe.PackageCheck.dll": "8e5cea484e2c39f25cee0b76c0fffc88ca52af4c8c96e643158b2c91b8549459",
+    "checker/Rookframe.PackageCheck.dll": "5aebda7768a8bdd44c18b876ad4b63222ac990c4d703e0fe406f756f02077777",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
-    "plugin.cfg": "461c766ca0dddc41c38a9f2348ed8f835ea5815f5a546bddfa444319816aa6ad",
+    "plugin.cfg": "ef02819d40132f06f948ec73308f81da22dddc2b891252553a64279f175127e7",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "7658a7be2fe0bf43a098ad4485627722a8038f8a88e333ba20f84560877d9f86",
+    "rookframe_authoring.py": "510d8530187230af334f4031d8811e3541111b91234bc47b16aafbfe20300f3d",
     "rookframe_authoring_checks.py": "2781ab032226b158e56da59db708df682a5d01f72cce2263debd7926b76be8de",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "8d67b3cfb27c3611d9520d52c9ab9e4052ed88659ae09a4d288e9eb0f7dc3451",
@@ -25,11 +25,11 @@
     "rookframe_sdk_action_log.py": "861e0f8196257c529dca90dfa117789a40a01683f04656cbe741c3bc4a801b23",
     "rookframe_sdk_authentication.py": "0975f23aab371a5fc3ee1ea6eb36b299b13eb8ff0177adb4031c16402008de61",
     "rookframe_sdk_dice.py": "ee6d29905fa2251bf41f0af813e7bb43b0a297c38d7534eb392b99d46d096c5b",
-    "rookframe_sdk_facade.py": "e3ab290f288343cee386843d547e66bf889e1d470b0e3815595b062f4f8d8d26",
+    "rookframe_sdk_facade.py": "992cbb2fe34f0eda13ff7930bd03af1fba30ef72effd16d5735b9c2363b73766",
     "rookframe_sdk_services.py": "b57047284172539168f49d9ca9e959387624e5e5d021cd84c17cfa36a7842e5b",
     "rookframe_sdk_settings.py": "4360b8e7379ba0d9f9b22bdc5b06caee4b8a7ad0dc55d87a1061060319c729e6",
     "rookframe_sdk_ui.py": "fdbcc04305a57e07941f89c680f1b1f58827cceaf6c3608cf4dd488fc2e4e3be",
-    "rookframe_sdk_world.py": "24296300ffec5b5c27df3e268645cf006d8dd7268c947dbde043d30cb0193909"
+    "rookframe_sdk_world.py": "c2d85a33a9cee58509af5dac6ce7b53f6f9af28ce8970946cda7a84df1d7a35b"
   },
   "uiFiles": {
     "README.md": "15b90e8e0ae983f4b763584017f0499e71006266a948eb7542cd3642098a577e",
@@ -212,5 +212,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "2f36e0eb3dcb2810531efe2d710a7a2658bb0029"
+  "sourceRevision": "d53daf0d8030ef339656cd3de45b1fa411353f2e"
 }
