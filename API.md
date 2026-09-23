@@ -1,4 +1,4 @@
-# Typed Package authoring — SDK 0.17.0
+# Typed Package authoring — SDK 0.17.1
 
 Edition 2029 revision 9 includes the typed UI, World, settings, physical-Throw,
 and initial managed-window presentation
@@ -6,7 +6,7 @@ integration APIs below. The earlier Edition/revision headings record when shared
 facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
 from `presentation_experience()`.
 
-SDK 0.17.0 also authors 2027 revisions 1–7 and 2028 revisions 1–4. For the
+SDK 0.17.1 also authors 2027 revisions 1–7 and 2028 revisions 1–4. For the
 operation-based integration API in 2027:8 / 2028:5, retain immutable SDK 0.7.0.
 Already generated Packages using those Editions remain supported by the host.
 
