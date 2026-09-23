@@ -123,6 +123,10 @@ func read(id: ActorId) -> ActorResult:
 \treturn ActorResult.new(_host.ReadActor(id.value))
 func create(definition: ContentReference, choices: Variant) -> ActorResult:
 \treturn ActorResult.new(await _completed(_host.CreateActor(definition.package_id, definition.local_id, choices)))
+## Create one owning Actor and its source-defined child Actors as one durable
+## World operation. A rejected child request leaves no parent or partial grant.
+func create_atomic(definition: ContentReference, choices: Variant, child_requests: Array) -> ActorResult:
+\treturn ActorResult.new(await _completed(_host.CreateActorsAtomically(definition.package_id, definition.local_id, choices, child_requests)))
 func update(id: ActorId, data: Variant) -> ActorResult:
 \treturn ActorResult.new(await _completed(_host.UpdateActor(id.value, data)))
 func delete(id: ActorId) -> OperationResult:
