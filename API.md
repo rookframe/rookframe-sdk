@@ -1,12 +1,12 @@
-# Typed Package authoring — SDK 0.16.0
+# Typed Package authoring — SDK 0.17.0
 
-Edition 2029 revision 8 includes the typed UI, World, settings, physical-Throw,
+Edition 2029 revision 9 includes the typed UI, World, settings, physical-Throw,
 and initial managed-window presentation
 integration APIs below. The earlier Edition/revision headings record when shared
 facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
 from `presentation_experience()`.
 
-SDK 0.16.0 also authors 2027 revisions 1–7 and 2028 revisions 1–4. For the
+SDK 0.17.0 also authors 2027 revisions 1–7 and 2028 revisions 1–4. For the
 operation-based integration API in 2027:8 / 2028:5, retain immutable SDK 0.7.0.
 Already generated Packages using those Editions remain supported by the host.
 
@@ -80,6 +80,16 @@ The typed World and Content scopes below require revision 5 (Edition 2028 revisi
 Direct Godot behavior within authored Package UI and the independently versioned
 UI Kit remain their existing contracts. Use public component properties and
 signals for Package-internal behavior, without depending on private child paths.
+
+## Atomic Actor creation — 2029 revision 9
+
+`await sdk.actors.create_atomic(definition, choices, child_requests)` creates
+one primary Actor and up to 31 additional Actors in one durable save. Each child
+request contains `package_id`, `local_id`, and `choices` for an available Actor
+Definition. Validation or publication failure creates none of the Actors. Every
+created Actor grants Owner to the creator; the GM retains inherent Owner access.
+The result contains the primary Actor. Close or discard drafts before submitting;
+final confirmation submits the durable operation and is not an undoable draft.
 
 ## Initial managed-window presentation — 2029 revision 8
 
@@ -727,6 +737,9 @@ World Authority accepted, saved locally and broadcast the entry; `sequence` is i
 order. Success does not guarantee every Participant received or saved it.
 Attribution is supplied by Rookframe from the authenticated Participant and bound
 Package. Publishing does not roll dice or infer outcomes from other SDK calls.
+Rookframe automatically adds only completed raw Rolls. Builder operations,
+object manipulation, targeting, and every other app action remain silent unless
+an Extension deliberately publishes a message through this capability.
 
 ```gdscript
 var message := SDK.ActionLogMessage.new("Watch begins")

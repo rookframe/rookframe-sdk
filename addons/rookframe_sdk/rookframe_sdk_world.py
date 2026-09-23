@@ -4,7 +4,8 @@ import re
 
 def world_sources(root: str, *, shared_actions: bool = False,
                   actor_inspection: bool = False,
-                  initial_presentations: bool = False) -> dict[str, str]:
+                  initial_presentations: bool = False,
+                  public_identity: bool = False, atomic_creation: bool = False) -> dict[str, str]:
     def path(name):
         return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower() + ".gd"
 
@@ -97,13 +98,20 @@ var value: String
 func _init(identity: String) -> void:
 \tvalue = identity
 '''
+    actor_fields = [('id', 'ActorId', 'ActorId.new(value.id)'), ('data', 'Variant', 'value.data'), ('access_level', 'String', 'value.access_level')]
+    if public_identity:
+        actor_fields.append(('public_label', 'String', 'value.get("public_label", "")'))
     entity_fields = {
-        "Actor": (("ActorId",), [('id', 'ActorId', 'ActorId.new(value.id)'), ('data', 'Variant', 'value.data'), ('access_level', 'String', 'value.access_level')]),
+        "Actor": (("ActorId",), actor_fields),
         "SystemRecord": (("SystemRecordId",), [('id', 'SystemRecordId', 'SystemRecordId.new(value.id)'), ('type_name', 'String', 'value.type_name'), ('data', 'Variant', 'value.data')]),
         "Rook": (("RookId", "ActorId", "SceneId", "ContentReference"), [('id', 'RookId', 'RookId.new(value.id)'), ('actor', 'ActorId', 'ActorId.new(value.actor) if value.actor != "" else null'), ('scene', 'SceneId', 'SceneId.new(value.scene)'), ('position', 'Vector2', 'value.position'), ('yaw', 'float', 'value.yaw'), ('miniature', 'ContentReference', 'ContentReference.new(raw_miniature.packageId, raw_miniature.localId)')]),
+    }
+    if public_identity:
+        entity_fields["PublicIdentity"] = (("RookId",), [('rook_id', 'RookId', 'RookId.new(value.rookId)'), ('label', 'String', 'value.label')])
+    entity_fields.update({
         "Scene": (("SceneId",), [('id', 'SceneId', 'SceneId.new(value.id)'), ('name', 'String', 'value.name')]),
         "ContentEntry": (("ContentReference", "ContentKind"), [('reference', 'ContentReference', 'ContentReference.new(value.packageId, value.localId)'), ('title', 'String', 'value.displayName'), ('kind', 'ContentKind.Value', 'ContentKind.Value.UNKNOWN'), ('available', 'bool', 'value.available')]),
-    }
+    })
     for name, (types, fields) in entity_fields.items():
         sources[path(name)] = "extends RefCounted\n\n" + imports(*types) + "\n".join(f"var {field}: {type_name}" for field, type_name, _ in fields) + "\nfunc _init(value: Dictionary) -> void:\n" + "\n".join(f"\t{field} = {expression}" for field, _, expression in fields) + "\n"
         if name == "Rook":
@@ -123,10 +131,6 @@ func read(id: ActorId) -> ActorResult:
 \treturn ActorResult.new(_host.ReadActor(id.value))
 func create(definition: ContentReference, choices: Variant) -> ActorResult:
 \treturn ActorResult.new(await _completed(_host.CreateActor(definition.package_id, definition.local_id, choices)))
-## Create one owning Actor and its source-defined child Actors as one durable
-## World operation. A rejected child request leaves no parent or partial grant.
-func create_atomic(definition: ContentReference, choices: Variant, child_requests: Array) -> ActorResult:
-\treturn ActorResult.new(await _completed(_host.CreateActorsAtomically(definition.package_id, definition.local_id, choices, child_requests)))
 func update(id: ActorId, data: Variant) -> ActorResult:
 \treturn ActorResult.new(await _completed(_host.UpdateActor(id.value, data)))
 func delete(id: ActorId) -> OperationResult:
@@ -139,6 +143,15 @@ func set_access(id: ActorId, participant: String, level: String) -> OperationRes
 \treturn OperationResult.new(await _completed(_host.SetActorAccess(id.value, participant, level)))
 """
     sources["actors.gd"] = sources["actors.gd"].replace("func list()", imports("ActorAccessListResult") + "\nfunc list()", 1)
+    if public_identity:
+        sources["public_identities.gd"] = capability("PublicIdentities", '''
+func list() -> PublicIdentityListResult:
+	return PublicIdentityListResult.new(_host.ListPublicIdentities())
+func read(rook: RookId) -> PublicIdentityResult:
+	return PublicIdentityResult.new(_host.ReadPublicIdentity(rook.value))
+func assign(actor: ActorId, label: String) -> OperationResult:
+	return OperationResult.new(await _completed(_host.SetPublicIdentity(actor.value, label)))
+''', ("ActorId", "RookId", "PublicIdentityResult", "PublicIdentityListResult", "OperationResult"))
     sources["system_records.gd"] = capability("SystemRecords", '''
 func list(type_name: String = "") -> SystemRecordListResult:
 \treturn SystemRecordListResult.new(_host.ListSystemRecords(type_name))
@@ -199,7 +212,20 @@ func open(surface: ExtensionSurface) -> void:
 func open(surface: ExtensionSurface) -> void:
 \t_host.OpenWindow(surface.scene)
 '''
-    sources["windows.gd"] = capability("Windows", open_window, ("ExtensionSurface",))
+    if initial_presentations:
+        open_window += '''
+
+## Update the managed window chrome to the current authored route identity.
+## Rookframe owns the host chrome; Packages provide only a bounded title value.
+func set_title(title: String) -> OperationResult:
+	return OperationResult.new(_host.SetWindowTitle(title))
+'''
+    sources["windows.gd"] = capability(
+        "Windows",
+        open_window,
+        ("ExtensionSurface", "OperationResult") if initial_presentations
+        else ("ExtensionSurface",),
+    )
     if actor_inspection:
         sources["rooks.gd"] += '''
 ## This Participant's local selection; it conveys no Actor Access.
@@ -225,7 +251,8 @@ func open_actor(surface: ExtensionSurface, actor: ActorId) -> OperationResult:
 func open_actor(surface: ExtensionSurface, actor: ActorId) -> OperationResult:
 \treturn OperationResult.new(_host.OpenActorWindow(surface.scene, actor.value))
 '''
-        sources["windows.gd"] += imports("ActorId", "OperationResult") + open_actor
+        sources["windows.gd"] += imports("ActorId",) if initial_presentations else imports("ActorId", "OperationResult")
+        sources["windows.gd"] += open_actor
     sources["world_capability.gd"] = """extends RefCounted
 
 ## Stock Godot signal completion; callers await mutating operations.
@@ -295,4 +322,6 @@ func _init(result: Dictionary) -> void:
         sources["actors.gd"] = sources["actors.gd"].replace(imports("ActorAccessListResult"), "")
         for name in ("actor_access_entry.gd", "actor_access_list_result.gd", "target_snapshot.gd", "target_snapshot_result.gd", "targeting.gd"):
             del sources[name]
+    if atomic_creation:
+        sources["actors.gd"] += '\nfunc create_atomic(definition: ContentReference, choices: Variant, child_requests: Array) -> ActorResult:\n\treturn ActorResult.new(await _completed(_host.CreateActorsAtomically(definition.package_id, definition.local_id, choices, child_requests)))\n'
     return {name: source.replace("await _completed(", "await WorldCapability.new().complete(_host, ") for name, source in sources.items()}

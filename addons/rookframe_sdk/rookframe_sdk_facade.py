@@ -192,9 +192,12 @@ func cleanup(operation: SDK.Cleanup) -> void:
     if (edition == "2027" and revision >= 5) or (edition == "2028" and revision >= 2) or edition == "2029":
         from rookframe_sdk_world import world_sources
         shared_actions = edition == "2029" and revision >= 2
+        public_identity = edition == "2029" and revision >= 8
         world = world_sources(root, shared_actions=shared_actions,
                               actor_inspection=edition == "2029" and revision >= 3,
-                              initial_presentations=initial_presentations)
+                              initial_presentations=initial_presentations,
+                              public_identity=public_identity,
+                              atomic_creation=edition == "2029" and revision >= 9)
         action_log = edition == "2029" and revision >= 5
         if action_log:
             from rookframe_sdk_action_log import action_log_sources
@@ -209,11 +212,19 @@ func cleanup(operation: SDK.Cleanup) -> void:
             type_name = "".join(word.capitalize() for word in filename[:-3].split("_"))
             sdk += f'\nconst {type_name} = preload("{root}{filename}")'
         sdk += "\n\nfunc context() -> WorldContext:\n\treturn WorldContext.new(_host.WorldContext())\n"
-        for name, type_name in (("world_data", "WorldData"), ("actors", "Actors"),
-                                ("system_records", "SystemRecords"), ("rooks", "Rooks"),
-                                ("scenes", "Scenes"), ("content", "Content"), ("windows", "Windows"),
-                                ("builder", "UnavailableCapability"), ("targeting", "Targeting" if shared_actions else "UnavailableCapability"),
-                                ("dice", "Dice" if immediate_dice else "UnavailableCapability")) + ((("action_log", "ActionLog"),) if action_log else ()):
+        capabilities = [("world_data", "WorldData"), ("actors", "Actors")]
+        if public_identity:
+            capabilities.append(("public_identities", "PublicIdentities"))
+        capabilities.extend([
+            ("system_records", "SystemRecords"), ("rooks", "Rooks"),
+            ("scenes", "Scenes"), ("content", "Content"), ("windows", "Windows"),
+            ("builder", "UnavailableCapability"),
+            ("targeting", "Targeting" if shared_actions else "UnavailableCapability"),
+            ("dice", "Dice" if immediate_dice else "UnavailableCapability"),
+        ])
+        if action_log:
+            capabilities.append(("action_log", "ActionLog"))
+        for name, type_name in capabilities:
             sdk += f"\nvar _{name}: {type_name}\nvar {name}: {type_name}:\n\tget:\n\t\treturn _{name}\n"
             initialization = f"\n\t_{name} = {type_name}.new(host)"
             if type_name == "UnavailableCapability":

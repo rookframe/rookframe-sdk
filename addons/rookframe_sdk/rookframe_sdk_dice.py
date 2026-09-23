@@ -50,7 +50,7 @@ var sequence: int = 0
 func _init(result: Dictionary) -> void:
 \tsuper(result)
 \tif ok:
-\t\tvar value: Dictionary = result.get("value", {})
+\t\tvar value: Dictionary = result.get("value", {{}})
 \t\tfor term in value.get("terms", []):
 \t\t\tterms.append(DiceTermResult.new(term))
 \t\tsequence = value.get("sequence", 0)
@@ -109,7 +109,7 @@ var sequence: int = 0
 func _init(result: Dictionary) -> void:
 \tsuper(result)
 \tif ok:
-\t\tvar value: Dictionary = result.get("value", {})
+\t\tvar value: Dictionary = result.get("value", {{}})
 \t\trequest_id = value.get("request_id", "")
 \t\tparticipant_id = value.get("participant_id", "")
 \t\tstatus = value.get("status", "")
