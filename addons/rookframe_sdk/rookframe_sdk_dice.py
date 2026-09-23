@@ -50,9 +50,10 @@ var sequence: int = 0
 func _init(result: Dictionary) -> void:
 \tsuper(result)
 \tif ok:
-\t\tfor term in result.value.get("terms", []):
+\t\tvar value: Dictionary = result.get("value", {})
+\t\tfor term in value.get("terms", []):
 \t\t\tterms.append(DiceTermResult.new(term))
-\t\tsequence = result.value.get("sequence", 0)
+\t\tsequence = value.get("sequence", 0)
 ''',
         "dice.gd": f'''extends RefCounted
 
@@ -108,14 +109,15 @@ var sequence: int = 0
 func _init(result: Dictionary) -> void:
 \tsuper(result)
 \tif ok:
-\t\trequest_id = result.value.get("request_id", "")
-\t\tparticipant_id = result.value.get("participant_id", "")
-\t\tstatus = result.value.get("status", "")
-\t\tfor term in result.value.get("plan", []):
+\t\tvar value: Dictionary = result.get("value", {})
+\t\trequest_id = value.get("request_id", "")
+\t\tparticipant_id = value.get("participant_id", "")
+\t\tstatus = value.get("status", "")
+\t\tfor term in value.get("plan", []):
 \t\t\tplan.append(DiceTerm.new(term.get("name", ""), term.get("faces", 0), term.get("count", 0)))
-\t\tfor term in result.value.get("terms", []):
+\t\tfor term in value.get("terms", []):
 \t\t\tterms.append(DiceTermResult.new(term))
-\t\tsequence = result.value.get("sequence", 0)
+\t\tsequence = value.get("sequence", 0)
 ''',
         })
         sources["dice.gd"] = sources["dice.gd"].replace(
