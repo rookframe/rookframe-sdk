@@ -5,7 +5,7 @@ import re
 def world_sources(root: str, *, shared_actions: bool = False,
                   actor_inspection: bool = False,
                   initial_presentations: bool = False,
-                  public_identity: bool = False, atomic_creation: bool = False) -> dict[str, str]:
+                  public_identity: bool = False, atomic_creation: bool = False, rook_appearance: bool = False) -> dict[str, str]:
     def path(name):
         return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower() + ".gd"
 
@@ -322,6 +322,8 @@ func _init(result: Dictionary) -> void:
         sources["actors.gd"] = sources["actors.gd"].replace(imports("ActorAccessListResult"), "")
         for name in ("actor_access_entry.gd", "actor_access_list_result.gd", "target_snapshot.gd", "target_snapshot_result.gd", "targeting.gd"):
             del sources[name]
+    if rook_appearance:
+        sources["rooks.gd"] += '\n## Replace one controlled Rook’s Miniature without changing identity, link or pose.\nfunc set_miniature(id: RookId, miniature: ContentReference) -> RookResult:\n\treturn RookResult.new(await _completed(_host.SetRookMiniature(id.value, miniature.package_id, miniature.local_id)))\n'
     if atomic_creation:
         sources["actors.gd"] += '\nfunc create_atomic(definition: ContentReference, choices: Variant, child_requests: Array) -> ActorResult:\n\treturn ActorResult.new(await _completed(_host.CreateActorsAtomically(definition.package_id, definition.local_id, choices, child_requests)))\n'
     return {name: source.replace("await _completed(", "await WorldCapability.new().complete(_host, ") for name, source in sources.items()}

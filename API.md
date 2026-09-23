@@ -896,3 +896,12 @@ cancellation. Rookframe appends the raw Roll once, independently of the retained
 latest-twenty Action Log window. The Extension owns all meaning and publishes any
 separate resolution explicitly. Optional Packages and non-selected Systems cannot
 request Throws.
+
+### Rook appearance (Edition 2029 revision 10)
+
+`await sdk.rooks.set_miniature(rook_id, content_reference)` returns a `RookResult`.
+It replaces only that controlled Rook's Miniature using available enabled World
+Content. The Rook identity, Actor link, Scene and pose remain unchanged. World
+Authority checks ordinary Rook control and refuses changes while held; success
+follows durable publication and uses the existing Rook replication. Actor default
+appearance remains System-owned Actor data and is used when placing future Rooks.
