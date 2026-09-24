@@ -237,9 +237,10 @@ if saved.ok:
 ```
 
 The handle is automatically scoped to this Package and World. It exposes the
-one live authority-owned Variant; only the World Authority GM may read or commit
-this additional World data. Remote Participants, including remote GMs, cannot
-read the opaque slot or World secret settings. `null` means never
+committed Variant to every admitted Participant through the same complete shared
+World state. `read()` works on each Participant; only the World Authority GM may
+commit this additional World data. UI display rules determine which details are
+shown. World secret settings are local credentials, separate from gameplay data. `null` means never
 committed and cannot be committed as a root. `replace(value)` commits implicitly;
 mutating a live Dictionary, Array or Resource requires `commit()` explicitly.
 An unrelated domain save preserves the last explicitly committed representation.
@@ -273,9 +274,10 @@ separate from its coherent data value.
 The selected System Extension owns these operations and payload meaning.
 `actors.list()` returns `ActorListResult.items`; `read(id)`, `create(definition,
 choices)` and `update(id, data)` return `ActorResult.actor`. An `Actor` has a typed
-`id`, generic `data`, and current `access_level` (`Viewer` or `Owner`). `delete(id)` returns `OperationResult`. The host filters
-Actor discovery/read by Actor Access and requires Owner access (or GM authority)
-for mutation. Creating from a declared, available `actor_definition` invokes its
+`id`, generic `data`, and current `access_level` (`Viewer` or `Owner`). `delete(id)` returns `OperationResult`. Actor discovery/read is an access-aware local presentation query over the complete
+shared World state, never an Authority-side replication filter. Every Participant
+receives all Actor data, grants and Actor–Rook links. Mutation requires Owner access
+(or GM authority). Creating from a declared, available `actor_definition` invokes its
 `create_data(choices)` method, assigns a fresh Actor identity, and grants the
 bound confirming human creator Owner access. It never creates a Rook.
 
@@ -945,13 +947,15 @@ retain the context; all its operations expire when the callback returns. It work
 without a local Participant or fake GM on dedicated authority. Ordinary SDK CRUD
 keeps its Participant access rules. Nested ordinary SDK operations are refused.
 The callback's input and public return value are Package data; neither conveys
-runtime authority. Keep private Actor data out of responses and reports.
+runtime authority. Every Participant already receives the complete shared World data.
+Actor privacy is a UI display rule: use public labels and appropriate detail in
+reports, and hide inaccessible sheets. This callback adds no confidentiality boundary.
 
 The context provides:
 
 - `caller() -> DataResult`: authenticated `participant_id`, `session_id`,
   `display_name`, `is_gm`, `is_authority` and current shared target Rook IDs in `targets`.
-- `read_actor(ActorId) -> ActorResult`: private authoritative snapshot; its
+- `read_actor(ActorId) -> ActorResult`: authoritative snapshot of shared Actor data; its
   `access_level` is the requesting Participant's actual access, never a new grant.
 - `read_rook(RookId) -> RookResult`: authoritative Actor link and committed position.
 - `actor_access(ActorId) -> ActorAccessListResult`: Player grants and connection state.

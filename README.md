@@ -255,8 +255,10 @@ No workflow, undo, takeover or action recovery is provided.
 Participants submit `sdk.system_actions.submit(name, data)`. The selected System
 Implementation overrides `handle_system_intent(context, name, data)` and executes
 synchronously on World Authority, including a dedicated authority with no local GM.
-The context authenticates the requester and provides private Actor reads, committed
+The context authenticates the requester and provides authoritative Actor reads, committed
 Rook positions, Scene distance, session-bound Throws and atomic Actor consequences.
-Only the explicitly returned public outcome reaches the requester. The System must
-validate source access, target types, counts and its own rules before committing.
+All Participants receive the complete World data. Actor privacy is implemented only
+by local UI display; the callback reply supplies the action outcome, not a data
+confidentiality boundary. The System validates source access, target types, counts
+and its own rules before committing.
 See [API.md](API.md#authority-side-system-intents-2029-revision-12).

@@ -58,7 +58,7 @@ Create an Actor explicitly on the Player endpoint, then Train to calculate and
 submit +1 HP. On the GM endpoint open the Actor row, then its Access tab to grant
 Viewer, Owner, and None. Viewer shows VIEW ONLY; None closes the Actor sheet while the Actor and linked Rooks remain. Point at a Rook and press T on desktop; the Workshop displays the accepted count. The target snapshot is
 awaited before training. Named cursors and targets belong to each active Session.
-Journal mutations remain GM-only, and Package World Data remains Authority-only.
+Journal mutations remain GM-only. Package World Data is shared and readable by every Participant; its commits remain Authority-only.
 
 Published releases for the remote action QA World:
 
