@@ -207,6 +207,22 @@ func cleanup(operation: SDK.Cleanup) -> void:
         if immediate_dice:
             from rookframe_sdk_dice import dice_sources
             world.update(dice_sources(root, requested_throws=revision >= 7, session_throws=revision >= 11))
+        if edition == "2029" and revision >= 12:
+            from rookframe_sdk_system_actions import system_action_sources
+            world.update(system_action_sources(root))
+            world["actor_access_entry.gd"] += '\nvar session_id: String = ""\n'
+            world["actor_access_entry.gd"] = world["actor_access_entry.gd"].replace(
+                'func _init(value: Dictionary) -> void:\n',
+                'func _init(value: Dictionary) -> void:\n\tsession_id = value.get("session_id", "")\n')
+            sources["implementation.gd"] += '''
+
+## Runs synchronously on World Authority; return only the public outcome.
+func _rookframe_system_intent(token: String, name: String, data: Variant) -> Variant:
+\treturn handle_system_intent(sdk.system_actions.context(token), name, data)
+
+func handle_system_intent(context: SDK.SystemActionContext, name: String, data: Variant) -> Variant:
+\treturn {"state": "error", "message": "Unsupported System action."}
+'''
         sources.update(world)
         sdk = sources["package_sdk_facade.gd"]
         for filename in world:
@@ -223,6 +239,8 @@ func cleanup(operation: SDK.Cleanup) -> void:
             ("targeting", "Targeting" if shared_actions else "UnavailableCapability"),
             ("dice", "Dice" if immediate_dice else "UnavailableCapability"),
         ])
+        if edition == "2029" and revision >= 12:
+            capabilities.append(("system_actions", "SystemActions"))
         if action_log:
             capabilities.append(("action_log", "ActionLog"))
         for name, type_name in capabilities:

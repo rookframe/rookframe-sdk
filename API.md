@@ -927,3 +927,46 @@ Tray hiding and minimization do not emit it. Connect the signal to the System's
 action cancellation. The source sheet stays alive during a Throw and reappears
 when the tray ends; reopening it earlier retains its participant-adjusted layout.
 No workflow, undo, takeover or action recovery is provided.
+
+## Authority-side System intents (2029 revision 12)
+
+`await sdk.system_actions.submit(name: String, data: Variant) -> DataResult` sends
+a bounded intent through Rookframe's existing reliable Godot RPC. It carries no
+Participant/role assertions. The selected System Implementation overrides:
+
+```gdscript
+func handle_system_intent(context: SDK.SystemActionContext, name: String, data: Variant) -> Variant:
+    # Validate the action, then deliberately return its public outcome.
+    return {"state": "error", "message": "Unsupported action."}
+```
+
+The callback runs synchronously on peer-1 World Authority. It must not await or
+retain the context; all its operations expire when the callback returns. It works
+without a local Participant or fake GM on dedicated authority. Ordinary SDK CRUD
+keeps its Participant access rules. Nested ordinary SDK operations are refused.
+The callback's input and public return value are Package data; neither conveys
+runtime authority. Keep private Actor data out of responses and reports.
+
+The context provides:
+
+- `caller() -> DataResult`: authenticated `participant_id`, `session_id`,
+  `display_name`, `is_gm`, `is_authority` and current shared target Rook IDs in `targets`.
+- `read_actor(ActorId) -> ActorResult`: private authoritative snapshot; its
+  `access_level` is the requesting Participant's actual access, never a new grant.
+- `read_rook(RookId) -> RookResult`: authoritative Actor link and committed position.
+- `actor_access(ActorId) -> ActorAccessListResult`: Player grants and connection state.
+- `distance(RookId, RookId) -> DistanceResult`: existing logical-center Scene
+  distance. One tabletop unit equals one metre; multiply feet by 0.3048.
+  Held previews do not move committed centers. This performs no line-of-sight test.
+- `read_throw(id)`, `request_throw(HumanThrowRequest)`, `cancel_throw(id)`:
+  session-bound requested Throws attributed to the authenticated requester.
+- `commit(Array[ActorChange], ActionLogMessage = null) -> OperationResult`:
+  validate every distinct Actor replacement and the public report before saving
+  one coherent World change. Invalid batches apply nothing; failed saves end the
+  World and are never acknowledged. It grants no Actor Access. Once accepted,
+  report storage failures use the existing local Action Log retention/retry path.
+
+The System owns rule checks, meaningful idempotency, its active action lifetime,
+and every selected target's validation. The host supplies no generalized workflow,
+resumption, undo, game rules or implied target permission. `ActorChange` takes an
+Actor ID and its complete replacement data. At most 32 Actors can change together.
