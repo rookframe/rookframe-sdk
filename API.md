@@ -989,3 +989,13 @@ Compare the exact session identities captured when an action begins before
 accepting later decisions, including after all requested Throws have settled.
 An absent or replaced session ends that action; reconnect does not resume it.
 This query changes no grants and does not filter shared World gameplay data.
+
+### Authored decision dialogs
+
+SDK Authoring Kit 0.22.1 admits stock Godot `Window` scenes for compact authored
+UI. Package-owned Windows can `popup_centered()`, `hide()`, receive
+`close_requested`, and mark their own input handled. Authored Controls can
+`grab_focus()`, and input callbacks can inspect `InputEvent.is_action_pressed()`.
+Casts and annotations do not grant access to the host Window or Viewport.
+The public UI Kit close icon and managed-surface frame are available for this
+composition; existing design tokens and assets remain unchanged.
