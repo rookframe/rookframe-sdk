@@ -1,5 +1,5 @@
 {
-  "version": "0.22.4",
+  "version": "0.22.5",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,17 +7,17 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "9de97beeede7f9d803e6ea0abef67730cdc84692"
+    "commit": "0c152a804332dd5571caa8a2c3dd161aa21fb7f7"
   },
   "files": {
     "checker/GDSHRAPT-LICENSE.txt": "7f75f118c690572a959bbc0836169ad39ba7f38116e84d008857dd6368fe1017",
     "checker/GDShrapt.Reader.dll": "576831f6f96c6cd3727bd783dd0cc7259f0741d49155abda5999d87af0d1859f",
     "checker/Rookframe.PackageCheck.deps.json": "273950442406babfc0693f093eefb958e33ece5af42de57e62ba68e8c4a12f21",
-    "checker/Rookframe.PackageCheck.dll": "51477dd7a78d61add4257541dc2385ae3b00c32b249edd8b92eb3cfd65e5af31",
+    "checker/Rookframe.PackageCheck.dll": "f3da0265a5985ace5d7b3e9ba6dd659ca9e36ed93037656b46173d0774768be1",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
     "plugin.cfg": "2daf72eb35bdd83f55ba5a986e7dc0383fa9e991e3cc10699a9bed6915adf8de",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "a24a9f100af744656f9ddf62b2829a64a81649e30ae7c941efdfc22eeb180796",
+    "rookframe_authoring.py": "5f5fa844175007f070941418fe8fadd525614c3fbfe23b8fd095d462d6018251",
     "rookframe_authoring_checks.py": "2781ab032226b158e56da59db708df682a5d01f72cce2263debd7926b76be8de",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "8d67b3cfb27c3611d9520d52c9ab9e4052ed88659ae09a4d288e9eb0f7dc3451",
@@ -35,6 +35,10 @@
   "uiFiles": {
     "README.md": "15b90e8e0ae983f4b763584017f0499e71006266a948eb7542cd3642098a577e",
     "_internal/README.md": "9e95c42d922628c3d8d26c1e774df1d0b7f99a2ccda798d650c989ebfa1cbe8f",
+    "assets/controls/checkbox-checked-disabled.svg": "818b1f01d9717e32c45ad41c8d5c1ec23e340e7acd8ad27f6511cbd6e45a51af",
+    "assets/controls/checkbox-checked.svg": "bdff775c4262012f92e548f39368a2b5149862cb17625f39f0b915c4dd62b4d0",
+    "assets/controls/checkbox-unchecked-disabled.svg": "a4ddce2ebf9190135f719387aafceeb6f62e75aeed827a92e9e2b66cf9d1ca7e",
+    "assets/controls/checkbox-unchecked.svg": "fb20b0a8921a4d5e519873d64322da8c2907dee3f22a773141861543a7b7f03d",
     "assets/fonts/Exo2-VariableFont_wght.ttf": "205a448676a2586f9c57c25f3d5c58ca8db7e6cf5edf7506783a010c6fe2bfb5",
     "assets/fonts/Inter-VariableFont_opsz,wght.ttf": "29160a80ff49ddcab2c97711247e08b1fab27a484a329ce8b813d820dc559031",
     "assets/fonts/LICENSE-EXO-2.txt": "41970aabe4fafb48410304c00fa10f29c03318f142b9928f332ecb15bb404b78",
@@ -209,9 +213,9 @@
     "icons/upload.svg": "ebe84111470d348eec19f44b9c82107b3e252411e90d617319bb977ed5143252",
     "icons/warning.svg": "2f180ae291096dac2e97f2d3459825a7001f892d6dd8c9db6573f01e79ecd8f4",
     "icons/world.svg": "6a7b1695690e86e5d812772448301131a82801bef24805faae865044ed4a4f35",
-    "theme/rookframe_theme.tres": "49dfb8d1539b269708c3288a8193c0fe4b2f605659069ae34b1857ba18ea80f1",
+    "theme/rookframe_theme.tres": "71fb005a39ea312df0da1b2101c0e4cd87d2c490054f5a6dfff991ff36c7dcae",
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "37661f62b3ea66069d991a2d5c4a150d3807eed0"
+  "sourceRevision": "08241f2ff0d3aa58d7629c6563d5e5b313e8df94"
 }

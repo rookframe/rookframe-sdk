@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.22.4
+# Rookframe SDK Authoring Kit 0.22.5
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–14). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -33,8 +33,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.22.4", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.22.5", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "0c152a804332dd5571caa8a2c3dd161aa21fb7f7", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -83,7 +83,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/9de97beeede7f9d803e6ea0abef67730cdc84692/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/0c152a804332dd5571caa8a2c3dd161aa21fb7f7/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
@@ -138,7 +138,7 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Imported architectural materials
 
-SDK 0.22.4 includes the production admission rules for stock
+SDK 0.22.5 includes the production admission rules for stock
 `BaseMaterial3D.cull_mode` and `normal_scale`. These preserve the original
 double-sided faces and normal-map strength of imported Builder assets. The
 complete resource closure and all other setter rules are still checked.
@@ -296,6 +296,9 @@ Authored decision dialogs may use stock Window transparency and an owned
 CanvasLayer/ColorRect backdrop. Viewport, CanvasLayer and ColorRect property access remains
 limited to Package-owned nodes; host traversal does not grant ownership.
 
-SDK 0.22.4 also admits authored stock Godot `CheckBox` controls and inherited
+SDK 0.22.5 also admits authored stock Godot `CheckBox` controls and inherited
 Button operations. Package-owned focus is supported; host-node casts do not
 acquire focus operations.
+
+SDK 0.22.5 pins the UI Kit checkbox theme correction: canonical 22px indicators
+use the existing aqua and ink tokens, including disabled variants.
