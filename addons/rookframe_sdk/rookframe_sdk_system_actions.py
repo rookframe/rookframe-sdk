@@ -1,8 +1,8 @@
 """Edition 2029 revision 12: authority-side System intent and consequence boundary."""
 
 
-def system_action_sources(root: str) -> dict[str, str]:
-    return {
+def system_action_sources(root: str, *, participant_sessions: bool = False) -> dict[str, str]:
+    sources = {
         "system_actions.gd": f'''extends RefCounted
 const DataResult = preload("{root}data_result.gd")
 const WorldCapability = preload("{root}world_capability.gd")
@@ -54,7 +54,7 @@ func new_request_id() -> String:
 ## Authenticated requester, session and shared target Rooks. Never client assertions.
 func caller() -> DataResult:
 \treturn DataResult.new(_host.SystemIntentContext(_token))
-## Private authority snapshot. access_level describes the requesting Participant.
+## Complete shared Actor state. access_level describes the requesting Participant.
 func read_actor(actor: ActorId) -> ActorResult:
 \treturn ActorResult.new(_host.SystemIntentReadActor(_token, actor.value))
 func read_rook(rook: RookId) -> RookResult:
@@ -79,3 +79,11 @@ func commit(changes: Array[ActorChange], report: ActionLogMessage = null) -> Ope
 \treturn OperationResult.new(_host.SystemIntentCommit(_token, records, report.to_record() if report != null else {{}}))
 ''',
     }
+    if participant_sessions:
+        sources["system_action_context.gd"] += '''
+## Live Participant sessions, including the GM only when connected.
+## Compare exact session identities; reconnect never continues an old action.
+func participant_sessions() -> DataResult:
+\treturn DataResult.new(_host.SystemIntentParticipantSessions(_token))
+'''
+    return sources

@@ -978,3 +978,14 @@ Actor ID and its complete replacement data. At most 32 Actors can change togethe
 ### Targeting handoff (2029 revision 13)
 
 `targeting.choose() -> OperationResult` starts the existing tabletop target picker from the Package’s active managed window. Visible windows temporarily yield the tabletop; Done restores their placements and focuses the source window. Read `targeting.snapshot()` or subscribe to `targeting.changed` for the committed selection. This does not submit an action or change access.
+
+### Live Participant sessions (2029 revision 14)
+
+`context.participant_sessions() -> DataResult` returns all currently connected
+Participant sessions as dictionaries containing `participant_id`, `session_id`
+and `is_gm`. It uses the same callback-scoped authority as the other context
+operations. A dedicated Authority contributes no invented Participant or GM.
+Compare the exact session identities captured when an action begins before
+accepting later decisions, including after all requested Throws have settled.
+An absent or replaced session ends that action; reconnect does not resume it.
+This query changes no grants and does not filter shared World gameplay data.
