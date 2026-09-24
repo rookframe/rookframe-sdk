@@ -1,7 +1,7 @@
 """Edition 2029 revision 12: authority-side System intent and consequence boundary."""
 
 
-def system_action_sources(root: str, *, participant_sessions: bool = False) -> dict[str, str]:
+def system_action_sources(root: str, *, participant_sessions: bool = False, actor_creation: bool = False) -> dict[str, str]:
     sources = {
         "system_actions.gd": f'''extends RefCounted
 const DataResult = preload("{root}data_result.gd")
@@ -85,5 +85,14 @@ func commit(changes: Array[ActorChange], report: ActionLogMessage = null) -> Ope
 ## Compare exact session identities; reconnect never continues an old action.
 func participant_sessions() -> DataResult:
 \treturn DataResult.new(_host.SystemIntentParticipantSessions(_token))
+'''
+    if actor_creation:
+        sources["system_action_context.gd"] += f'''
+const ActorListResult = preload("{root}actor_list_result.gd")
+## Create a complete batch from declared Actor Definitions, granting normal Owner
+## access to its connected creator. The GM may create for another Participant.
+## Requests use package_id, local_id and choices, as actors.create_atomic does.
+func create_actors(requests: Array, creator_participant: String, report: ActionLogMessage = null) -> ActorListResult:
+\treturn ActorListResult.new(_host.SystemIntentCreateActors(_token, creator_participant, requests, report.to_record() if report != null else {{}}))
 '''
     return sources

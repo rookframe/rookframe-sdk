@@ -999,3 +999,21 @@ UI. Package-owned Windows can `popup_centered()`, `hide()`, receive
 Casts and annotations do not grant access to the host Window or Viewport.
 The public UI Kit close icon and managed-surface frame are available for this
 composition; existing design tokens and assets remain unchanged.
+
+### Actor creation from System actions (2029 revision 15)
+
+`context.create_actors(requests: Array, creator_participant: String,
+report: ActionLogMessage = null) -> ActorListResult` materializes 1–32 individual
+Actors from declared Actor Definitions. Each request contains `package_id`,
+`local_id` and `choices`, matching the child requests for `actors.create_atomic`.
+Every definition and the report are validated before one coherent World save.
+Failure creates none; success returns the fresh Actors in request order and
+publishes the supplied outcome through the existing Action Log retention path.
+
+The connected creator receives ordinary Owner access to each Actor, with the
+GM retaining inherent Owner access. Only a GM-initiated action can name another
+connected Participant as creator. No Rooks or separate permission model are
+created. The callback must validate the rule and its live action before calling;
+its capability expires on return, and the System remains responsible for
+idempotency and rejection of late results. All Actor data and grants continue
+to be shared with every Participant.

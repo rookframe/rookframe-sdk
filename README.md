@@ -1,6 +1,6 @@
-# Rookframe SDK Authoring Kit 0.22.5
+# Rookframe SDK Authoring Kit 0.23.0
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–14). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–15). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.22.5", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.23.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "0c152a804332dd5571caa8a2c3dd161aa21fb7f7", "include": ["rookframe/ui"]})
 ```
 
@@ -302,3 +302,6 @@ acquire focus operations.
 
 SDK 0.22.5 pins the UI Kit checkbox theme correction: canonical 22px indicators
 use the existing aqua and ink tokens, including disabled variants.
+
+Edition 2029 revision 15 adds atomic Actor materialization from a live System
+action with ordinary creator Owner grants. See [the API](API.md#actor-creation-from-system-actions-2029-revision-15).

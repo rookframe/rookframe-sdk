@@ -209,7 +209,7 @@ func cleanup(operation: SDK.Cleanup) -> void:
             world.update(dice_sources(root, requested_throws=revision >= 7, session_throws=revision >= 11))
         if edition == "2029" and revision >= 12:
             from rookframe_sdk_system_actions import system_action_sources
-            world.update(system_action_sources(root, participant_sessions=revision >= 14))
+            world.update(system_action_sources(root, participant_sessions=revision >= 14, actor_creation=revision >= 15))
             world["actor_access_entry.gd"] += '\nvar session_id: String = ""\n'
             world["actor_access_entry.gd"] = world["actor_access_entry.gd"].replace(
                 'func _init(value: Dictionary) -> void:\n',
