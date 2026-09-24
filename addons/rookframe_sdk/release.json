@@ -13,12 +13,12 @@
     "checker/GDSHRAPT-LICENSE.txt": "7f75f118c690572a959bbc0836169ad39ba7f38116e84d008857dd6368fe1017",
     "checker/GDShrapt.Reader.dll": "576831f6f96c6cd3727bd783dd0cc7259f0741d49155abda5999d87af0d1859f",
     "checker/Rookframe.PackageCheck.deps.json": "273950442406babfc0693f093eefb958e33ece5af42de57e62ba68e8c4a12f21",
-    "checker/Rookframe.PackageCheck.dll": "901ecdb015fb3efb706fc1af05631ec412cb7eeeabe625e07874df6a610e4123",
+    "checker/Rookframe.PackageCheck.dll": "f98459cecf4363af5606fb9fd43aa81bbc005bee6eafacc3caace1c4e4da6dcc",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
     "plugin.cfg": "2daf72eb35bdd83f55ba5a986e7dc0383fa9e991e3cc10699a9bed6915adf8de",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
     "rookframe_authoring.py": "7c26c08dc710a23f1f12eef7818b963205e03b9501f53e62d5d2dc8335c129ae",
-    "rookframe_authoring_checks.py": "2781ab032226b158e56da59db708df682a5d01f72cce2263debd7926b76be8de",
+    "rookframe_authoring_checks.py": "c9cfd5e1d3bc3103c1ee33795176990c3d1b69ddfc01df34cfdf91efa9484cd5",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "8d67b3cfb27c3611d9520d52c9ab9e4052ed88659ae09a4d288e9eb0f7dc3451",
     "rookframe_publication.py": "8a48ebb0c674bdc33087519b96a053a53bbdd7a70e26d785213268d8755a92f0",
@@ -217,5 +217,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "435ed1aac513fc78849df4afc5d84f008ee5c654"
+  "sourceRevision": "0b8de8e0e6ab44a9ea415549aca9eba483e2b2a7"
 }
