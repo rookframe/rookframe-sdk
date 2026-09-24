@@ -1,6 +1,6 @@
-# Rookframe SDK Authoring Kit 0.18.1
+# Rookframe SDK Authoring Kit 0.19.0
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–10). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–11). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.18.1", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.19.0", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
 ```
 
@@ -138,7 +138,7 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Imported architectural materials
 
-SDK 0.18.1 includes the production admission rules for stock
+SDK 0.19.0 includes the production admission rules for stock
 `BaseMaterial3D.cull_mode` and `normal_scale`. These preserve the original
 double-sided faces and normal-map strength of imported Builder assets. The
 complete resource closure and all other setter rules are still checked.
@@ -227,3 +227,25 @@ Publication is a separate, deliberate author action. It never runs as part of
 See [PUBLICATION.md](PUBLICATION.md) for registration, GitHub hosting, metadata
 review, submission readback, and retries. Authoring credentials stay in the
 Publisher environment and are never supplied to Manager acquisition.
+
+## Session-bound requested Throws (2029 revision 11)
+
+Use `sdk.dice.request_session_throw(request)` for a human Throw that must end
+when either its requesting Participant or its target Participant connection ends.
+Both must be connected at creation. The immutable plan includes the requester;
+a cancelled request ID always returns cancelled, including after reconnect or
+Authority restart. A lost required connection cancels pending requests even if
+that Participant has another application connected. Generic `request_throw` keeps
+its existing durable recovery behavior.
+
+`sdk.dice.cancel_throw(request_id)` is available to the target Participant and,
+for session-bound requests, their original requester. It never removes or changes
+an already completed Roll. Packages must discard their own pending consequences
+on interruption and must not restore an action from a completed request.
+
+SDK `Window.closed` is an ordinary Godot signal emitted on explicit managed-window
+closure, dock replacement, Actor replacement or loss of access. Temporary Dice
+Tray hiding and minimization do not emit it. Connect the signal to the System's
+action cancellation. The source sheet stays alive during a Throw and reappears
+when the tray ends; reopening it earlier retains its participant-adjusted layout.
+No workflow, undo, takeover or action recovery is provided.

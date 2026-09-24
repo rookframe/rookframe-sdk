@@ -206,7 +206,7 @@ func cleanup(operation: SDK.Cleanup) -> void:
         immediate_dice = edition == "2029" and revision >= 6
         if immediate_dice:
             from rookframe_sdk_dice import dice_sources
-            world.update(dice_sources(root, requested_throws=revision >= 7))
+            world.update(dice_sources(root, requested_throws=revision >= 7, session_throws=revision >= 11))
         sources.update(world)
         sdk = sources["package_sdk_facade.gd"]
         for filename in world:
@@ -276,6 +276,8 @@ const AuthenticationProviderDefinition = preload("{root}authentication_provider_
             sdk = sdk.replace("\t_host = host", f"\t_host = host\n\t_{name} = {type_name}.new(_service_scope)", 1)
         sdk = sdk.replace("\t_host = host", "\t_host = host\n\t_service_scope = ServiceScope.new(host)", 1)
         sources["package_sdk_facade.gd"] = sdk
+    if edition == "2029" and revision >= 11:
+        sources["window.gd"] += '\n## Explicit closure (including dock replacement), never temporary Dice Tray hiding.\nsignal closed\n'
     if edition == "2029" and revision >= 3:
         sources["window.gd"] += '''
 

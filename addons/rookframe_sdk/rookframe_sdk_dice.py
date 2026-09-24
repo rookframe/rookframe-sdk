@@ -1,7 +1,7 @@
 """Edition 2029 revisions 6–7: immediate and requested physical Throws."""
 
 
-def dice_sources(root: str, *, requested_throws: bool = False) -> dict[str, str]:
+def dice_sources(root: str, *, requested_throws: bool = False, session_throws: bool = False) -> dict[str, str]:
     sources = {
         "dice_term.gd": '''extends Resource
 
@@ -132,5 +132,18 @@ func request_throw(request: HumanThrowRequest) -> HumanThrowResult:
 \t\treturn HumanThrowResult.new(await WorldCapability.new().complete(_host, _host.RequestHumanThrow("", "", [])))
 \treturn HumanThrowResult.new(await WorldCapability.new().complete(_host, _host.RequestHumanThrow(
 \t\trequest.request_id, request.participant_id, request.to_records())))
+'''
+    if session_throws:
+        sources["dice.gd"] += '''
+## A request that ends when its requester or thrower disconnects. Never resumed.
+func request_session_throw(request: HumanThrowRequest) -> HumanThrowResult:
+\tif request == null:
+\t\treturn HumanThrowResult.new({"ok": false, "code": "invalid_data", "message": "A request is required."})
+\treturn HumanThrowResult.new(await WorldCapability.new().complete(_host, _host.RequestSessionThrow(
+\t\trequest.request_id, request.participant_id, request.to_records())))
+
+## Requester or target cancellation. Completed raw Rolls remain unchanged.
+func cancel_throw(request_id: String) -> HumanThrowResult:
+\treturn HumanThrowResult.new(await WorldCapability.new().complete(_host, _host.CancelHumanThrow(request_id)))
 '''
     return sources

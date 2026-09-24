@@ -905,3 +905,25 @@ Content. The Rook identity, Actor link, Scene and pose remain unchanged. World
 Authority checks ordinary Rook control and refuses changes while held; success
 follows durable publication and uses the existing Rook replication. Actor default
 appearance remains System-owned Actor data and is used when placing future Rooks.
+
+## Session-bound requested Throws (2029 revision 11)
+
+Use `sdk.dice.request_session_throw(request)` for a human Throw that must end
+when either its requesting Participant or its target Participant connection ends.
+Both must be connected at creation. The immutable plan includes the requester;
+a cancelled request ID always returns cancelled, including after reconnect or
+Authority restart. A lost required connection cancels pending requests even if
+that Participant has another application connected. Generic `request_throw` keeps
+its existing durable recovery behavior.
+
+`sdk.dice.cancel_throw(request_id)` is available to the target Participant and,
+for session-bound requests, their original requester. It never removes or changes
+an already completed Roll. Packages must discard their own pending consequences
+on interruption and must not restore an action from a completed request.
+
+SDK `Window.closed` is an ordinary Godot signal emitted on explicit managed-window
+closure, dock replacement, Actor replacement or loss of access. Temporary Dice
+Tray hiding and minimization do not emit it. Connect the signal to the System's
+action cancellation. The source sheet stays alive during a Throw and reappears
+when the tray ends; reopening it earlier retains its participant-adjusted layout.
+No workflow, undo, takeover or action recovery is provided.
