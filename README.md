@@ -262,3 +262,32 @@ by local UI display; the callback reply supplies the action outcome, not a data
 confidentiality boundary. The System validates source access, target types, counts
 and its own rules before committing.
 See [API.md](API.md#authority-side-system-intents-2029-revision-12).
+
+
+## Testing extensions
+
+Use GdUnit4 for GDScript domain and UI component tests. Rookframe's supported
+baseline is official GdUnit4 6.2.1 (commit
+`08ffc7c65b61b1b2edd545616061a99973c13ce1`) on stock Godot 4.7.2 Mono.
+Add it as a development dependency in `plug.gd`:
+
+```gdscript
+plug("godot-gdunit-labs/gdUnit4", {
+    "commit": "08ffc7c65b61b1b2edd545616061a99973c13ce1",
+    "include": ["addons/gdUnit4"],
+})
+```
+
+Put suites extending `GdUnitTestSuite` under `tests/`, with named `test_*`
+methods, native assertions, `auto_free` fixture cleanup and signals/await for
+async completion. Exercise Actors, World Data, access and targeting through the
+public SDK; substitute only the external host boundary for fast domain tests.
+MÖRK BORG and Calendar contain complete examples and runners that require a
+fresh, nonempty passing JUnit report. Real host integration belongs in
+rookframe-godot. Enable GdUnit's Godot error reporting and disable flaky retries.
+
+Exclude `addons/gdUnit4/**,tests/**,reports/**` from every Package export preset,
+and ignore the installed addon and generated reports. Do not ship a test
+framework in a published Package. Headless tests cover rules and explicitly
+injected Viewport events; use a graphical run for OS input and screenshots.
+See [GdUnit4 documentation](https://godot-gdunit-labs.github.io/gdUnit4/latest/).
