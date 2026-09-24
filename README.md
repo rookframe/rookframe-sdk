@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.22.1
+# Rookframe SDK Authoring Kit 0.22.2
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–14). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.22.1", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.22.2", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
 ```
 
@@ -138,7 +138,7 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Imported architectural materials
 
-SDK 0.22.1 includes the production admission rules for stock
+SDK 0.22.2 includes the production admission rules for stock
 `BaseMaterial3D.cull_mode` and `normal_scale`. These preserve the original
 double-sided faces and normal-map strength of imported Builder assets. The
 complete resource closure and all other setter rules are still checked.
@@ -291,3 +291,7 @@ and ignore the installed addon and generated reports. Do not ship a test
 framework in a published Package. Headless tests cover rules and explicitly
 injected Viewport events; use a graphical run for OS input and screenshots.
 See [GdUnit4 documentation](https://godot-gdunit-labs.github.io/gdUnit4/latest/).
+
+Authored decision dialogs may use stock Window transparency and an owned
+CanvasLayer/ColorRect backdrop. Viewport, CanvasLayer and ColorRect property access remains
+limited to Package-owned nodes; host traversal does not grant ownership.
