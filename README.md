@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.22.3
+# Rookframe SDK Authoring Kit 0.22.4
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–14). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.22.3", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.22.4", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
 ```
 
@@ -138,7 +138,7 @@ See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Imported architectural materials
 
-SDK 0.22.3 includes the production admission rules for stock
+SDK 0.22.4 includes the production admission rules for stock
 `BaseMaterial3D.cull_mode` and `normal_scale`. These preserve the original
 double-sided faces and normal-map strength of imported Builder assets. The
 complete resource closure and all other setter rules are still checked.
@@ -296,6 +296,6 @@ Authored decision dialogs may use stock Window transparency and an owned
 CanvasLayer/ColorRect backdrop. Viewport, CanvasLayer and ColorRect property access remains
 limited to Package-owned nodes; host traversal does not grant ownership.
 
-SDK 0.22.3 also admits authored stock Godot `CheckBox` controls and inherited
-Button operations within Package-owned UI. Host-node casts do not acquire those
-operations.
+SDK 0.22.4 also admits authored stock Godot `CheckBox` controls and inherited
+Button operations. Package-owned focus is supported; host-node casts do not
+acquire focus operations.
