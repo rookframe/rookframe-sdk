@@ -223,6 +223,9 @@ func _rookframe_system_intent(token: String, name: String, data: Variant) -> Var
 func handle_system_intent(context: SDK.SystemActionContext, name: String, data: Variant) -> Variant:
 \treturn {"state": "error", "message": "Unsupported System action."}
 '''
+        if edition == "2029" and revision >= 13:
+            world["targeting.gd"] += f'\nconst OperationResult = preload("{root}operation_result.gd")\n'
+            world["targeting.gd"] += '\n## Temporarily reveal the tabletop; Done restores window placement and focus.\nfunc choose() -> OperationResult:\n\treturn OperationResult.new(_host.ChooseTargets())\n'
         sources.update(world)
         sdk = sources["package_sdk_facade.gd"]
         for filename in world:

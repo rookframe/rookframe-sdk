@@ -970,3 +970,7 @@ The System owns rule checks, meaningful idempotency, its active action lifetime,
 and every selected target's validation. The host supplies no generalized workflow,
 resumption, undo, game rules or implied target permission. `ActorChange` takes an
 Actor ID and its complete replacement data. At most 32 Actors can change together.
+
+### Targeting handoff (2029 revision 13)
+
+`targeting.choose() -> OperationResult` starts the existing tabletop target picker from the Package’s active managed window. Visible windows temporarily yield the tabletop; Done restores their placements and focuses the source window. Read `targeting.snapshot()` or subscribe to `targeting.changed` for the committed selection. This does not submit an action or change access.
