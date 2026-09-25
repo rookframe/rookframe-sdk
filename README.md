@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.25.1
+# Rookframe SDK Authoring Kit 0.25.2
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–17). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.25.1", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.25.2", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "0c152a804332dd5571caa8a2c3dd161aa21fb7f7", "include": ["rookframe/ui"]})
 ```
 
@@ -320,3 +320,6 @@ existing Rook Miniature inside authored UI through the shared Content renderer.
 SDK 0.25.1 admits the existing public ActionBar and TaskState components, the
 chevron icon, and bounded `load()` of already admitted Package resources. It
 also reports the required revision for window closure.
+
+SDK 0.25.2 models stock Rect2 geometry, owned Control bounds/focus queries,
+and ordinary GUI input and rectangle-change signals for responsive Package UI.
