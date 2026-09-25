@@ -1017,3 +1017,15 @@ created. The callback must validate the rule and its live action before calling;
 its capability expires on return, and the System remains responsible for
 idempotency and rejection of late results. All Actor data and grants continue
 to be shared with every Participant.
+
+### World data from System actions (2029 revision 16)
+
+`context.read_world_data() -> DataResult` reads the complete selected System
+Package's World data. `context.commit_world_data(value, report = null)` replaces
+that value durably, then publishes the validated Action Log report after success.
+A malformed report or failed save publishes no new outcome. Null means never
+committed and is rejected as a replacement. The context expires on callback exit.
+The System validates the authenticated caller and its domain rules. This works
+for remote GM callers and dedicated authority without a local GM. Every
+Participant receives complete World data; display privacy belongs to Presentation.
+Use this callback boundary rather than nesting ordinary World data operations.

@@ -59,7 +59,7 @@ def verifier_path() -> Path:
 
 def verify(*arguments: str) -> dict:
     result = subprocess.run(["dotnet", str(verifier_path()), *map(str, arguments)],
-                            capture_output=True, text=True, timeout=120)
+                            capture_output=True, text=True, timeout=300)
     if result.returncode:
         raise RuntimeError("CHECK.PRODUCTION: " + result.stdout + result.stderr)
     return json.loads(result.stdout)

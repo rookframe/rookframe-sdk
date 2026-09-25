@@ -1,7 +1,7 @@
 """Edition 2029 revision 12: authority-side System intent and consequence boundary."""
 
 
-def system_action_sources(root: str, *, participant_sessions: bool = False, actor_creation: bool = False) -> dict[str, str]:
+def system_action_sources(root: str, *, participant_sessions: bool = False, actor_creation: bool = False, world_data: bool = False) -> dict[str, str]:
     sources = {
         "system_actions.gd": f'''extends RefCounted
 const DataResult = preload("{root}data_result.gd")
@@ -94,5 +94,15 @@ const ActorListResult = preload("{root}actor_list_result.gd")
 ## Requests use package_id, local_id and choices, as actors.create_atomic does.
 func create_actors(requests: Array, creator_participant: String, report: ActionLogMessage = null) -> ActorListResult:
 \treturn ActorListResult.new(_host.SystemIntentCreateActors(_token, creator_participant, requests, report.to_record() if report != null else {{}}))
+'''
+    if world_data:
+        sources["system_action_context.gd"] += '''
+## Complete Package-owned World data, including on dedicated authority.
+func read_world_data() -> DataResult:
+\treturn DataResult.new(_host.SystemIntentReadWorldData(_token))
+## Replace current World data, then publish the validated public report on success.
+## The System validates caller permissions and rules. Null is not a saved value.
+func commit_world_data(value: Variant, report: ActionLogMessage = null) -> OperationResult:
+\treturn OperationResult.new(_host.SystemIntentCommitWorldData(_token, value, report.to_record() if report != null else {}))
 '''
     return sources
