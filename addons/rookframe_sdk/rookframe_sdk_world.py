@@ -5,7 +5,8 @@ import re
 def world_sources(root: str, *, shared_actions: bool = False,
                   actor_inspection: bool = False,
                   initial_presentations: bool = False,
-                  public_identity: bool = False, atomic_creation: bool = False, rook_appearance: bool = False) -> dict[str, str]:
+                  public_identity: bool = False, atomic_creation: bool = False, rook_appearance: bool = False,
+                  rook_preview: bool = False) -> dict[str, str]:
     def path(name):
         return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower() + ".gd"
 
@@ -14,6 +15,8 @@ def world_sources(root: str, *, shared_actions: bool = False,
 
     def capability(name, methods, types):
         constructor = '\nvar _host: Object\nfunc _init(host: Object) -> void:\n\t_host = host\n'
+        if name == "Rooks" and rook_preview:
+            constructor += '\t_host.connect("SelectedRookContextChanged", _selection_changed)\n'
         if name == "Targeting":
             constructor += '\t_host.TargetingChanged.connect(_changed)\n'
         return ("extends RefCounted\n\n" + imports("WorldCapability", *types)
@@ -180,6 +183,19 @@ func unlink(id: RookId) -> OperationResult:
 func delete(id: RookId) -> OperationResult:
 \treturn OperationResult.new(await _completed(_host.DeleteRook(id.value)))
 ''', ("RookId", "ActorId", "RookResult", "RookListResult", "SceneId", "ContentReference", "OperationResult"))
+    if rook_preview:
+        sources["rooks.gd"] += '''
+signal selection_changed
+
+func _selection_changed(_context: Dictionary) -> void:
+\tselection_changed.emit()
+
+## Show this Rook's current Miniature in an authored UI placeholder.
+## Reuses the host's Content preview. No World mutation or image storage.
+## Call again after World changes; the host reuses the mounted preview.
+func preview(id: RookId, target: Control) -> OperationResult:
+\treturn OperationResult.new(_host.PreviewRook(id.value, target))
+'''
     sources["distance_result.gd"] = f'''extends "{root}operation_result.gd"
 
 ## Logical center-to-center distance in the current Scene's tabletop units.
@@ -226,6 +242,12 @@ func set_title(title: String) -> OperationResult:
         ("ExtensionSurface", "OperationResult") if initial_presentations
         else ("ExtensionSurface",),
     )
+    if rook_preview:
+        sources["windows.gd"] += '''
+## Close this Package's retained surface, delivering its ordinary closed signal.
+func close(surface: ExtensionSurface) -> OperationResult:
+\treturn OperationResult.new(_host.CloseWindow(surface.scene))
+'''
     if actor_inspection:
         sources["rooks.gd"] += '''
 ## This Participant's local selection; it conveys no Actor Access.

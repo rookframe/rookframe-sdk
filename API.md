@@ -1029,3 +1029,20 @@ The System validates the authenticated caller and its domain rules. This works
 for remote GM callers and dedicated authority without a local GM. Every
 Participant receives complete World data; display privacy belongs to Presentation.
 Use this callback boundary rather than nesting ordinary World data operations.
+
+### Rook Miniature previews (2029 revision 17)
+
+`rooks.preview(id: RookId, target: Control) -> OperationResult` displays the
+Rook's current Miniature in a Package-authored UI placeholder. The host reuses
+its existing Content preview renderer and owns resource resolution and the 3D
+preview scene. The placeholder must be inside this Package's bound UI and have
+an authored size. Its children are released with the placeholder. Calling again
+reuses the preview; call after `world_changed` to reflect Miniature changes.
+This operation changes no World data and returns no host node or image handle.
+A missing Rook, unavailable Miniature or unrelated UI target returns a failure.
+
+`rooks.selection_changed` announces Participant-local tabletop selection changes.
+Read `rooks.selected()` when handling it. `windows.close(surface)` closes that
+Package's retained surface through the ordinary host lifecycle, including its
+`closed` signal. It preserves local placement and cannot close another Package's
+surface. Closing an already closed surface succeeds without recreating it.
