@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.25.3
+# Rookframe SDK Authoring Kit 0.25.4
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–17). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.25.3", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.25.4", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "0c152a804332dd5571caa8a2c3dd161aa21fb7f7", "include": ["rookframe/ui"]})
 ```
 
@@ -327,3 +327,7 @@ and ordinary GUI input and rectangle-change signals for responsive Package UI.
 SDK 0.25.3 runs Package file analysis on bounded concurrent workers while
 preserving ordered SDK bindings, diagnostics, source closure and per-file limits.
 It uses the same pinned parser as runtime admission.
+
+SDK 0.25.4 verifies stock runtime casts to checked Package GDScript types,
+including possible derived implementations, for communication between authored
+Package controls. Native casts and annotations do not grant host authority.
