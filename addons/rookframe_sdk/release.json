@@ -1,5 +1,5 @@
 {
-  "version": "0.25.2",
+  "version": "0.25.3",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -11,13 +11,13 @@
   },
   "files": {
     "checker/GDSHRAPT-LICENSE.txt": "7f75f118c690572a959bbc0836169ad39ba7f38116e84d008857dd6368fe1017",
-    "checker/GDShrapt.Reader.dll": "576831f6f96c6cd3727bd783dd0cc7259f0741d49155abda5999d87af0d1859f",
-    "checker/Rookframe.PackageCheck.deps.json": "273950442406babfc0693f093eefb958e33ece5af42de57e62ba68e8c4a12f21",
-    "checker/Rookframe.PackageCheck.dll": "08a14a2ad09043d54597b342b9eef5a0f46a3221fb4b2d6808f922b70b103ead",
+    "checker/GDShrapt.Reader.dll": "fbead16c2563759a38c5b75565ede9f6c474a71b3470f3458eddb6fd0a40f935",
+    "checker/Rookframe.PackageCheck.deps.json": "1b772ee9889205593a941fc691ac31d6c32ea77e41b3a135af6745c99ca3212e",
+    "checker/Rookframe.PackageCheck.dll": "9a26af29a6f098d5c3b185d1a51ecbb821df1003a6dcf1e68a6441f5af05fa4a",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
     "plugin.cfg": "2daf72eb35bdd83f55ba5a986e7dc0383fa9e991e3cc10699a9bed6915adf8de",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "94671207168f3ccf8b838bf553c997c625ac1fa9fcdf1f9c3b6607c33e32fd92",
+    "rookframe_authoring.py": "a95c05384ecff0b409840d6fd2e87194cccf2086a282a2c45c1d943b198ae397",
     "rookframe_authoring_checks.py": "c9cfd5e1d3bc3103c1ee33795176990c3d1b69ddfc01df34cfdf91efa9484cd5",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "8d67b3cfb27c3611d9520d52c9ab9e4052ed88659ae09a4d288e9eb0f7dc3451",
@@ -217,5 +217,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "9790685b1a5ce7f9cd1b431def4f203268843e05"
+  "sourceRevision": "c9faae3c33ec37296b91b0334f10bf4330d222ab"
 }
