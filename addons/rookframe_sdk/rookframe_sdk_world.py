@@ -6,7 +6,7 @@ def world_sources(root: str, *, shared_actions: bool = False,
                   actor_inspection: bool = False,
                   initial_presentations: bool = False,
                   public_identity: bool = False, atomic_creation: bool = False, rook_appearance: bool = False,
-                  rook_preview: bool = False) -> dict[str, str]:
+                  rook_preview: bool = False, rook_hiding: bool = False, miniature_browser: bool = False) -> dict[str, str]:
     def path(name):
         return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower() + ".gd"
 
@@ -109,11 +109,13 @@ func _init(identity: String) -> void:
         "SystemRecord": (("SystemRecordId",), [('id', 'SystemRecordId', 'SystemRecordId.new(value.id)'), ('type_name', 'String', 'value.type_name'), ('data', 'Variant', 'value.data')]),
         "Rook": (("RookId", "ActorId", "SceneId", "ContentReference"), [('id', 'RookId', 'RookId.new(value.id)'), ('actor', 'ActorId', 'ActorId.new(value.actor) if value.actor != "" else null'), ('scene', 'SceneId', 'SceneId.new(value.scene)'), ('position', 'Vector2', 'value.position'), ('yaw', 'float', 'value.yaw'), ('miniature', 'ContentReference', 'ContentReference.new(raw_miniature.packageId, raw_miniature.localId)')]),
     }
+    if rook_hiding:
+        entity_fields["Rook"][1].append(("hidden", "bool", "value.hidden"))
     if public_identity:
         entity_fields["PublicIdentity"] = (("RookId",), [('rook_id', 'RookId', 'RookId.new(value.rookId)'), ('label', 'String', 'value.label')])
     entity_fields.update({
         "Scene": (("SceneId",), [('id', 'SceneId', 'SceneId.new(value.id)'), ('name', 'String', 'value.name')]),
-        "ContentEntry": (("ContentReference", "ContentKind"), [('reference', 'ContentReference', 'ContentReference.new(value.packageId, value.localId)'), ('title', 'String', 'value.displayName'), ('kind', 'ContentKind.Value', 'ContentKind.Value.UNKNOWN'), ('available', 'bool', 'value.available')]),
+        "ContentEntry": (("ContentReference", "ContentKind"), [('reference', 'ContentReference', 'ContentReference.new(value.packageId, value.localId)'), ('title', 'String', 'value.displayName'), ('kind', 'ContentKind.Value', 'ContentKind.Value.UNKNOWN'), ('available', 'bool', 'value.available'), ('package_title', 'String', 'value.get("packageName", "")')]),
     })
     for name, (types, fields) in entity_fields.items():
         sources[path(name)] = "extends RefCounted\n\n" + imports(*types) + "\n".join(f"var {field}: {type_name}" for field, type_name, _ in fields) + "\nfunc _init(value: Dictionary) -> void:\n" + "\n".join(f"\t{field} = {expression}" for field, _, expression in fields) + "\n"
@@ -217,6 +219,14 @@ func list(kind: ContentKind.Value = ContentKind.Value.ALL) -> ContentEntryListRe
 func read(reference: ContentReference) -> ContentEntryResult:
 \treturn ContentEntryResult.new(_host.ReadContent(reference.package_id, reference.local_id))
 ''', ("ContentReference", "ContentEntryResult", "ContentEntryListResult", "ContentKind"))
+    if miniature_browser:
+        sources["content.gd"] += """
+## Render an available Miniature into this Package's authored UI placeholder.
+func preview_miniature(reference: ContentReference, target: Control) -> OperationResult:
+\treturn OperationResult.new(_host.PreviewMiniature(reference.package_id, reference.local_id, target))
+"""
+        sources["content.gd"] = sources["content.gd"].replace('extends RefCounted',
+            'extends RefCounted\n' + imports("OperationResult"), 1)
     sources["content_kind.gd"] = '''extends RefCounted
 
 enum Value { UNKNOWN = -1, ALL, ACTOR_DEFINITION, MINIATURE, PROP, SURFACE_FINISH, WALL_STYLE }
@@ -344,6 +354,8 @@ func _init(result: Dictionary) -> void:
         sources["actors.gd"] = sources["actors.gd"].replace(imports("ActorAccessListResult"), "")
         for name in ("actor_access_entry.gd", "actor_access_list_result.gd", "target_snapshot.gd", "target_snapshot_result.gd", "targeting.gd"):
             del sources[name]
+    if rook_hiding:
+        sources["rooks.gd"] += '\n## GM-only visibility change; hiding clears all targeting.\nfunc set_hidden(id: RookId, hidden: bool) -> RookResult:\n\treturn RookResult.new(await _completed(_host.SetRookHidden(id.value, hidden)))\n'
     if rook_appearance:
         sources["rooks.gd"] += '\n## Replace one controlled Rook’s Miniature without changing identity, link or pose.\nfunc set_miniature(id: RookId, miniature: ContentReference) -> RookResult:\n\treturn RookResult.new(await _completed(_host.SetRookMiniature(id.value, miniature.package_id, miniature.local_id)))\n'
     if atomic_creation:

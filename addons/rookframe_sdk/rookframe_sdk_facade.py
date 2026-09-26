@@ -199,7 +199,9 @@ func cleanup(operation: SDK.Cleanup) -> void:
                               public_identity=public_identity,
                               atomic_creation=edition == "2029" and revision >= 9,
                               rook_appearance=edition == "2029" and revision >= 10,
-                              rook_preview=edition == "2029" and revision >= 17)
+                              rook_preview=edition == "2029" and revision >= 17,
+                              rook_hiding=edition == "2029" and revision >= 18,
+                              miniature_browser=edition == "2029" and revision >= 19)
         action_log = edition == "2029" and revision >= 5
         if action_log:
             from rookframe_sdk_action_log import action_log_sources

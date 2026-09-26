@@ -1052,3 +1052,31 @@ Read `rooks.selected()` when handling it. `windows.close(surface)` closes that
 Package's retained surface through the ordinary host lifecycle, including its
 `closed` signal. It preserves local placement and cannot close another Package's
 surface. Closing an already closed surface succeeds without recreating it.
+
+### Rook hiding (Edition 2029 revision 18)
+
+`await sdk.rooks.set_hidden(rook_id, hidden)` returns a `RookResult` after the
+visibility change is durable. This is a GM-only Rookframe capability available
+to System Extensions and optional Packages. Read `result.rook.hidden`, or use
+`rooks.read` / `rooks.list` to inspect the current flag.
+
+A hidden Rook remains in the complete shared World state. Players do not render
+or pick it; the GM sees diagonal shader stripes and retains selection and
+control. Hiding removes that Rook from every Session's targets, and nobody can
+target it while hidden. Showing it again does not restore discarded targets.
+
+```gdscript
+var result := await sdk.rooks.set_hidden(rook_id, true)
+if not result.ok:
+    push_warning(result.message)
+```
+
+### Miniature browser previews (Edition 2029 revision 19)
+
+`content.preview_miniature(reference: ContentReference, target: Control)` returns
+an OperationResult and renders an enabled Miniature into the Package's bound
+authored UI. It reuses the host Content renderer, requires no existing Rook and
+exposes no resource path. Unavailable/wrong-kind content clears stale previews.
+`ContentEntry.package_title` supplies the source Package display name; identity
+remains the complete ContentReference. The UI Kit Miniature browser can emit
+preview requests directly to this capability. Selection never mutates World data.
