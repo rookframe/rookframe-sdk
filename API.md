@@ -1088,3 +1088,22 @@ domain in the current UI language, with that Package’s default-locale fallback
 `content.list` and `content.read` also work synchronously inside a live System
 intent callback. They read shared, declared Content metadata through that current
 intent; they do not start a nested World operation or grant mutation authority.
+
+## Rookframe standard Content (Edition 2029 revision 20)
+
+Every World includes Rookframe's application-owned Content. Its stable source
+identity is `fbf21a78-626e-4f35-b2ce-bd196083d9b7`, carried in the existing
+ContentReference `package_id` field. It is not a Package to install or enable.
+The application release supplies these resources; source title is Rookframe.
+Use normal Content queries, previews and Rook operations, never resource paths.
+
+Miniature local IDs: `default-miniature`, `knight`, `goblin-raider`, `goblin`,
+`barbarian`, `bandit`. The default is a featureless dark-grey humanoid.
+Wall Style IDs: `wood`, `ornate-stone-panel-wall`, `rough-stone-wall`,
+`timber-plaster-wall`. Surface Finish IDs: `stone`, `dark-stone-tiles`,
+`oak-planks`, usable for both Floor and Ceiling. Names are localized by Rookframe.
+
+Systems may use the default implicitly when no Miniature preference is saved.
+A missing explicit preference is not the same as no preference: keep it visible
+as unavailable and let the user choose a replacement. Built-in Content is
+shared with every Participant through the ordinary World Content library.

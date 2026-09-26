@@ -1,9 +1,9 @@
 {
-  "version": "0.27.2",
+  "version": "0.28.0",
   "editions": {
     "2027": 7,
     "2028": 4,
-    "2029": 19
+    "2029": 20
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
@@ -11,7 +11,7 @@
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "039611ce3098af35796009aa169c227340b15ed033cc4ba654048e99cf4a9c6a",
-    "checker/Rookframe.PackageCheck.dll": "1192c657b32b6ae78928f684987d4fb40c48dd95ae7dded9cb0ed3893ed0c031",
+    "checker/Rookframe.PackageCheck.dll": "05c74a1e4b25255b136ea97c47c2e2f3555b6036563bdf45fd603f8e888f480e",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -23,7 +23,7 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "plugin.cfg": "2daf72eb35bdd83f55ba5a986e7dc0383fa9e991e3cc10699a9bed6915adf8de",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "a06be28e87b417caeb8aa0c6185df88b84e18f421e8b3ce85be1533c81d5ae7e",
+    "rookframe_authoring.py": "61f49ec1b39e2df9d067b15d78b62ada1d9972776795ac6f7656966c97da0dbf",
     "rookframe_authoring_checks.py": "c9cfd5e1d3bc3103c1ee33795176990c3d1b69ddfc01df34cfdf91efa9484cd5",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "8d67b3cfb27c3611d9520d52c9ab9e4052ed88659ae09a4d288e9eb0f7dc3451",
@@ -229,5 +229,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "c723cbfe42f8ee2acf6fcfef636b2e9261b3a9d5"
+  "sourceRevision": "5db01eb01ee39b4bd8b183a46627ec25616ed9f5"
 }
