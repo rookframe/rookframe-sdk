@@ -150,8 +150,14 @@ Declare translations in `rookframe.json` as
 Each resource is a normal Godot Translation with the matching locale, inside
 the Package namespace. Use `sdk.translations.text("Calendar")` or pass the
 declared domain as the second argument. Domains are private to each Package,
-registered before Implementation setup and disposed at shutdown. Missing keys
-retain their source text. The active application locale selects the translation.
+registered before Implementation setup and disposed at shutdown. The saved
+Rookframe language selects the translation. Unsupported locales and
+missing messages fall back to the Package's default language, then source text.
+Set `"defaultLocale": "de"` alongside `translations` for a German default; every
+domain must contain that explicitly declared default. Omitting `defaultLocale`
+preserves English source text as the default without requiring an English
+resource. Hardcoded Package text remains supported and is not translated by the
+host catalog. See [Application and Package language](https://github.com/rookframe/rookframe-godot/blob/main/docs/implementation/internationalization.md).
 
 Override `cleanup(completed: SDK.Cleanup)` on an Implementation or Presentation;
 call `completed.complete()` when finished, immediately or after asynchronous
