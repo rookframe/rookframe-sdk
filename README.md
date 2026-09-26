@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.27.1
+# Rookframe SDK Authoring Kit 0.27.2
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–19). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.27.1", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.27.2", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "ad1a168e726640de8ca14687a72fc86aa06311bc", "include": ["rookframe/ui"]})
 ```
 
@@ -328,11 +328,15 @@ SDK 0.25.3 runs Package file analysis on bounded concurrent workers while
 preserving ordered SDK bindings, diagnostics, source closure and per-file limits.
 It uses the same pinned parser as runtime admission.
 
-SDK 0.27.1 verifies stock runtime casts to checked Package GDScript types,
+SDK 0.25.4 verifies stock runtime casts to checked Package GDScript types,
 including possible derived implementations, for communication between authored
 Package controls. Native casts and annotations do not grant host authority.
 
-SDK 0.27.1 / Edition 2029 revision 18 adds `rooks.set_hidden` and `Rook.hidden`.
+SDK 0.26.0 / Edition 2029 revision 18 adds `rooks.set_hidden` and `Rook.hidden`.
 The GM controls durable Rook visibility through the SDK or the contextual rook
 button. Hidden Rooks stay fully shared, render striped for the GM, and clear
 all targeting. See [Rook hiding](API.md#rook-hiding-edition-2029-revision-18).
+
+SDK 0.27.2 / Edition 2029 revision 19 adds the reusable UI Kit Miniature browser,
+previews for unplaced Miniatures, source-Package localized Content names and
+checked dynamic data keys for persisted Package dictionaries.
