@@ -1084,3 +1084,7 @@ preview requests directly to this capability. Selection never mutates World data
 `ContentEntry.localized_title` resolves the source Package’s default translation
 domain in the current UI language, with that Package’s default-locale fallback.
 `title` remains the original Manifest display name.
+
+`content.list` and `content.read` also work synchronously inside a live System
+intent callback. They read shared, declared Content metadata through that current
+intent; they do not start a nested World operation or grant mutation authority.
