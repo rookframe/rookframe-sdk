@@ -115,7 +115,7 @@ func _init(identity: String) -> void:
         entity_fields["PublicIdentity"] = (("RookId",), [('rook_id', 'RookId', 'RookId.new(value.rookId)'), ('label', 'String', 'value.label')])
     entity_fields.update({
         "Scene": (("SceneId",), [('id', 'SceneId', 'SceneId.new(value.id)'), ('name', 'String', 'value.name')]),
-        "ContentEntry": (("ContentReference", "ContentKind"), [('reference', 'ContentReference', 'ContentReference.new(value.packageId, value.localId)'), ('title', 'String', 'value.displayName'), ('kind', 'ContentKind.Value', 'ContentKind.Value.UNKNOWN'), ('available', 'bool', 'value.available'), ('package_title', 'String', 'value.get("packageName", "")')]),
+        "ContentEntry": (("ContentReference", "ContentKind"), [('reference', 'ContentReference', 'ContentReference.new(value.packageId, value.localId)'), ('title', 'String', 'value.displayName'), ('kind', 'ContentKind.Value', 'ContentKind.Value.UNKNOWN'), ('available', 'bool', 'value.available'), ('package_title', 'String', 'value.get("packageName", "")'), ('localized_title', 'String', 'value.get("localizedDisplayName", value.displayName)')]),
     })
     for name, (types, fields) in entity_fields.items():
         sources[path(name)] = "extends RefCounted\n\n" + imports(*types) + "\n".join(f"var {field}: {type_name}" for field, type_name, _ in fields) + "\nfunc _init(value: Dictionary) -> void:\n" + "\n".join(f"\t{field} = {expression}" for field, _, expression in fields) + "\n"

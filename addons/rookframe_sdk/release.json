@@ -1,5 +1,5 @@
 {
-  "version": "0.27.0",
+  "version": "0.27.1",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,11 +7,11 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "bcc97b688e9e69c5e2857cecf9019e5ef8f68c7c"
+    "commit": "ad1a168e726640de8ca14687a72fc86aa06311bc"
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "039611ce3098af35796009aa169c227340b15ed033cc4ba654048e99cf4a9c6a",
-    "checker/Rookframe.PackageCheck.dll": "562e136678439614cd386d68ffbef9faa15df74b478c82a40998c60748c14985",
+    "checker/Rookframe.PackageCheck.dll": "caed79415cbd9d77b5c1d273e1f8046c34149c32cd21f2b012347ed1678ed223",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -23,7 +23,7 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "plugin.cfg": "2daf72eb35bdd83f55ba5a986e7dc0383fa9e991e3cc10699a9bed6915adf8de",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "04d1ea14ab48e998b3399ffe5f9e1959c52ff3ded27a675b7d6739b1c919b43e",
+    "rookframe_authoring.py": "4c1d0a9ebca364de17c638fb1231cf534394ebf6aeb7728a67d6c00c164cdba1",
     "rookframe_authoring_checks.py": "c9cfd5e1d3bc3103c1ee33795176990c3d1b69ddfc01df34cfdf91efa9484cd5",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "8d67b3cfb27c3611d9520d52c9ab9e4052ed88659ae09a4d288e9eb0f7dc3451",
@@ -36,11 +36,14 @@
     "rookframe_sdk_settings.py": "4360b8e7379ba0d9f9b22bdc5b06caee4b8a7ad0dc55d87a1061060319c729e6",
     "rookframe_sdk_system_actions.py": "8493e71cd0a1926ac51e59bed86224d9a685b7cb032c24eaa4c40610f2f88057",
     "rookframe_sdk_ui.py": "fdbcc04305a57e07941f89c680f1b1f58827cceaf6c3608cf4dd488fc2e4e3be",
-    "rookframe_sdk_world.py": "481b92ff2c1999e89c8cd2b48cb9995680e2625eee51f3526e9065a0bdcb0dcf"
+    "rookframe_sdk_world.py": "d90691ae1e4d7900bc363fc97efb9cd9c05a9070209bf94263dfacfc3c6ee6c4"
   },
   "uiFiles": {
     "README.md": "15b90e8e0ae983f4b763584017f0499e71006266a948eb7542cd3642098a577e",
     "_internal/README.md": "9e95c42d922628c3d8d26c1e774df1d0b7f99a2ccda798d650c989ebfa1cbe8f",
+    "_internal/content/miniature_browser_row.gd": "dd2296bc6acbce1f0545fbd178ee558d7f2d6ecf45f0dfbd8c76ba15fb360d4f",
+    "_internal/content/miniature_browser_row.gd.uid": "59ec435431950e44f9d961d4b4f558e7616344a0d61245ecc77372908d2c2b07",
+    "_internal/content/miniature_browser_row.tscn": "880612eebd1e19c9b2ea780f837d91bdbd132d61324905a04b6c6a122760acc4",
     "assets/controls/checkbox-checked-disabled.svg": "818b1f01d9717e32c45ad41c8d5c1ec23e340e7acd8ad27f6511cbd6e45a51af",
     "assets/controls/checkbox-checked.svg": "bdff775c4262012f92e548f39368a2b5149862cb17625f39f0b915c4dd62b4d0",
     "assets/controls/checkbox-unchecked-disabled.svg": "a4ddce2ebf9190135f719387aafceeb6f62e75aeed827a92e9e2b66cf9d1ca7e",
@@ -58,14 +61,11 @@
     "assets/frames/secondary-normal.png": "583f9da9fa91edf30e4831e5cc52c9e73cddf2f4228046be053c6e8e0f87be25",
     "assets/frames/secondary-pressed.png": "72f1b0e005d908ddbda9cff953a9ca3782586ff9f724d2168128dc5fa426e390",
     "assets/frames/section.png": "c71d301e2ff39ccf881c768263471eedbca52923130f8a3c850a06aaa36ba9cc",
-    "catalogue.json": "e6a4cfe385c2a727db9c4d603fc1ee5549b9fbe8d86b481eb1a32f7af9789a22",
+    "catalogue.json": "91c4c1212927f10a18ed9fbde28453f38e5516a2be98edd94d8dc4a03278e900",
     "components/README.md": "46c7c3938919758fd4bfac5b725933eef2eff53c158e6cf9b0ce2cadc925c52f",
-    "components/content/miniature_browser.gd": "d186b6aabc320078d9dc935b423ca4fc11f7cc0ca9ca8d56e577a17f9ce782c3",
+    "components/content/miniature_browser.gd": "69327485579492a287ece274facb813a9ab46c08a8c7a75bdfb5ae511cba962e",
     "components/content/miniature_browser.gd.uid": "8b7f8284aec691a5672dae6255d120c52909b2d43c8e1befd59a90236d65480b",
     "components/content/miniature_browser.tscn": "c2d4f6062fe902ab09e4fb5c917365ca96e75c9d7e218eb5a5aea7bbe9c858fa",
-    "components/content/miniature_browser_row.gd": "dd2296bc6acbce1f0545fbd178ee558d7f2d6ecf45f0dfbd8c76ba15fb360d4f",
-    "components/content/miniature_browser_row.gd.uid": "59ec435431950e44f9d961d4b4f558e7616344a0d61245ecc77372908d2c2b07",
-    "components/content/miniature_browser_row.tscn": "f092046274f932063d7037926bf3fe09eb566db7a6e4e733b7e08b7bc0796dc2",
     "components/data/action_link.gd": "f72a055fb7d814a6f850bc131814c7b35493b0af08fd7b68b04bfa4c467b5641",
     "components/data/action_link.gd.uid": "0db123b908294049028ae4c7f4a37173786af8f26f48b299ebd0f68291bad729",
     "components/data/action_link.tscn": "a1401d9ea01c67f332455f06f605c6d52e4a204c3fd96629817964dcc526b432",

@@ -1080,3 +1080,7 @@ exposes no resource path. Unavailable/wrong-kind content clears stale previews.
 `ContentEntry.package_title` supplies the source Package display name; identity
 remains the complete ContentReference. The UI Kit Miniature browser can emit
 preview requests directly to this capability. Selection never mutates World data.
+
+`ContentEntry.localized_title` resolves the source Package’s default translation
+domain in the current UI language, with that Package’s default-locale fallback.
+`title` remains the original Manifest display name.

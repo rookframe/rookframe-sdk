@@ -20,11 +20,11 @@ from rookframe_package_build import (BUILD_SCHEMA,
     deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.27.0"
+SDK_VERSION = "0.27.1"
 SDK_EDITION = "2029"
 SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 19}
 UI_VERSION = "v1.0.0-rc.1"
-UI_COMMIT = "bcc97b688e9e69c5e2857cecf9019e5ef8f68c7c"
+UI_COMMIT = "ad1a168e726640de8ca14687a72fc86aa06311bc"
 RESOURCE_EXPORT = "package"
 
 

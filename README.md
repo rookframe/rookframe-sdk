@@ -1,6 +1,6 @@
-# Rookframe SDK Authoring Kit 0.27.0
+# Rookframe SDK Authoring Kit 0.27.1
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–18). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–19). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -33,8 +33,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.27.0", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "bcc97b688e9e69c5e2857cecf9019e5ef8f68c7c", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.27.1", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "ad1a168e726640de8ca14687a72fc86aa06311bc", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -83,7 +83,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/bcc97b688e9e69c5e2857cecf9019e5ef8f68c7c/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/ad1a168e726640de8ca14687a72fc86aa06311bc/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
@@ -328,11 +328,11 @@ SDK 0.25.3 runs Package file analysis on bounded concurrent workers while
 preserving ordered SDK bindings, diagnostics, source closure and per-file limits.
 It uses the same pinned parser as runtime admission.
 
-SDK 0.27.0 verifies stock runtime casts to checked Package GDScript types,
+SDK 0.27.1 verifies stock runtime casts to checked Package GDScript types,
 including possible derived implementations, for communication between authored
 Package controls. Native casts and annotations do not grant host authority.
 
-SDK 0.27.0 / Edition 2029 revision 18 adds `rooks.set_hidden` and `Rook.hidden`.
+SDK 0.27.1 / Edition 2029 revision 18 adds `rooks.set_hidden` and `Rook.hidden`.
 The GM controls durable Rook visibility through the SDK or the contextual rook
 button. Hidden Rooks stay fully shared, render striped for the GM, and clear
 all targeting. See [Rook hiding](API.md#rook-hiding-edition-2029-revision-18).
