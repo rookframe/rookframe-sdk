@@ -346,6 +346,53 @@ func _rookframe_inspect_actor(actor_id: String) -> void:
 \tif sdk.actors.read(actor).ok:
 \t\tinspect_actor(actor)
 '''
+    if edition == "2029" and revision >= 21:
+        sources["actor_definition_view.gd"] = f'''extends RefCounted
+const ExtensionSurface = preload("{root}extension_surface.gd")
+## System-owned Library presentation. An empty category omits a workflow-only definition.
+var category: String
+var surface: ExtensionSurface
+var can_create: bool
+func _init(label: String = "", window: ExtensionSurface = null, creatable: bool = false) -> void:
+\tcategory = label
+\tsurface = window
+\tcan_create = creatable
+'''
+        sources["package_sdk_facade.gd"] += f'\nconst ActorDefinitionView = preload("{root}actor_definition_view.gd")\n'
+        sources["presentation.gd"] += '''
+
+## Describe reusable Actor Definitions in the host Library; never enumerate live Actors here.
+func describe_actor_definition(definition: SDK.ContentEntry) -> SDK.ActorDefinitionView:
+\treturn SDK.ActorDefinitionView.new()
+
+## A Library Create action has no Scene; a tabletop drop supplies Scene and world position.
+## Submit ordinary SDK domain operations and present any failure through sdk.feedback.
+func create_actor_from_definition(definition: SDK.ContentEntry, scene: SDK.SceneId = null, position: Vector2 = Vector2.ZERO) -> void:
+\tpass
+
+func _rookframe_describe_actor_definition(package_id: String, local_id: String) -> Dictionary:
+\tvar result := sdk.content.read(SDK.ContentReference.new(package_id, local_id))
+\tif not result.ok or result.content_entry.kind != SDK.ContentKind.Value.ACTOR_DEFINITION:
+\t\treturn {}
+\tvar view := describe_actor_definition(result.content_entry)
+\tif view == null or view.category.is_empty() or view.surface == null:
+\t\treturn {}
+\treturn {"category": view.category, "scene": view.surface.scene, "presentation": view.surface.initial_presentation(), "canCreate": view.can_create and result.content_entry.available}
+
+func _rookframe_create_actor_from_definition(package_id: String, local_id: String, scene_id: String, position: Vector2) -> void:
+\tvar result := sdk.content.read(SDK.ContentReference.new(package_id, local_id))
+\tif result.ok and result.content_entry.available and result.content_entry.kind == SDK.ContentKind.Value.ACTOR_DEFINITION:
+\t\tcreate_actor_from_definition(result.content_entry, SDK.SceneId.new(scene_id) if not scene_id.is_empty() else null, position)
+'''
+        sources["window.gd"] += '''
+
+## Render one immutable Library definition in this managed window.
+func opened_definition(definition: SDK.ContentReference) -> void:
+\tpass
+
+func _rookframe_open_definition(package_id: String, local_id: String) -> void:
+\topened_definition(SDK.ContentReference.new(package_id, local_id))
+'''
     if not implementation:
         sources.pop("implementation.gd", None)
     if not presentations:

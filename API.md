@@ -1107,3 +1107,19 @@ Systems may use the default implicitly when no Miniature preference is saved.
 A missing explicit preference is not the same as no preference: keep it visible
 as unavailable and let the user choose a replacement. Built-in Content is
 shared with every Participant through the ordinary World Content library.
+
+## Actor Definitions in Library (Edition 2029 revision 21)
+
+The selected System implements `Presentation.describe_actor_definition(entry)`
+and returns `SDK.ActorDefinitionView.new(category, surface, can_create)`. The
+host lists that Content in its Package and category. An empty view excludes a
+workflow-only definition from this presentation, without filtering shared World
+data. Rookframe opens the authored surface and calls
+`Window.opened_definition(ContentReference)` for that single definition.
+
+The row's Create button and stock Godot tabletop drop call
+`Presentation.create_actor_from_definition(entry, scene, position)`. A button
+passes a null Scene; a drop passes the target Scene and world-space Vector2.
+The System executes ordinary SDK Actor/Rook operations, checks mutation
+permissions on Authority, and reports failures through SDK feedback. It must
+not manipulate host nodes. The source Library stays open during dragging.
