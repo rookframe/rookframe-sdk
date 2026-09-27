@@ -347,6 +347,30 @@ func _rookframe_inspect_actor(actor_id: String) -> void:
 \tif sdk.actors.read(actor).ok:
 \t\tinspect_actor(actor)
 '''
+    if edition == "2029" and revision >= 23:
+        sources["actor_summary.gd"] = sources["actor_summary.gd"].replace(
+            "extends RefCounted", f'extends RefCounted\nconst ContentReference = preload("{root}content_reference.gd")')
+        sources["actor_summary.gd"] = sources["actor_summary.gd"].replace(
+            "var portrait: Texture2D", "var portrait: Texture2D\nvar miniature: ContentReference\nvar can_place: bool")
+        sources["actor_summary.gd"] = sources["actor_summary.gd"].replace(
+            'image: Texture2D = null)', 'image: Texture2D = null, model: ContentReference = null, placeable: bool = false)')
+        sources["actor_summary.gd"] += "\tminiature = model\n\tcan_place = placeable\n"
+        sources["presentation.gd"] = sources["presentation.gd"].replace(
+            '"portrait": summary.portrait}',
+            '"portrait": summary.portrait, "miniature": {"packageId": summary.miniature.package_id, "localId": summary.miniature.local_id} if summary.miniature != null else {}, "canPlace": summary.can_place and result.actor.access_level == "Owner"}')
+        sources["presentation.gd"] += '''
+
+## Place a linked Rook for an existing Actor. Rookframe supplies the drop position.
+## Use SDK Rook operations and report a failed placement through sdk.feedback.
+func place_actor(actor: SDK.ActorId, scene: SDK.SceneId, position: Vector2) -> void:
+\tpass
+
+func _rookframe_place_actor(actor_id: String, scene_id: String, position: Vector2) -> void:
+\tvar actor := SDK.ActorId.new(actor_id)
+\tvar result := sdk.actors.read(actor)
+\tif result.ok and result.actor.access_level == "Owner":
+\t\tplace_actor(actor, SDK.SceneId.new(scene_id), position)
+'''
     if edition == "2029" and revision >= 21:
         sources["actor_definition_view.gd"] = f'''extends RefCounted
 const ExtensionSurface = preload("{root}extension_surface.gd")

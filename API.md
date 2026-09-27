@@ -1162,3 +1162,17 @@ Dice presentation, targeting and a child window can temporarily hide live conten
 A picker should emit its selection to its parent before calling `windows.pop(self)`.
 Cancel only pops; browsing should not commit domain data. Return errors through the
 usual `OperationResult` handling. Child windows do not grant new Actor access.
+
+## Actor browser placement — Edition 2029 revision 23
+
+`ActorSummary.new(name, portrait, miniature, placeable)` uses an optional `ContentReference`
+for the 3D preview when `portrait` is absent. It is presentation data only; it does
+not alter the Actor or existing linked Rooks. Unavailable or omitted content falls
+back to Rookframe's default Miniature. Set `can_place` (the optional fourth
+constructor argument, default false) to enable Actor dragging.
+
+`Presentation.place_actor(actor: SDK.ActorId, scene: SDK.SceneId, position: Vector2)`
+is invoked after a native Actor list drop onto the tabletop. The host rechecks
+Owner access, current Scene and drop bounds. Implementations use ordinary awaited
+SDK operations to create and link the Rook and report failures with `sdk.feedback`.
+This creates another linked Rook; it does not move existing Rooks or create an Actor.
