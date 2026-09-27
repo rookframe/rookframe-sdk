@@ -1,6 +1,6 @@
-# Rookframe SDK Authoring Kit 0.29.2
+# Rookframe SDK Authoring Kit 0.30.0
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–21). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–22). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -34,7 +34,7 @@ func request_quit(exit_code := -1) -> bool:
 
 func _plugging() -> void:
     plug("rookframe/rookframe-sdk", {"tag": "v0.27.2", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "ad1a168e726640de8ca14687a72fc86aa06311bc", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "03213e78e2bceaef88979206869d833ae367ac70", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -83,7 +83,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/ad1a168e726640de8ca14687a72fc86aa06311bc/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/03213e78e2bceaef88979206869d833ae367ac70/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
@@ -151,6 +151,16 @@ before including them in the Package namespace. Both text formats 3 and 4 are
 inspected, including format 4's base64 mesh buffers; normal dependency and size
 checks still apply. The Tabletop Pieces example includes the Bevy Amber Warden
 and Goblin Raider in this form.
+
+Physical mesh Miniatures and Props must cast native dynamic shadows and receive
+Scene lighting and shadows, including default Content. Use per-pixel
+`StandardMaterial3D` shading, shadow receiving enabled and native mesh shadow
+casting. Opaque materials are the usual choice; use supported alpha cutout modes
+where needed. Reserve unshaded/emissive, shadowless materials for effects such
+as flames and indicators. The host preserves physical shadows during camera
+cutaways, suppresses deliberately hidden Rooks locally, and keeps new placement
+ghosts shadowless. See [physical mesh lighting](../docs/implementation/physical-mesh-lighting.md)
+for the complete presentation contract and shipped-asset audit.
 
 The bounded [conformance projects](examples/package-conformance/README.md) cover
 a 2029 System, 2027 data-only Content and 2029 Presentation-only UI. Install them
@@ -344,3 +354,7 @@ checked dynamic data keys for persisted Package dictionaries.
 SDK 0.29.1 / Edition 2029 revision 21 adds System-owned Actor Definition categories, individual definition sheets, and Library Create/drop callbacks. See [the Library contract](API.md#actor-definitions-in-library-edition-2029-revision-21).
 
 SDK 0.29.2 admits Godot TabContainer for Package-owned sheets, including localized tab titles.
+
+SDK 0.30.0 / Edition 2029 revision 22 adds explicit child windows. `windows.push`
+retains the parent draft while a picker runs; `windows.pop`, Escape and Close
+return to it. See [child windows](API.md#child-windows-edition-2029-revision-22).

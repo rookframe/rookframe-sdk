@@ -63,4 +63,4 @@ Journal mutations remain GM-only. Package World Data is shared and readable by e
 Published releases for the remote action QA World:
 
 - [Workshop System 0.16.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.16.0/Workshop-System-0.16.0.json)
-- [Tabletop Pieces 0.9.0](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.9.0/Tabletop-Pieces-0.9.0.json)
+- [Tabletop Pieces 0.9.6](https://github.com/rookframe/rookframe-fixtures/releases/download/v0.9.6/Tabletop-Pieces-0.9.6.json)

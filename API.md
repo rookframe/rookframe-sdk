@@ -1102,11 +1102,29 @@ Miniature local IDs: `default-miniature`, `knight`, `goblin-raider`, `goblin`,
 Wall Style IDs: `wood`, `ornate-stone-panel-wall`, `rough-stone-wall`,
 `timber-plaster-wall`. Surface Finish IDs: `stone`, `dark-stone-tiles`,
 `oak-planks`, usable for both Floor and Ceiling. Names are localized by Rookframe.
+Included Prop ID: `wall-torch`, with an authored wall mount and no light emission yet.
 
 Systems may use the default implicitly when no Miniature preference is saved.
 A missing explicit preference is not the same as no preference: keep it visible
 as unavailable and let the user choose a replacement. Built-in Content is
 shared with every Participant through the ordinary World Content library.
+
+### Prop wall mounting
+
+A `visual` Content entry of type `prop` can declare
+`"wallMount": { "width": 0.14, "height": 0.30, "defaultHeight": 1.60 }`.
+All values are required positive finite metres, and no extra fields are accepted.
+Omitting the declaration preserves ordinary Prop placement. Wall mounting is
+independent of light emission and does not add Package-owned Prop state.
+
+The ordinary Node3D PackedScene keeps its required
+`PropCollision/CollisionShape3D`. Centre its origin on the rear contact footprint,
+with +Y up and +Z facing away from the wall. Rookframe targets/validates accepted
+wall support, chooses pose, persists identity/attachment/height and replicates the
+complete state. Authors supply appearance and collision with ordinary Godot
+facilities; no script or host-node manipulation is needed. See
+[wall-mounted Prop authoring](../docs/implementation/wall-mounted-props.md).
+
 
 ## Actor Definitions in Library (Edition 2029 revision 21)
 
@@ -1123,3 +1141,24 @@ passes a null Scene; a drop passes the target Scene and world-space Vector2.
 The System executes ordinary SDK Actor/Rook operations, checks mutation
 permissions on Authority, and reports failures through SDK feedback. It must
 not manipulate host nodes. The source Library stays open during dragging.
+
+## Child windows (Edition 2029 revision 22)
+
+`windows.push(source: Control, child: Control, title: String) -> OperationResult`
+opens an authored child Control in the owning managed window's placement. `source`
+must belong to that visible Package window; `child` must already be its descendant
+and declare the zero-argument `closed` signal. The child is reparented into host
+chrome using native Godot Controls. The parent remains alive and hidden, retaining
+its draft, scroll position and keyboard focus. Children may open further children.
+
+`windows.pop(child: Control) -> OperationResult` returns to the parent. Escape and
+the child's chrome Close do the same. The child returns hidden to its authored
+parent and emits `closed`; the parent does not receive `closed`. Explicit closure
+or replacement of the root closes the whole stack. Ordinary unrelated windows
+continue to replace and close a dock occupant; this API alone requests a stack.
+
+Use `closed` to discard drafts, rather than treating invisibility as cancellation:
+Dice presentation, targeting and a child window can temporarily hide live content.
+A picker should emit its selection to its parent before calling `windows.pop(self)`.
+Cancel only pops; browsing should not commit domain data. Return errors through the
+usual `OperationResult` handling. Child windows do not grant new Actor access.

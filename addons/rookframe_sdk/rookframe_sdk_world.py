@@ -6,7 +6,7 @@ def world_sources(root: str, *, shared_actions: bool = False,
                   actor_inspection: bool = False,
                   initial_presentations: bool = False,
                   public_identity: bool = False, atomic_creation: bool = False, rook_appearance: bool = False,
-                  rook_preview: bool = False, rook_hiding: bool = False, miniature_browser: bool = False) -> dict[str, str]:
+                  rook_preview: bool = False, rook_hiding: bool = False, miniature_browser: bool = False, stacked_windows: bool = False) -> dict[str, str]:
     def path(name):
         return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower() + ".gd"
 
@@ -257,6 +257,18 @@ func set_title(title: String) -> OperationResult:
 ## Close this Package's retained surface, delivering its ordinary closed signal.
 func close(surface: ExtensionSurface) -> OperationResult:
 \treturn OperationResult.new(_host.CloseWindow(surface.scene))
+'''
+    if stacked_windows:
+        sources["windows.gd"] += '''
+## Open an authored child Control above its owning managed window. The parent
+## stays alive, preserving draft, scroll and focus. Child must declare signal closed.
+func push(source: Control, child: Control, title: String) -> OperationResult:
+\treturn OperationResult.new(_host.PushWindow(source, child, title))
+
+## Close the child and return to its parent. Chrome Close and Escape do the same.
+## The child returns hidden to its authored parent and emits closed.
+func pop(child: Control) -> OperationResult:
+\treturn OperationResult.new(_host.PopWindow(child))
 '''
     if actor_inspection:
         sources["rooks.gd"] += '''
