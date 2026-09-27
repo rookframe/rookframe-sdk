@@ -367,7 +367,7 @@ func describe_actor_definition(definition: SDK.ContentEntry) -> SDK.ActorDefinit
 
 ## A Library Create action has no Scene; a tabletop drop supplies Scene and world position.
 ## Submit ordinary SDK domain operations and present any failure through sdk.feedback.
-func create_actor_from_definition(definition: SDK.ContentEntry, scene: SDK.SceneId = null, position: Vector2 = Vector2.ZERO) -> void:
+func create_actor_from_definition(definition: SDK.ContentEntry, scene: SDK.SceneId = null, position: Vector2 = Vector2(0, 0)) -> void:
 \tpass
 
 func _rookframe_describe_actor_definition(package_id: String, local_id: String) -> Dictionary:

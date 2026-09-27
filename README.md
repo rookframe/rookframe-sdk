@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.29.0
+# Rookframe SDK Authoring Kit 0.29.1
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–21). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -341,4 +341,4 @@ SDK 0.27.2 / Edition 2029 revision 19 adds the reusable UI Kit Miniature browser
 previews for unplaced Miniatures, source-Package localized Content names and
 checked dynamic data keys for persisted Package dictionaries.
 
-SDK 0.29.0 / Edition 2029 revision 21 adds System-owned Actor Definition categories, individual definition sheets, and Library Create/drop callbacks. See [the Library contract](API.md#actor-definitions-in-library-edition-2029-revision-21).
+SDK 0.29.1 / Edition 2029 revision 21 adds System-owned Actor Definition categories, individual definition sheets, and Library Create/drop callbacks. See [the Library contract](API.md#actor-definitions-in-library-edition-2029-revision-21).
