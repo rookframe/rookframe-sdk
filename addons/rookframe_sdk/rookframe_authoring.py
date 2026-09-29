@@ -20,7 +20,7 @@ from rookframe_package_build import (BUILD_SCHEMA,
     deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.32.0"
+SDK_VERSION = "0.32.1"
 SDK_EDITION = "2029"
 SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 24}
 UI_VERSION = "v1.0.0-rc.1"
@@ -34,7 +34,7 @@ class AuthoringError(RuntimeError):
 
 def check_edition(edition: str, revision: int) -> None:
     if type(revision) is not int or not 1 <= revision <= SDK_EDITIONS.get(edition, 0):
-        raise AuthoringError("SDK.REVISION: This kit authors 2029 revisions 1–23, 2027 revisions 1–7 and 2028 revisions 1–4. Use SDK 0.7.0 to author 2027:8 or 2028:5, or migrate integrations to 2029:1.")
+        raise AuthoringError("SDK.REVISION: This kit authors 2029 revisions 1–24, 2027 revisions 1–7 and 2028 revisions 1–4. Use SDK 0.7.0 to author 2027:8 or 2028:5, or migrate integrations to 2029:1.")
 
 
 def json_text(value: object) -> str:
@@ -78,7 +78,7 @@ def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: s
         raise AuthoringError("INIT.CONFLICT: export_presets.cfg must be a regular file.")
     manifest_path = project / "rookframe.json"
     if manifest_path.exists():
-        manifest = json.loads(manifest_path.read_text())
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         package_id = manifest["id"]
         if manifest.get("kind") != kind or manifest.get("sdk", {}).get("edition") != edition:
             raise AuthoringError("INIT.CONFLICT: Existing Manifest has a different Kind or SDK Edition.")
@@ -154,7 +154,7 @@ func _plugging() -> void:
             raise AuthoringError(f"INIT.CONFLICT: {relative} traverses a symbolic link.")
     for relative, content in proposed.items():
         path = project / relative
-        if path.exists() and relative != "rookframe.json" and path.read_text() != content:
+        if path.exists() and relative != "rookframe.json" and path.read_text(encoding="utf-8") != content:
             raise AuthoringError(f"INIT.CONFLICT: {relative} differs; reconcile it explicitly. No files were overwritten.")
         if any(parent.exists() and not parent.is_dir() for parent in path.parents):
             raise AuthoringError(f"INIT.CONFLICT: Parent of {relative} is not a directory.")
@@ -169,14 +169,14 @@ func _plugging() -> void:
 
 
 def check_facade(project: Path, *, generate_missing: bool = False) -> dict:
-    manifest = json.loads((project / "rookframe.json").read_text())
+    manifest = json.loads((project / "rookframe.json").read_text(encoding="utf-8"))
     identity = uuid.UUID(manifest["id"])
     revision = manifest["sdk"]["minimumRevision"]
     if str(identity) != manifest["id"] or identity.version != 4:
         raise AuthoringError("MANIFEST.ID: Use a canonical UUIDv4 Package identity.")
     edition = manifest["sdk"]["edition"]
     check_edition(edition, revision)
-    lock = json.loads((project / ".rookframe/authoring.lock.json").read_text())
+    lock = json.loads((project / ".rookframe/authoring.lock.json").read_text(encoding="utf-8"))
     if (lock.get("sdkEdition") != edition or lock.get("minimumRevision") != revision
             or lock.get("sdkAuthoringKitVersion") != SDK_VERSION):
         raise AuthoringError("SDK.REVISION: Manifest and exact authoring lock disagree.")
@@ -186,7 +186,7 @@ def check_facade(project: Path, *, generate_missing: bool = False) -> dict:
     for path, expected in generated.items():
         if any(parent.exists() and not parent.is_dir() for parent in path.parents):
             raise AuthoringError(f"SDK.FACADE: Parent of {path.name} must be a directory.")
-        if path.exists() and (not path.is_file() or path.read_text() != expected):
+        if path.exists() and (not path.is_file() or path.read_text(encoding="utf-8") != expected):
             raise AuthoringError(f"SDK.FACADE: {path.name} differs. Reconcile the lock, then regenerate the SDK directory explicitly.")
         if not path.exists() and not generate_missing:
             raise AuthoringError(f"SDK.FACADE: {path.name} is absent. Run `facade` to generate the typed SDK.")

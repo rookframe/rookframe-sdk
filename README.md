@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.0
+# Rookframe SDK Authoring Kit 0.32.1
 
 Edition 2029 revision 24 adds fixed `full-viewport` task placement and cancellation
 of abandoned immediate physical Rolls by their caller-owned request identity.
@@ -38,7 +38,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.1", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "8e6fa5e4b1d9e412cb0dcfcf0c0b7bbafed48eb5", "include": ["rookframe/ui"]})
 ```
 

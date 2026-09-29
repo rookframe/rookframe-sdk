@@ -65,6 +65,17 @@ def verify(*arguments: str) -> dict:
     return json.loads(result.stdout)
 
 
+def committed_ui_files(checkout: Path, revision: str) -> dict[str, str]:
+    """Hash the public release tree, independently of checkout line endings."""
+    archived = subprocess.check_output(["git", "-C", str(checkout), "archive", revision, "rookframe/ui"], timeout=30)
+    with tarfile.open(fileobj=io.BytesIO(archived)) as tree:
+        files = {member.name[len("rookframe/ui/"):]: hashlib.sha256(tree.extractfile(member).read()).hexdigest()
+                 for member in tree.getmembers() if member.isfile() and not member.name.endswith(".import")}
+    if not files:
+        raise RuntimeError("UI.CONTENTS: The selected UI release has no public resources.")
+    return files
+
+
 def check_dependencies(project: Path, sdk_version: str, ui_version: str, ui_commit: str) -> None:
     lock = json.loads((project / ".rookframe/authoring.lock.json").read_text())
     if lock.get("sdkAuthoringKitVersion") != sdk_version:
@@ -85,12 +96,7 @@ def check_dependencies(project: Path, sdk_version: str, ui_version: str, ui_comm
         # Other independently selected UI releases do not require an SDK release.
         # Compare the gd-plug checkout's committed tree without executing it.
         checkout = project / ".plugged/rookframe-ui-kit"
-        archived = subprocess.check_output(["git", "-C", str(checkout), "archive", ui_pin["commit"], "rookframe/ui"], timeout=30)
-        with tarfile.open(fileobj=io.BytesIO(archived)) as tree:
-            ui_files = {member.name[len("rookframe/ui/"):]: hashlib.sha256(tree.extractfile(member).read()).hexdigest()
-                        for member in tree.getmembers() if member.isfile() and not member.name.endswith(".import")}
-        if not ui_files:
-            raise RuntimeError("UI.CONTENTS: The selected UI release has no public resources.")
+        ui_files = committed_ui_files(checkout, ui_pin["commit"])
     for relative, expected in ui_files.items():
         if hashlib.sha256((ui / relative).read_bytes()).hexdigest() != expected:
             raise RuntimeError(f"UI.CONTENTS: Restore UI Kit {ui_pin['commit']}; {relative} was changed.")
