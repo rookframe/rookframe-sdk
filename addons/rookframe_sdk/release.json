@@ -1,5 +1,5 @@
 {
-  "version": "0.32.1",
+  "version": "0.32.2",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,11 +7,11 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "8e6fa5e4b1d9e412cb0dcfcf0c0b7bbafed48eb5"
+    "commit": "5d5a00f295cfadfa18bbf3867a9b5d742e21ef93"
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "039611ce3098af35796009aa169c227340b15ed033cc4ba654048e99cf4a9c6a",
-    "checker/Rookframe.PackageCheck.dll": "7f2d603784f92992fc030d8d3841a4a9ae61d72e174a1e862bb1c23429d9e1c0",
+    "checker/Rookframe.PackageCheck.dll": "f63d16eadab7f9bb9b424e5c46a7e08445280c45f1c41a82a7aa1fc63c9405c0",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -21,9 +21,9 @@
     "checker/tree-sitter-gdscript.LICENSE": "d724405ce238a22c0d35769c5a36b386ad5958192efe8bbb304fb2896254575f",
     "checker/tree-sitter.LICENSE": "c5cfb43042b6b72045f4ba997834d0a7786d2793d91680868b5815b39f14fc78",
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
-    "plugin.cfg": "674a6313655774a36e079c4c7964c385cfa40d6a88acb102c5895850a1ec782a",
+    "plugin.cfg": "ae67fea8a4b600551b9263444369f9e8c1651a86cd77c6d820e962e9c09fcc80",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "26aa5d54ac28f10764a4857a3fdfdfb9c4cf44411136a5b7f2fd79092eab89b2",
+    "rookframe_authoring.py": "4eb2fb43635399751331109dda79d4e16b6e1b4fb1e23a10bffb6153683bb3ac",
     "rookframe_authoring_checks.py": "6d661b2a998919ffab742e901e8c541d9daefd58e967a901a0dccccf3995302f",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "2e1183ee702542bb90c9bb4eba94a954bdfcf82ac86a419a03d33b61ae98da64",
@@ -100,7 +100,7 @@
     "components/data/package_row.gd": "3c702cedbdc502ed665e2745c3c6a7400a41f068e00bc1e81bcc27ccce0806a1",
     "components/data/package_row.gd.uid": "1e0874fee680093d4179a4784345704fd05f8b8f99eafef46643b7fdeada0714",
     "components/data/package_row.tscn": "216871a95a374f379be0e0430ec6aaf1b7144c0733ac9a530d7d179c256fc5e2",
-    "components/data/paginated_choices.gd": "da8a91217a2e312918de0794d2097e6be84f57e9e1608e70dbe21c82ee7a73ab",
+    "components/data/paginated_choices.gd": "d50c872739eaa4c825eedc9580f883cc83670a4aa794062c594c9e7ef333578c",
     "components/data/paginated_choices.gd.uid": "f9be3895a9300ef5cf298b08447182f81c2664f19032ed329b5ab2751860ec2a",
     "components/data/paginated_choices.tscn": "4270677f1f78cd7f5ec571b45e7ec5d758cdf2beb9596a0f7b51fbc3671ad70b",
     "components/data/roll_row.gd": "59b244d338870ad51a3ef440f42544cf522aa80ae4224a48fe38b9012bacd64a",
@@ -173,9 +173,9 @@
     "components/overlays/file_picker_dialog.gd": "f7aa3b14f05f6fdf1b0fa42dc19d3a858a845d95775cb35746c75446c824cfeb",
     "components/overlays/file_picker_dialog.gd.uid": "3ca2f5f30bbf6cecd3a245225c854a800861b2a86bf1cdcc3457d88412500b57",
     "components/overlays/file_picker_dialog.tscn": "e01db188fa6ee9b80018c1aaa17ed5467ba6ed4cec6e4245d4c88425ce05fad4",
-    "components/surfaces/fullscreen_wizard.gd": "f0797b7e08051edf65c959421883fc07788e80b9ddcf8bf0de6e87dd00de635b",
+    "components/surfaces/fullscreen_wizard.gd": "854834ccde62a14651e6c04964da709272d40cbf1e9db51a03ebb3be19147579",
     "components/surfaces/fullscreen_wizard.gd.uid": "bceab74383dcf0b4fb34157ed5ffa1c4035d6b21d4233ab169d10bb2ca273dc4",
-    "components/surfaces/fullscreen_wizard.tscn": "02dbdc958f2a968de65ed8ef49da50df165f636fa252fae5de0bbe7a99b5263d",
+    "components/surfaces/fullscreen_wizard.tscn": "8c9d29b2548e7bf2f051d11574968194cdca4d95019e15f0470771d1dd64a0fc",
     "components/surfaces/managed_surface.gd": "588c73a75a49fb455be148b66ff3814c3caddbb3b27781cd34b16aee782989a8",
     "components/surfaces/managed_surface.gd.uid": "847cc910bc373de6d03f8ff4d0d9cc9b2adcab8c878091a7c9dd3217d53a91e2",
     "components/surfaces/managed_surface.tscn": "c870d8110bb35773eb82d45f7c2cb41b2c07b281e3b722ef307775019aba1ce2",
@@ -285,5 +285,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "b25697ea92358ce00e81d644732c8e232fffa041"
+  "sourceRevision": "ad664b785d4454fd9af73c14db19f3e51a12b34c"
 }
