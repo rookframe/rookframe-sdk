@@ -1,5 +1,5 @@
 {
-  "version": "0.31.0",
+  "version": "0.31.1",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -11,7 +11,7 @@
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "039611ce3098af35796009aa169c227340b15ed033cc4ba654048e99cf4a9c6a",
-    "checker/Rookframe.PackageCheck.dll": "0efa97b993f473d4b602bc238d465dd3c1238b5ba6d553bbf8411f9b52e2d5c4",
+    "checker/Rookframe.PackageCheck.dll": "c76f17a0b8de70ee34295272bb21515245587dd6a66f67ef445cb38e4073b365",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -23,11 +23,11 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "plugin.cfg": "2daf72eb35bdd83f55ba5a986e7dc0383fa9e991e3cc10699a9bed6915adf8de",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "a7a886b8fe4b656dc9f35b5e55a29560a3dd08b4a33a4a0a2d2f53eada6e856e",
+    "rookframe_authoring.py": "0d5ec54c8c22b729e9e58e9eb304335ad6a6423c94eb316432b8358280aed028",
     "rookframe_authoring_checks.py": "c9cfd5e1d3bc3103c1ee33795176990c3d1b69ddfc01df34cfdf91efa9484cd5",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
-    "rookframe_package_build.py": "8d67b3cfb27c3611d9520d52c9ab9e4052ed88659ae09a4d288e9eb0f7dc3451",
-    "rookframe_publication.py": "8a48ebb0c674bdc33087519b96a053a53bbdd7a70e26d785213268d8755a92f0",
+    "rookframe_package_build.py": "2e1183ee702542bb90c9bb4eba94a954bdfcf82ac86a419a03d33b61ae98da64",
+    "rookframe_publication.py": "9843c2545ccba0d69117ddf45a359d574dfeddcd00079ad6cc8483cfe654b450",
     "rookframe_sdk_action_log.py": "861e0f8196257c529dca90dfa117789a40a01683f04656cbe741c3bc4a801b23",
     "rookframe_sdk_authentication.py": "0975f23aab371a5fc3ee1ea6eb36b299b13eb8ff0177adb4031c16402008de61",
     "rookframe_sdk_dice.py": "38719e92e21d61b4e8d6f0d1964699c975bf0f7f7dede9a2009934cd37a4c08c",
@@ -39,11 +39,10 @@
     "rookframe_sdk_world.py": "fedd1cca262e2f0013f6e2fcf85cd9c78b76621a6a256a510a6d5a163b122410"
   },
   "uiFiles": {
-    "README.md": "15b90e8e0ae983f4b763584017f0499e71006266a948eb7542cd3642098a577e",
-    "_internal/README.md": "9e95c42d922628c3d8d26c1e774df1d0b7f99a2ccda798d650c989ebfa1cbe8f",
     "_internal/content/miniature_browser_row.gd": "dd5848680818afc2cf82662b12c1d0f470af70354b8b47567d19356e32863861",
     "_internal/content/miniature_browser_row.gd.uid": "59ec435431950e44f9d961d4b4f558e7616344a0d61245ecc77372908d2c2b07",
     "_internal/content/miniature_browser_row.tscn": "9dd71fddade0643a81f8ed0a5a906902516c661b7ebb06b9b8b8473a01a25a2d",
+    "_internal/README.md": "9e95c42d922628c3d8d26c1e774df1d0b7f99a2ccda798d650c989ebfa1cbe8f",
     "assets/controls/checkbox-checked-disabled.svg": "818b1f01d9717e32c45ad41c8d5c1ec23e340e7acd8ad27f6511cbd6e45a51af",
     "assets/controls/checkbox-checked.svg": "bdff775c4262012f92e548f39368a2b5149862cb17625f39f0b915c4dd62b4d0",
     "assets/controls/checkbox-unchecked-disabled.svg": "a4ddce2ebf9190135f719387aafceeb6f62e75aeed827a92e9e2b66cf9d1ca7e",
@@ -62,7 +61,6 @@
     "assets/frames/secondary-pressed.png": "72f1b0e005d908ddbda9cff953a9ca3782586ff9f724d2168128dc5fa426e390",
     "assets/frames/section.png": "c71d301e2ff39ccf881c768263471eedbca52923130f8a3c850a06aaa36ba9cc",
     "catalogue.json": "91c4c1212927f10a18ed9fbde28453f38e5516a2be98edd94d8dc4a03278e900",
-    "components/README.md": "46c7c3938919758fd4bfac5b725933eef2eff53c158e6cf9b0ce2cadc925c52f",
     "components/content/miniature_browser.gd": "6758fd21170cb5abba00d0513ea4d1479eb5bc487e5c9fbcb57b6f4bbdebd26a",
     "components/content/miniature_browser.gd.uid": "8b7f8284aec691a5672dae6255d120c52909b2d43c8e1befd59a90236d65480b",
     "components/content/miniature_browser.tscn": "836b3826fc7595419883ec066d8e5b0634fedc939e953d650ee07963503a3259",
@@ -155,12 +153,12 @@
     "components/overlays/file_picker_dialog.gd": "f7aa3b14f05f6fdf1b0fa42dc19d3a858a845d95775cb35746c75446c824cfeb",
     "components/overlays/file_picker_dialog.gd.uid": "3ca2f5f30bbf6cecd3a245225c854a800861b2a86bf1cdcc3457d88412500b57",
     "components/overlays/file_picker_dialog.tscn": "e01db188fa6ee9b80018c1aaa17ed5467ba6ed4cec6e4245d4c88425ce05fad4",
+    "components/README.md": "46c7c3938919758fd4bfac5b725933eef2eff53c158e6cf9b0ce2cadc925c52f",
     "components/surfaces/managed_surface.gd": "d6275b6e715f4b35c6c7786d2071a9f64466d4f5c471889f5c266e34760a74e1",
     "components/surfaces/managed_surface.gd.uid": "847cc910bc373de6d03f8ff4d0d9cc9b2adcab8c878091a7c9dd3217d53a91e2",
     "components/surfaces/managed_surface.tscn": "c870d8110bb35773eb82d45f7c2cb41b2c07b281e3b722ef307775019aba1ce2",
     "components/surfaces/managed_surface_state.gd": "67b6a0dd7b816216c0e1931418d004afaa6289d4609f2f487cd12cffed1d0707",
     "components/surfaces/managed_surface_state.gd.uid": "068621392f45a708570d45d4a298b42d1b1a012677fa6add090f0cdbe187bcd2",
-    "icons/LICENSE": "b740a1d46122672da62833e97f7e7c8a13fa85cbc7445b584b297cc00dde93db",
     "icons/add.svg": "a40d0918a74f16b18a3d2628966a2dff2d1c02ac2837fa9d6fa2c426275374c6",
     "icons/back.svg": "b2bd0f02eea19067ebf3837eecef57e889e888d08f4db30d831123a3623898db",
     "icons/bolt.svg": "e9e604de1b0643296f34ed1c1b9a5533e1c76f14d12f6a0eb4e0e2f1dcda38d7",
@@ -201,6 +199,7 @@
     "icons/home.svg": "7a2e67f090f21faaea9930d6bf6ca4ba11e4b08a04cc4d9b095bbfea9cc0df02",
     "icons/info.svg": "c535dc6d5a87c6984282a143047902b08bc189a80762bc225b78fea820f05100",
     "icons/layers.svg": "d2844d8dcfb6e8ca141e30a4a5f67958ce308bae9380bb08684218bbbe715bae",
+    "icons/LICENSE": "b740a1d46122672da62833e97f7e7c8a13fa85cbc7445b584b297cc00dde93db",
     "icons/light-off.svg": "241f2272358df1eac4ff50cda8d8e49992037b7b43c43c75a0f61809a532a172",
     "icons/light-on.svg": "8974ad5d452ac02e7acee4b77281c4c506ebe28b65645724e65059d6ff25e21d",
     "icons/link.svg": "bf09c0ceffc0548112c9caa11f432b1cce8af022f3b5cdb85d408f33db914533",
@@ -236,9 +235,10 @@
     "icons/upload.svg": "ebe84111470d348eec19f44b9c82107b3e252411e90d617319bb977ed5143252",
     "icons/warning.svg": "2f180ae291096dac2e97f2d3459825a7001f892d6dd8c9db6573f01e79ecd8f4",
     "icons/world.svg": "6a7b1695690e86e5d812772448301131a82801bef24805faae865044ed4a4f35",
+    "README.md": "15b90e8e0ae983f4b763584017f0499e71006266a948eb7542cd3642098a577e",
     "theme/rookframe_theme.tres": "e473c69bd7dcd97b113f8d0a2a0d7f21f0608a539f7ec4abc81b2bc5cedbe054",
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "230372e5ccce9d26ffd7ab52391ba52cde9d4d3e"
+  "sourceRevision": "b228f7c716a88c99df1ddeeb52a7206f806a26de"
 }

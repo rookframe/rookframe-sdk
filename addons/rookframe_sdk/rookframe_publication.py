@@ -55,16 +55,18 @@ def credential_file(address: str) -> Path:
 def save_credentials(address: str, token: str, token_id: str) -> None:
     path = credential_file(address)
     path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile(mode="w", dir=path.parent, delete=False) as file:
-        temporary = Path(file.name)
-        try:
+    file = tempfile.NamedTemporaryFile(mode="w", dir=path.parent, delete=False)
+    temporary = Path(file.name)
+    try:
+        with file:
             os.chmod(temporary, 0o600)
             json.dump({"catalogue": address, "token": token, "tokenId": token_id}, file)
             file.flush()
             os.fsync(file.fileno())
-            os.replace(temporary, path)
-        finally:
-            temporary.unlink(missing_ok=True)
+        # Windows requires the writer to close before replacement or cleanup.
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 class Catalogue:

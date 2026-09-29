@@ -210,7 +210,7 @@ def prepare_profile(
             text = remap.rstrip() + "\n\n[params]" + params
         if path.name == "export_presets.cfg":
             text = text.replace(source_root[6:], runtime_root[6:])
-        path.write_text(text, encoding="utf-8")
+        path.write_bytes(text.encode("utf-8"))
     new_root = project / runtime_root.removeprefix("res://")
     new_root.parent.mkdir(parents=True)
     old_root.rename(new_root)

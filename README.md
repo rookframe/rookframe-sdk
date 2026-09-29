@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.31.0
+# Rookframe SDK Authoring Kit 0.31.1
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–23). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
@@ -33,7 +33,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.31.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.31.1", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "03213e78e2bceaef88979206869d833ae367ac70", "include": ["rookframe/ui"]})
 ```
 
@@ -370,3 +370,6 @@ The host dispatches an existing Actor drop only with current Owner access; place
 must re-read access and report any failure through SDK feedback.
 
 SDK 0.31.0 also admits stock Button text clipping for compact native tab layouts.
+
+SDK 0.31.1 preserves canonical LF script bytes during Package preparation on
+Windows, so relocated generated facades pass the same exact admission checks.
