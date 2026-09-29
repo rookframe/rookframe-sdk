@@ -110,6 +110,22 @@ the retained window, and Rookframe owns safe-area clamping and responsive
 fallbacks. Facades generated for earlier revisions call their original host
 operations and expose no initial-presentation fields.
 
+### Fixed full-viewport tasks — 2029 revision 24
+
+Set `initial_placement = "full-viewport"` for an additional fixed task that fills
+the viewport. The surface cannot be resized, docked, minimized or converted to
+floating. Existing docked and floating windows retain their arrangement beneath
+it. The authored scene supplies its Close control using `sdk.windows.close`;
+Rookframe adds no title bar. `sdk.windows.push` covers the parent with a child in
+the same full-viewport placement. Cancel/Close pop the child; desktop Escape
+returns from the child before closing its parent. Closing retains the task tree
+and reconnect capture/restore uses the existing Window contract.
+
+Immediate named Rolls from this task use physical dice over its entire visible
+surface. Only the originating Participant renders that motion; accepted raw
+results still use the normal shared Action Log. Closing leaves a launched Roll
+running in the background. Settled dice disappear after approximately one second.
+
 ## Migrating the initial 0.1.x example
 
 Update the exact SDK pin and authoring lock together. Replace the generated
@@ -831,6 +847,22 @@ Extension, a headless caller without a graphical tabletop, a World that is not
 ready, and an ended or revoked World Session. A pending await is World Session-bound:
 teardown discards its completion, and it cannot attach to a later World Session or
 another World. Invalid requests create no Throw or Action Log entry.
+
+### Cancelling an abandoned immediate Roll — 2029 revision 24
+
+`SDK.DiceRequest.new(terms, request_id)` accepts an optional identity obtained
+from `sdk.dice.new_request_id()`. `request_id` is also an exported String on the
+request. An empty identity is generated automatically. A duplicate identity for
+a still-pending Roll from this Package is refused.
+
+Keep the identity when an authored workflow can abandon a launched Roll, then
+call `sdk.dice.cancel_roll(request_id) -> SDK.OperationResult`. This removes its
+moving dice immediately and completes the pending await with `code = "cancelled"`.
+Cancellation is scoped to this Package's pending Roll in the current World
+Session. An already completed or absent Roll is a successful no-op; accepted
+Action Log history remains intact. Invalidate the abandoned draft before
+cancelling so its resumed coroutine cannot write into the replacement draft.
+Ordinary window Close does not cancel a Roll.
 
 ## Requested human Throws (2029 revision 7)
 

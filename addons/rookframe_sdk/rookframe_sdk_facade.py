@@ -40,6 +40,13 @@ func initial_presentation() -> Dictionary:
 \t\t"floatingRect": initial_floating_rect,
 \t}
 '''
+    if edition == "2029" and revision >= 24:
+        extension_surface = extension_surface.replace(
+            "## First-open placement. The Participant can move or redock the retained window.",
+            '## First-open placement: "left", "right", "floating", or "full-viewport".\n'
+            '## Full-viewport is fixed, has no host title bar, and retains covered windows.\n'
+            '## Its authored task supplies Close; Escape uses the ordinary window lifecycle.\n'
+            '## Other placements remain movable and dockable.')
     sources = {
         "package_sdk_facade.gd": f'''extends RefCounted
 
@@ -210,7 +217,8 @@ func cleanup(operation: SDK.Cleanup) -> void:
         immediate_dice = edition == "2029" and revision >= 6
         if immediate_dice:
             from rookframe_sdk_dice import dice_sources
-            world.update(dice_sources(root, requested_throws=revision >= 7, session_throws=revision >= 11))
+            world.update(dice_sources(root, requested_throws=revision >= 7, session_throws=revision >= 11,
+                                      cancellable_rolls=revision >= 24))
         if edition == "2029" and revision >= 12:
             from rookframe_sdk_system_actions import system_action_sources
             world.update(system_action_sources(root, participant_sessions=revision >= 14, actor_creation=revision >= 15, world_data=revision >= 16))

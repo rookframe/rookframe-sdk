@@ -1,7 +1,8 @@
 """Edition 2029 revisions 6–7: immediate and requested physical Throws."""
 
 
-def dice_sources(root: str, *, requested_throws: bool = False, session_throws: bool = False) -> dict[str, str]:
+def dice_sources(root: str, *, requested_throws: bool = False, session_throws: bool = False,
+                 cancellable_rolls: bool = False) -> dict[str, str]:
     sources = {
         "dice_term.gd": '''extends Resource
 
@@ -72,6 +73,25 @@ func roll(request: DiceRequest) -> DiceRollResult:
 \treturn DiceRollResult.new(await WorldCapability.new().complete(_host, _host.RollDice(terms)))
 ''',
     }
+    if cancellable_rolls:
+        sources["dice_request.gd"] = sources["dice_request.gd"].replace(
+            "## Terms retain", "## Optional attempt identity, allocated with dice.new_request_id().\n"
+            "## Retain it only while this immediate Roll is running, to cancel abandoned work.\n"
+            '@export var request_id := ""\n## Terms retain').replace(
+            "func _init(requested_terms: Array[DiceTerm] = []) -> void:",
+            'func _init(requested_terms: Array[DiceTerm] = [], identity: String = "") -> void:').replace(
+            "\tterms = requested_terms", "\tterms = requested_terms\n\trequest_id = identity")
+        sources["dice.gd"] = sources["dice.gd"].replace(
+            "_host.RollDice(terms)",
+            "_host.RollDiceWithId(terms, request.request_id if request != null and not request.request_id.is_empty() else new_request_id())")
+        sources["dice.gd"] += f'''
+const OperationResult = preload("{root}operation_result.gd")
+
+## Stop this Package's local pending Roll and dismiss its dice immediately.
+## The awaiting roll returns cancelled. Already accepted Action Log entries stay unchanged.
+func cancel_roll(request_id: String) -> OperationResult:
+\treturn OperationResult.new(_host.CancelImmediateRoll(request_id))
+'''
     if requested_throws:
         sources.update({
             "human_throw_request.gd": f'''extends Resource
