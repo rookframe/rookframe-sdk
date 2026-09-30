@@ -1,5 +1,5 @@
 {
-  "version": "0.32.3",
+  "version": "0.32.4",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,11 +7,11 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "4a23ec00e8119190f1a16a0986dbbb88fddac665"
+    "commit": "441664989ba69b57b040bb21254963cc912c6276"
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "039611ce3098af35796009aa169c227340b15ed033cc4ba654048e99cf4a9c6a",
-    "checker/Rookframe.PackageCheck.dll": "22c30711e84675e2e939c08f1aaf20b5290f9a1ad8c310137389d8c92b40e922",
+    "checker/Rookframe.PackageCheck.dll": "cd2c6c18524b1355912633d9a9f2bbf20be3fc494e7ad69cfa9644ff12d43bf3",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "97c9700542b659150b230c3578b29530fd76ab01ec66a92cd16945e0245713df",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -23,7 +23,7 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "plugin.cfg": "ae67fea8a4b600551b9263444369f9e8c1651a86cd77c6d820e962e9c09fcc80",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "eb9cf8a4925dd6025b13e82d97aa8531ba40ad9d7dd85c382be9faeed439861e",
+    "rookframe_authoring.py": "fa6f730ed413ad90897b230a0736e76a52fdef176a065994f2f2157499c6d19d",
     "rookframe_authoring_checks.py": "6d661b2a998919ffab742e901e8c541d9daefd58e967a901a0dccccf3995302f",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "2e1183ee702542bb90c9bb4eba94a954bdfcf82ac86a419a03d33b61ae98da64",
@@ -70,7 +70,7 @@
     "assets/frames/section.png": "c71d301e2ff39ccf881c768263471eedbca52923130f8a3c850a06aaa36ba9cc",
     "catalogue.json": "1f48043dd463f07fd3b3a7e77d6ff9700e8a72e3ff9b3345667d52bb176c16e2",
     "components/README.md": "3abf2904644c873938557108efb0e5382d956c92eaf8335d862bc519cac71ea0",
-    "components/content/fullscreen_miniature_browser.gd": "e06fcc82acaa221048be6645e9ac067a0987a04af0535d7932e3f2fb32623347",
+    "components/content/fullscreen_miniature_browser.gd": "819d08ea540f4a3cde22619e76a5ff143d05a2b186898d97a88f8fb653904b6a",
     "components/content/fullscreen_miniature_browser.gd.uid": "fae81fdd5d5d3a2acf8293390c28ac4e469f6cfbfe59368ce329732a0090e544",
     "components/content/fullscreen_miniature_browser.tscn": "25ee26262fc58ac12bdb77fb2080768ea199b7fc6dbe735fe31e728d1a9026c3",
     "components/content/miniature_browser.gd": "ab988e7040b158a3b3dc14797ad1de4fcee644cd296544319de494bf763f4660",
@@ -285,5 +285,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "5dd48d2d2d7754f9aed436dc42f298ad3e340cb9"
+  "sourceRevision": "272bf712f107a03cd7904316d8fde93c6018e879"
 }
