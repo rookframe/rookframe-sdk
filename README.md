@@ -1,4 +1,7 @@
-# Rookframe SDK Authoring Kit 0.32.13
+# Rookframe SDK Authoring Kit 0.32.16
+
+This kit admits the stock `LineEdit.text_changed` signal on Package-owned
+authored or constructed controls, carrying the native String callback value.
 
 Edition 2029 revision 26 adds `sdk.dice.roll_requested(request_id, source)`.
 An authored full-viewport surface can present its Participant's pending requested
@@ -51,7 +54,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.13", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.16", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "6319c25748b706364cf11c064969826650c33611", "include": ["rookframe/ui"]})
 ```
 
@@ -391,5 +394,3 @@ SDK 0.31.0 also admits stock Button text clipping for compact native tab layouts
 
 SDK 0.31.1 preserves canonical LF script bytes during Package preparation on
 Windows, so relocated generated facades pass the same exact admission checks.
-
-Owned authored Controls may read stock `get_viewport_rect()` for responsive layout without acquiring a Viewport object.
