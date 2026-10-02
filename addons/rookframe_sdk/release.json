@@ -1,5 +1,5 @@
 {
-  "version": "0.32.14",
+  "version": "0.32.15",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,11 +7,11 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "07937db1ee05c81d4d3e52077a0e4d957700ff30"
+    "commit": "6319c25748b706364cf11c064969826650c33611"
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "0177cf7f59df3563813d2aa46beed5b93674b1a83f0973a396ae942d0b0da9f1",
+    "checker/Rookframe.PackageCheck.dll": "aaae487a5329ab77098375c6895079966d08aa1324a09d5abb7bc5461fc57a75",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -23,7 +23,7 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "plugin.cfg": "ae67fea8a4b600551b9263444369f9e8c1651a86cd77c6d820e962e9c09fcc80",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "bca71a5cefafc526562d5124330af79d23c804aa1ceb959faa2b7b929c79e223",
+    "rookframe_authoring.py": "0d1b57157d2d8c0e751ab4752b91a1672708ab918862a3912dc05fa01588990a",
     "rookframe_authoring_checks.py": "d1f93358d1f959f352622734b8b020e295080fcd10c805cc34b00f3cdd58ab68",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "2e1183ee702542bb90c9bb4eba94a954bdfcf82ac86a419a03d33b61ae98da64",
@@ -106,7 +106,7 @@
     "components/data/paginated_choices.gd": "c3d554ffcbfff7d7228f0fc1edadbb674e9c1f098835ff41a1a941ac8e1f446a",
     "components/data/paginated_choices.gd.uid": "f9be3895a9300ef5cf298b08447182f81c2664f19032ed329b5ab2751860ec2a",
     "components/data/paginated_choices.tscn": "f455c7c5046493989464cd59fa5fd41abea8bddfd6d5fddf719ece26b320e298",
-    "components/data/paginated_content.gd": "44fe0dc9a5a58d65812aef97254ec1383e99b88daa51290e24d8e160b0714df8",
+    "components/data/paginated_content.gd": "0478d20ee0f89140951eb317ec9f8d3a6ba87fda73124f72a3629a5622093ff2",
     "components/data/paginated_content.gd.uid": "8e3e31ec118a3730280304861d40a8e2a9c3f35636ddd452a08ad90d84e136f0",
     "components/data/paginated_content.tscn": "814fe75cefee1e05f3db43c5b18785ab7185724e1288bd5be529ac8475867c9b",
     "components/data/roll_row.gd": "59b244d338870ad51a3ef440f42544cf522aa80ae4224a48fe38b9012bacd64a",
@@ -298,5 +298,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "0af6a52e30a3fed03e3bb78b723148eac4776c64"
+  "sourceRevision": "0154336090c89c377442ea44d945030ba1ee1ffc"
 }

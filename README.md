@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.14
+# Rookframe SDK Authoring Kit 0.32.13
 
 Edition 2029 revision 26 adds `sdk.dice.roll_requested(request_id, source)`.
 An authored full-viewport surface can present its Participant's pending requested
@@ -9,9 +9,6 @@ from attaching to retained surfaces.
 Edition 2029 revision 25 adds host-owned Actor portrait selection and decoding.
 The result contains a texture for presentation and normalized PNG bytes for
 shared Actor data. Selection cancellation leaves existing data unchanged.
-
-This kit admits `get_viewport_rect()` on Package-owned Controls for responsive
-layout without exposing a Viewport handle.
 
 This kit also admits stock read-only key callbacks and exposes collection focus
 return through the public UI Kit. Native input construction remains prohibited.
@@ -54,8 +51,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.14", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "07937db1ee05c81d4d3e52077a0e4d957700ff30", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.13", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "6319c25748b706364cf11c064969826650c33611", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -104,7 +101,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/07937db1ee05c81d4d3e52077a0e4d957700ff30/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/6319c25748b706364cf11c064969826650c33611/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
@@ -394,3 +391,5 @@ SDK 0.31.0 also admits stock Button text clipping for compact native tab layouts
 
 SDK 0.31.1 preserves canonical LF script bytes during Package preparation on
 Windows, so relocated generated facades pass the same exact admission checks.
+
+Owned authored Controls may read stock `get_viewport_rect()` for responsive layout without acquiring a Viewport object.

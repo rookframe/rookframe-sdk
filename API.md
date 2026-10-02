@@ -190,7 +190,7 @@ command. The selected Presentation experience is kept when the exact requirement
 still match. Changed requirements return through stopped Manager preparation.
 
 An Implementation, Presentation, or currently open SDK Window may opt in to
-private draft preservation with ordinary GDScript callbacks:
+private local state preservation with ordinary GDScript callbacks:
 
 ```gdscript
 func capture_reconnect_state() -> Dictionary:
@@ -210,6 +210,11 @@ Session revocation. Restore runs on the fresh instance after normal setup and
 current-state bootstrap, with shared operations disabled during the callback.
 It must only populate local UI, never submit or schedule actions. The user acts
 again in the new Session; query current Actor Access and values when they do.
+The same callbacks also retain an Actor window's local navigation when its view
+is released and recreated within the running World application. Capture follows
+its `closed` signal; restoration follows `opened(actor)` and may defer rendering
+that needs current SDK reads. This opt-in state is keyed by Package, scene and
+Actor. It contains no shared Actor data or unfinished action state.
 An Actor window is reopened only if it remains readable. Leaving or application
 termination discards these in-memory drafts. This does not promise static/cache
 reset or preemption of arbitrary Package code.
