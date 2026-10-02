@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.13
+# Rookframe SDK Authoring Kit 0.32.14
 
 Edition 2029 revision 26 adds `sdk.dice.roll_requested(request_id, source)`.
 An authored full-viewport surface can present its Participant's pending requested
@@ -9,6 +9,9 @@ from attaching to retained surfaces.
 Edition 2029 revision 25 adds host-owned Actor portrait selection and decoding.
 The result contains a texture for presentation and normalized PNG bytes for
 shared Actor data. Selection cancellation leaves existing data unchanged.
+
+This kit admits `get_viewport_rect()` on Package-owned Controls for responsive
+layout without exposing a Viewport handle.
 
 This kit also admits stock read-only key callbacks and exposes collection focus
 return through the public UI Kit. Native input construction remains prohibited.
@@ -51,7 +54,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.13", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.14", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "07937db1ee05c81d4d3e52077a0e4d957700ff30", "include": ["rookframe/ui"]})
 ```
 
