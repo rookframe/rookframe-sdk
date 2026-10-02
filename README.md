@@ -1,4 +1,10 @@
-# Rookframe SDK Authoring Kit 0.32.10
+# Rookframe SDK Authoring Kit 0.32.11
+
+Edition 2029 revision 26 adds `sdk.dice.roll_requested(request_id, source)`.
+An authored full-viewport surface can present its Participant's pending requested
+Throw as Window Dice using the accepted immutable plan. Closing that surface
+preserves its dice; the explicit request identity prevents unrelated requests
+from attaching to retained surfaces.
 
 Edition 2029 revision 25 adds host-owned Actor portrait selection and decoding.
 The result contains a texture for presentation and normalized PNG bytes for
@@ -12,7 +18,7 @@ of abandoned immediate physical Rolls by their caller-owned request identity.
 Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–25). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–26). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -45,7 +51,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.10", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.11", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "871bd92cff68c4d40b0c9a31d446e1b8a28d8c77", "include": ["rookframe/ui"]})
 ```
 

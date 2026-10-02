@@ -218,7 +218,7 @@ func cleanup(operation: SDK.Cleanup) -> void:
         if immediate_dice:
             from rookframe_sdk_dice import dice_sources
             world.update(dice_sources(root, requested_throws=revision >= 7, session_throws=revision >= 11,
-                                      cancellable_rolls=revision >= 24))
+                                      cancellable_rolls=revision >= 24, window_rolls=revision >= 26))
         if edition == "2029" and revision >= 12:
             from rookframe_sdk_system_actions import system_action_sources
             world.update(system_action_sources(root, participant_sessions=revision >= 14, actor_creation=revision >= 15, world_data=revision >= 16))

@@ -952,6 +952,23 @@ latest-twenty Action Log window. The Extension owns all meaning and publishes an
 separate resolution explicitly. Optional Packages and non-selected Systems cannot
 request Throws.
 
+### Requested Window Dice — Edition 2029 revision 26
+
+After a requested Throw has been accepted as pending, its target Participant's
+System Presentation can call `sdk.dice.roll_requested(request_id, source)`.
+`source` is the registered root Control of that Package's full-viewport surface,
+usually `self` in its window script. The returned `SDK.OperationResult` reports whether the host
+presented the request in that surface. An absent or non-local pending request
+returns `not_ready`; an unowned or non-full-viewport source returns `invalid_window`.
+
+The host uses the Authority's immutable plan and the existing physical Throw,
+accepted Roll, replication, and Action Log paths. Repeating the same pending
+identity does not start new dice. Close preserves the running dice and accepted
+result. Explicit cancellation or a terminal request removes its transient dice.
+An unrelated later request uses the normal Dice Tray unless its authored workflow
+explicitly presents that request. Do not infer cancellation from Control visibility:
+the host may temporarily hide a surface during ordinary presentation.
+
 ### Rook appearance (Edition 2029 revision 10)
 
 `await sdk.rooks.set_miniature(rook_id, content_reference)` returns a `RookResult`.
