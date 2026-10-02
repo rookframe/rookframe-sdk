@@ -1,4 +1,8 @@
-# Rookframe SDK Authoring Kit 0.32.16
+# Rookframe SDK Authoring Kit 0.32.17
+
+This release pins the UI Kit collection pagination and focus corrections, admits
+public field focus and configurable empty-state copy, and supports owned native
+Label line measurement for authored disclosure layouts.
 
 This kit admits the stock `LineEdit.text_changed` signal on Package-owned
 authored or constructed controls, carrying the native String callback value.
@@ -54,8 +58,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.16", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "6319c25748b706364cf11c064969826650c33611", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.17", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "59996ec184008aa59a6f60f5c59017bbf51acc0f", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -104,7 +108,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/6319c25748b706364cf11c064969826650c33611/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/59996ec184008aa59a6f60f5c59017bbf51acc0f/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
