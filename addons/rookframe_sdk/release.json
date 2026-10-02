@@ -1,5 +1,5 @@
 {
-  "version": "0.32.11",
+  "version": "0.32.12",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,11 +7,11 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "871bd92cff68c4d40b0c9a31d446e1b8a28d8c77"
+    "commit": "94f49dc7d7fe2927136aa491ba91d82ed579edd8"
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "c9be0b3dfb408f6d0164e3812ced743a66045ad60bf233fdd22059c1719e32e6",
+    "checker/Rookframe.PackageCheck.dll": "66ab82169c106eac61050f43eddca4f4ca961b584a7b424a8fc6ea628cc089c7",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -23,7 +23,7 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "plugin.cfg": "ae67fea8a4b600551b9263444369f9e8c1651a86cd77c6d820e962e9c09fcc80",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "c514b9dca8a38f855a8a573eaa0910dfb66d435c786ac8a4ee55a830705ddc7e",
+    "rookframe_authoring.py": "588e4fef5bebe13b3d663d6a658a65031c20054a2386d9b4305c9167e3f73809",
     "rookframe_authoring_checks.py": "d1f93358d1f959f352622734b8b020e295080fcd10c805cc34b00f3cdd58ab68",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "2e1183ee702542bb90c9bb4eba94a954bdfcf82ac86a419a03d33b61ae98da64",
@@ -47,6 +47,9 @@
     "_internal/content/miniature_browser_row.gd": "dd5848680818afc2cf82662b12c1d0f470af70354b8b47567d19356e32863861",
     "_internal/content/miniature_browser_row.gd.uid": "59ec435431950e44f9d961d4b4f558e7616344a0d61245ecc77372908d2c2b07",
     "_internal/content/miniature_browser_row.tscn": "b1a96c6e7c1601fdc33a01484c36e41e945f82c7b77c5c986380e4756e08622a",
+    "_internal/data/collection_caption.tres": "2ac8353752a08705a59d35702b5557c587e096e4ad81181e2ca81deba5c8b1a6",
+    "_internal/data/collection_frame.tres": "e522aac45a75ca2c733f24ed07978788fd5fbde08e107f3563564f8909f52887",
+    "_internal/data/collection_label.tres": "fe80c522aa63281dfaaf809149b15fa1066eecb11d9d55eb0e50697e2f1c6c9c",
     "_internal/data/summary_pair.tscn": "00fed14986a5e61548797ade13ff0c4ca5170e22ffd92c0f7bd3320926bb73ef",
     "_internal/data/summary_stat.tscn": "0bd66f247455a281f8acae6f5c5c8f807d4b95e733008ad3c40efad2ec7e6d7f",
     "_internal/data/task_choice.tscn": "a5b675dfabc00e08c4caa3c8079c925341ff3ea66c3d9159c7050afe01695ca7",
@@ -100,9 +103,9 @@
     "components/data/package_row.gd": "3c702cedbdc502ed665e2745c3c6a7400a41f068e00bc1e81bcc27ccce0806a1",
     "components/data/package_row.gd.uid": "1e0874fee680093d4179a4784345704fd05f8b8f99eafef46643b7fdeada0714",
     "components/data/package_row.tscn": "216871a95a374f379be0e0430ec6aaf1b7144c0733ac9a530d7d179c256fc5e2",
-    "components/data/paginated_choices.gd": "b66fbfc37d4d969fb34b0bfb3bff7d65bddf5a407bedd663744b1f0b8f710392",
+    "components/data/paginated_choices.gd": "4f3763bdbe87f47f47eb3f39b16fcf55eb20c42d2335a8071b2978ef4c10bd56",
     "components/data/paginated_choices.gd.uid": "f9be3895a9300ef5cf298b08447182f81c2664f19032ed329b5ab2751860ec2a",
-    "components/data/paginated_choices.tscn": "d66a14a67782aae726d0b441efbbcd5e331c32befad4d1af4a803e790b660c53",
+    "components/data/paginated_choices.tscn": "f455c7c5046493989464cd59fa5fd41abea8bddfd6d5fddf719ece26b320e298",
     "components/data/paginated_content.gd": "44fe0dc9a5a58d65812aef97254ec1383e99b88daa51290e24d8e160b0714df8",
     "components/data/paginated_content.gd.uid": "8e3e31ec118a3730280304861d40a8e2a9c3f35636ddd452a08ad90d84e136f0",
     "components/data/paginated_content.tscn": "814fe75cefee1e05f3db43c5b18785ab7185724e1288bd5be529ac8475867c9b",
@@ -205,8 +208,11 @@
     "icons/character/food.svg": "7dde207f76637cb5810c7ba0af1b4b3f3647d68fc4c41916e3ff8a91cc90b3d0",
     "icons/character/heart.svg": "ec2332d79d159376e1d7dad94de9c51f744b3084d41fcd0eed188d6fc443eb47",
     "icons/character/herbs.svg": "747e3e46f906986ee6614c7ec2d09c83f904e305dbd876d489d0b91377803d4e",
+    "icons/character/palms.svg": "a7f8c64a57ad6d0d200af9b236dc48fb2627d77e432f942b23e496cff5a39297",
     "icons/character/presence.svg": "52a212b9d77831a0f8ef7d384b3dde5f9d38be6c0ae2c81aa37321d22cff0a51",
     "icons/character/psychopomp.svg": "4e6473ecc0093991d12bbcb9348eafdcdba5e859c69387d07c614b0ea45e0cb9",
+    "icons/character/quill.svg": "11a94667f009675b698ca85307244cf3fa78dd883636b9845684ce0f2bc4542f",
+    "icons/character/shield.svg": "b50b9c13f5f71d2b75973c4a35330431436fb5c225e891faa63107343b05c303",
     "icons/character/silver.svg": "141e6b6b09719af89db2d5b1648a2cfe731e5a7d271b03b014061ce2d02bcded",
     "icons/character/staff.svg": "ee5d7ddf3eec31f413e2147e3144a7966da6823c7d4ea2467abab81da6b5ad2f",
     "icons/character/strength.svg": "3e549f31e5ab57499384dc8cb317959137da69cb7779d5cd45dd0a9480a9b645",
@@ -292,5 +298,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "a5c05cd8fbe40cdcc84c822e50fcd6d7f1738761"
+  "sourceRevision": "a55ca1efd682d5e2e3bc0a6b950c786be909638f"
 }

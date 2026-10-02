@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.11
+# Rookframe SDK Authoring Kit 0.32.12
 
 Edition 2029 revision 26 adds `sdk.dice.roll_requested(request_id, source)`.
 An authored full-viewport surface can present its Participant's pending requested
@@ -51,8 +51,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.11", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "871bd92cff68c4d40b0c9a31d446e1b8a28d8c77", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.12", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "94f49dc7d7fe2927136aa491ba91d82ed579edd8", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -101,7 +101,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/871bd92cff68c4d40b0c9a31d446e1b8a28d8c77/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/94f49dc7d7fe2927136aa491ba91d82ed579edd8/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
