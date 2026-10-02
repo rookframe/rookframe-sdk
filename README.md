@@ -1,8 +1,9 @@
-# Rookframe SDK Authoring Kit 0.32.17
+# Rookframe SDK Authoring Kit 0.32.18
 
-This release pins the UI Kit collection pagination and focus corrections, admits
-public field focus and configurable empty-state copy, and supports owned native
-Label line measurement for authored disclosure layouts.
+This release pins the bounded sheet collection densities, relocatable public
+content pager and native field focus query. Task fields accept the documented
+font and minimum-height theme constants. The production checker admits these
+public presentation contracts without exposing private Kit children.
 
 This kit admits the stock `LineEdit.text_changed` signal on Package-owned
 authored or constructed controls, carrying the native String callback value.
@@ -58,8 +59,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.17", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "59996ec184008aa59a6f60f5c59017bbf51acc0f", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.18", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "1390e661fa80beb4ee4a5957837e63f8936db10e", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -108,7 +109,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/59996ec184008aa59a6f60f5c59017bbf51acc0f/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/1390e661fa80beb4ee4a5957837e63f8936db10e/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.

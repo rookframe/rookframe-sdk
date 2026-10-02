@@ -1,5 +1,5 @@
 {
-  "version": "0.32.17",
+  "version": "0.32.18",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,11 +7,11 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "59996ec184008aa59a6f60f5c59017bbf51acc0f"
+    "commit": "1390e661fa80beb4ee4a5957837e63f8936db10e"
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "b3301d986ead6f82feb93e0e4a06e174c8dadd78e667b4ea4103189e3defc70c",
+    "checker/Rookframe.PackageCheck.dll": "982fb6834adcc158d631a21aaf8ea26d73a6175f651794c55e146a4c8018edd2",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -23,7 +23,7 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "plugin.cfg": "ae67fea8a4b600551b9263444369f9e8c1651a86cd77c6d820e962e9c09fcc80",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "7e94bb863cfd0e8375c0bf4b924831d2f3ea5ff479713c7a494dc7e024741169",
+    "rookframe_authoring.py": "546c3fe338ad2aec8a0f620bceacec6dfc2b82672d93e3df9d8456e06f5785ec",
     "rookframe_authoring_checks.py": "d1f93358d1f959f352622734b8b020e295080fcd10c805cc34b00f3cdd58ab68",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "2e1183ee702542bb90c9bb4eba94a954bdfcf82ac86a419a03d33b61ae98da64",
@@ -50,6 +50,7 @@
     "_internal/data/collection_caption.tres": "2ac8353752a08705a59d35702b5557c587e096e4ad81181e2ca81deba5c8b1a6",
     "_internal/data/collection_frame.tres": "e522aac45a75ca2c733f24ed07978788fd5fbde08e107f3563564f8909f52887",
     "_internal/data/collection_label.tres": "fe80c522aa63281dfaaf809149b15fa1066eecb11d9d55eb0e50697e2f1c6c9c",
+    "_internal/data/collection_title.tres": "a06b251f48fbdb1491682f772cd41ffe4320af8d55756984df1156c2897bd6cf",
     "_internal/data/summary_pair.tscn": "00fed14986a5e61548797ade13ff0c4ca5170e22ffd92c0f7bd3320926bb73ef",
     "_internal/data/summary_stat.tscn": "0bd66f247455a281f8acae6f5c5c8f807d4b95e733008ad3c40efad2ec7e6d7f",
     "_internal/data/task_choice.tscn": "a5b675dfabc00e08c4caa3c8079c925341ff3ea66c3d9159c7050afe01695ca7",
@@ -103,10 +104,10 @@
     "components/data/package_row.gd": "3c702cedbdc502ed665e2745c3c6a7400a41f068e00bc1e81bcc27ccce0806a1",
     "components/data/package_row.gd.uid": "1e0874fee680093d4179a4784345704fd05f8b8f99eafef46643b7fdeada0714",
     "components/data/package_row.tscn": "216871a95a374f379be0e0430ec6aaf1b7144c0733ac9a530d7d179c256fc5e2",
-    "components/data/paginated_choices.gd": "f57120034bb2e74e09bb233a0c2c5280a2b4b9de125ccc0d77272053e576b4ba",
+    "components/data/paginated_choices.gd": "b9e2bbf9c2cbd74b4c6fa3892a76431cf81286e2a35b7bbd76a6b24fdb630f85",
     "components/data/paginated_choices.gd.uid": "f9be3895a9300ef5cf298b08447182f81c2664f19032ed329b5ab2751860ec2a",
-    "components/data/paginated_choices.tscn": "e88a42e8adb3032b15c46bbd1ff4481bd30e2912d8afeddd968bfbfa1a03eed4",
-    "components/data/paginated_content.gd": "4a5fe4180a8f2b1e95c3be6ed6d9983a38c8b13a07ed1a37229003a8a21aa593",
+    "components/data/paginated_choices.tscn": "4f79b67a8855e1f751b076563bc29516467e4a4380844596d29c8a7379ea4053",
+    "components/data/paginated_content.gd": "8678ac28cc15d3ab920212c6c39f09a609b21e203874f077a5c6c2abe16d42ab",
     "components/data/paginated_content.gd.uid": "8e3e31ec118a3730280304861d40a8e2a9c3f35636ddd452a08ad90d84e136f0",
     "components/data/paginated_content.tscn": "814fe75cefee1e05f3db43c5b18785ab7185724e1288bd5be529ac8475867c9b",
     "components/data/roll_row.gd": "59b244d338870ad51a3ef440f42544cf522aa80ae4224a48fe38b9012bacd64a",
@@ -146,16 +147,16 @@
     "components/forms/search_field.gd": "750968b54bb501d9df02556e793f4c605300a27033518f6558fd3bd2c822f6d7",
     "components/forms/search_field.gd.uid": "c7b55853a536c20043dbb65e7b15d16fe023bff5f8ee2e69448df70c922474a0",
     "components/forms/search_field.tscn": "686e3c63f73ff7185dfb50b8b3758c7192045e5498b9e0fc37dc32687a9e0192",
-    "components/forms/task_text_area.gd": "dd97cbd98e5ff0fc54d39fc3023072bfe4febd4e986e880fed0ccf3ada30c863",
+    "components/forms/task_text_area.gd": "a5463d5b50c47a84fa3204d771b757e4a8a177d9f1e1cc7c236f99e8a188c325",
     "components/forms/task_text_area.gd.uid": "13acb80db98fe8ea2c4ca2a4b0762496e2d2de3fb9f737ad4bbdaf5ea0895cd1",
     "components/forms/task_text_area.tscn": "f6678025e5e8d31fff8e851c9074ca424feabc4e8baf15e24b3498924c6b9a85",
-    "components/forms/task_text_field.gd": "ed23f01c526a6cf6bb74b062e8e77b31cd70dfefc269c164079be502ac780298",
+    "components/forms/task_text_field.gd": "5b3510ebc22c2e5f23a81aa859700d6d0417039b18772e2747ca3b98c45ea61e",
     "components/forms/task_text_field.gd.uid": "1a0db35f456b5bb78f8c70d9005080569fc7846f898fd756a382344866e6e3ab",
     "components/forms/task_text_field.tscn": "a3469b3bdcf7ea40f9ad59a8b920e9b43903c4b669e61ad8891d3c2ed24665d2",
-    "components/forms/text_area.gd": "c5399a1bdddb78e25d1fb6d133c198a18be0a1199f23f90d84a12337b47e8801",
+    "components/forms/text_area.gd": "16708948122665da6a554ca3eb5bf3897643acc38e15f40513e85df6423e70a9",
     "components/forms/text_area.gd.uid": "5208f5688d61394aa66acf13b6d96bb224e76c3524cf54a0c691b2a1bdc2eafb",
     "components/forms/text_area.tscn": "b05d51673a0a7a470ac0c435bf9762b85a8e5a185c3647c702bbac26d631b233",
-    "components/forms/text_field.gd": "5ac8d35e37c7bc580b6d8470195d8d747c5f444c268d1ec9deb5eb6afd59d1dc",
+    "components/forms/text_field.gd": "32dbcb5afe436ef3ef957d1bb2d6b207ed5c398c172b6fefc91b7adc9cdc8f9d",
     "components/forms/text_field.gd.uid": "3f0222e792c03fabb86180f7cbd920b7b280ec8d4afbfc09043f317a85b0646f",
     "components/forms/text_field.tscn": "6b6e4a272b2ce0c23d0173a36986aebf7fdb00ccfc9b6565574c8bd812c79ee4",
     "components/layout/action_bar.gd": "d47d6805cd7e6c5d880c5430dbc4456d9ebb3c8f14a9c4c4eaed985e2cb4f25a",
@@ -298,5 +299,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "d3d41e93a9e1c0e6bb20f3914f5449d0a6417432"
+  "sourceRevision": "c88bf2582f12c73849fcf391083cab8bf498d6d0"
 }
