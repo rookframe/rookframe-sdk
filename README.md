@@ -1,8 +1,11 @@
-# Rookframe SDK Authoring Kit 0.32.9
+# Rookframe SDK Authoring Kit 0.32.10
 
 Edition 2029 revision 25 adds host-owned Actor portrait selection and decoding.
 The result contains a texture for presentation and normalized PNG bytes for
 shared Actor data. Selection cancellation leaves existing data unchanged.
+
+This kit also admits stock read-only key callbacks and exposes collection focus
+return through the public UI Kit. Native input construction remains prohibited.
 
 Revision 24 adds fixed `full-viewport` task placement and cancellation
 of abandoned immediate physical Rolls by their caller-owned request identity.
@@ -42,8 +45,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.9", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "80118d6d5b4225697d6646208c89995b3e31c46d", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.10", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "871bd92cff68c4d40b0c9a31d446e1b8a28d8c77", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -92,7 +95,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/80118d6d5b4225697d6646208c89995b3e31c46d/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/871bd92cff68c4d40b0c9a31d446e1b8a28d8c77/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
