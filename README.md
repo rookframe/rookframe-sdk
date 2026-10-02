@@ -1,9 +1,10 @@
-# Rookframe SDK Authoring Kit 0.32.18
+# Rookframe SDK Authoring Kit 0.32.19
 
-This release pins the bounded sheet collection densities, relocatable public
-content pager and native field focus query. Task fields accept the documented
-font and minimum-height theme constants. The production checker admits these
-public presentation contracts without exposing private Kit children.
+This release restores default collection metrics for existing wizard consumers
+and supplies compact glyph controls, Detail tab typography and fixed footer
+styles. It admits authored stock CenterContainer layout, integer Window sizes
+and the documented public field theme constants. Public content paging and
+native field focus remain available without exposing private Kit children.
 
 This kit admits the stock `LineEdit.text_changed` signal on Package-owned
 authored or constructed controls, carrying the native String callback value.
