@@ -1,11 +1,15 @@
-# Rookframe SDK Authoring Kit 0.32.8
+# Rookframe SDK Authoring Kit 0.32.9
 
-Edition 2029 revision 24 adds fixed `full-viewport` task placement and cancellation
+Edition 2029 revision 25 adds host-owned Actor portrait selection and decoding.
+The result contains a texture for presentation and normalized PNG bytes for
+shared Actor data. Selection cancellation leaves existing data unchanged.
+
+Revision 24 adds fixed `full-viewport` task placement and cancellation
 of abandoned immediate physical Rolls by their caller-owned request identity.
 Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–24). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–25). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -20,7 +24,7 @@ The SDK does not introduce a replacement UI or signal framework.
 
 ## Install the two dependencies
 
-Use Godot **4.7.2**, Python **3.10+**, Git and the **.NET 8 runtime** on PATH.
+Use Godot **4.7.2**, Python **3.10+**, Git and the **.NET 10 runtime** on PATH.
 Install Godot's matching export templates for the local authoring host. The exporter produces a shared PCK, not an OS application.
 Rookframe currently tests this authoring path on macOS with Godot Mono; the tools
 accept an explicit Godot executable on every host.
@@ -38,7 +42,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.8", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.9", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "80118d6d5b4225697d6646208c89995b3e31c46d", "include": ["rookframe/ui"]})
 ```
 

@@ -621,6 +621,21 @@ to 1 MiB of UTF-8. Check outcomes such as `display_unavailable`,
 An OS that silently supplies an empty clipboard cannot always distinguish denial
 from genuinely empty text. A GM cannot grant another device permission.
 
+### Shared Actor portraits — Edition 2029 revision 25
+
+`await sdk.portraits.choose() -> ActorPortraitResult` opens a host-owned native
+file picker for PNG, JPEG or WebP. The host validates an 8 MiB input limit and
+fits the image within 512 × 512 while retaining its aspect ratio. The result
+supplies `texture: Texture2D` and normalized PNG `image: PackedByteArray`.
+Package code receives no filesystem path. Cancellation returns a failed result
+with `code == "cancelled"`; callers leave the previous Actor data unchanged.
+
+Save `image` through an ordinary permitted Actor update. These bytes belong to
+the shared World and are included in its normal sharing and persistence.
+`sdk.portraits.decode(image) -> ActorPortraitResult` produces a local texture
+from those bytes. Native resources returned for presentation are never saved in
+Actor data. Clearing a portrait is an ordinary Actor field removal.
+
 ### Named network operations
 
 Create an authored `ServiceDefinition` Resource with `name` matching a declaration

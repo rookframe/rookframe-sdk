@@ -51,7 +51,7 @@ def verifier_path() -> Path:
     shipped = here / "checker/Rookframe.PackageCheck.dll"
     if shipped.exists():
         return shipped
-    development = here / "Rookframe.PackageCheck/bin/Debug/net8.0/Rookframe.PackageCheck.dll"
+    development = here / "Rookframe.PackageCheck/bin/Debug/net10.0/Rookframe.PackageCheck.dll"
     if development.exists():
         return development
     raise RuntimeError("CHECK.TOOL: Install the exact SDK Authoring Kit (or build Rookframe.PackageCheck when developing the SDK).")
