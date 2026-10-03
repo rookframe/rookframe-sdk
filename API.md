@@ -1245,3 +1245,34 @@ is invoked after a native Actor list drop onto the tabletop. The host rechecks
 Owner access, current Scene and drop bounds. Implementations use ordinary awaited
 SDK operations to create and link the Rook and report failures with `sdk.feedback`.
 This creates another linked Rook; it does not move existing Rooks or create an Actor.
+
+
+### Character HUD — Edition 2029 revision 27
+
+The selected System Extension may mount one authored Control scene with
+`sdk.character_hud.mount(contribution)`. Its root receives the display safe area
+and should use full-rect anchors with `MOUSE_FILTER_IGNORE`; interactive children
+use ordinary Godot input. Mounting the same scene again is idempotent. Package UI
+Root and selected-Rook contributions retain their existing layers.
+
+`sdk.character_hud.context()` returns an `SDK.CharacterHudContext` with nullable
+`actor` and `rook` IDs. An owned selected linked Rook supplies its Actor. A Player
+with exactly one owned Actor falls back to that Actor when no owned object
+supplies controls. Multiple owned Actors and GameMaster have no default. A
+selected Prop with available native controls takes priority. The System decides
+whether that Actor has a Character HUD; Creature selection does not become a
+character fallback. Query context again on `context_changed`, and query Actor
+state on `sdk.world_changed`. Neither operation changes selection or World data.
+
+Rendering and native input put this surface above floating windows and below
+docked windows and Full-viewport Surfaces. Its geometry stays fixed as windows
+open, move or dock. Full-viewport tasks also exclude underlying keyboard focus.
+The context is a presentation capability: it does not grant Actor access or
+filter the complete World state shared with Participants.
+
+`sdk.character_hud.open_dice_tray()` opens the native tabletop Dice Tray without
+toggling a live tray closed or changing an outstanding Requested Throw. Launch
+workflows through existing domain capabilities, retaining their initiating Actor
+and source independently of subsequent HUD context changes. Use
+`sdk.windows.open_actor(surface, actor)` for the completed full-viewport sheet;
+that sheet retains Requested Window Dice.

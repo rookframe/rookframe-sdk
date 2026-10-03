@@ -459,4 +459,11 @@ func decode(image: PackedByteArray) -> ActorPortraitResult:
         sdk += f'\nconst ActorPortraits = preload("{root}actor_portraits.gd")\nconst ActorPortraitResult = preload("{root}actor_portrait_result.gd")\nvar _portraits: ActorPortraits\nvar portraits: ActorPortraits:\n\tget:\n\t\treturn _portraits\n'
         sdk = sdk.replace("\t_service_scope = ServiceScope.new(host)", "\t_service_scope = ServiceScope.new(host)\n\t_portraits = ActorPortraits.new(_service_scope)", 1)
         sources["package_sdk_facade.gd"] = sdk
+    if edition == "2029" and revision >= 27:
+        from rookframe_sdk_ui import character_hud_sources
+        sources.update(character_hud_sources(root))
+        sdk = sources["package_sdk_facade.gd"]
+        sdk += f'\nconst CharacterHud = preload("{root}character_hud.gd")\nconst CharacterHudContext = preload("{root}character_hud_context.gd")\nvar _character_hud: CharacterHud\nvar character_hud: CharacterHud:\n\tget:\n\t\treturn _character_hud\n'
+        sdk = sdk.replace("\t_rails = Rails.new(host)", "\t_rails = Rails.new(host)\n\t_character_hud = CharacterHud.new(host)", 1)
+        sources["package_sdk_facade.gd"] = sdk
     return {name: header + source for name, source in sources.items()}
