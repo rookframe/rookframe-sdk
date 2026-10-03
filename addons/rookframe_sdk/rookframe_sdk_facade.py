@@ -218,7 +218,7 @@ func cleanup(operation: SDK.Cleanup) -> void:
         if immediate_dice:
             from rookframe_sdk_dice import dice_sources
             world.update(dice_sources(root, requested_throws=revision >= 7, session_throws=revision >= 11,
-                                      cancellable_rolls=revision >= 24))
+                                      cancellable_rolls=revision >= 24, window_rolls=revision >= 26))
         if edition == "2029" and revision >= 12:
             from rookframe_sdk_system_actions import system_action_sources
             world.update(system_action_sources(root, participant_sessions=revision >= 14, actor_creation=revision >= 15, world_data=revision >= 16))
@@ -430,4 +430,33 @@ func _rookframe_open_definition(package_id: String, local_id: String) -> void:
         sources.pop("implementation.gd", None)
     if not presentations:
         sources.pop("presentation.gd", None)
+
+    if edition == "2029" and revision >= 25:
+        sources["actor_portrait_result.gd"] = f'''extends "{root}portrait_result.gd"
+## Normalized image bytes can be saved in Actor data and travel with its World.
+var image: PackedByteArray
+func _init(result: Dictionary) -> void:
+\tsuper(result)
+\timage = result.get("image", PackedByteArray())
+'''
+        sources["actor_portraits.gd"] = f'''extends RefCounted
+const ServiceScope = preload("{root}service_scope.gd")
+const ActorPortraitResult = preload("{root}actor_portrait_result.gd")
+var _scope: ServiceScope
+func _init(scope: ServiceScope) -> void:
+\t_scope = scope
+## Host-owned image-file selection. Cancel leaves the Actor untouched.
+## Save the returned image bytes through an ordinary Actor update when ready.
+func choose() -> ActorPortraitResult:
+\tvar selected: Dictionary = await _scope._complete(_scope._host.ChooseActorPortrait())
+\tif not selected.get("ok", false):
+\t\treturn ActorPortraitResult.new(selected)
+\treturn decode(selected.get("data", PackedByteArray()))
+func decode(image: PackedByteArray) -> ActorPortraitResult:
+\treturn ActorPortraitResult.new(_scope._host.DecodeActorPortrait(image))
+'''
+        sdk = sources["package_sdk_facade.gd"]
+        sdk += f'\nconst ActorPortraits = preload("{root}actor_portraits.gd")\nconst ActorPortraitResult = preload("{root}actor_portrait_result.gd")\nvar _portraits: ActorPortraits\nvar portraits: ActorPortraits:\n\tget:\n\t\treturn _portraits\n'
+        sdk = sdk.replace("\t_service_scope = ServiceScope.new(host)", "\t_service_scope = ServiceScope.new(host)\n\t_portraits = ActorPortraits.new(_service_scope)", 1)
+        sources["package_sdk_facade.gd"] = sdk
     return {name: header + source for name, source in sources.items()}

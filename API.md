@@ -190,7 +190,7 @@ command. The selected Presentation experience is kept when the exact requirement
 still match. Changed requirements return through stopped Manager preparation.
 
 An Implementation, Presentation, or currently open SDK Window may opt in to
-private draft preservation with ordinary GDScript callbacks:
+private local state preservation with ordinary GDScript callbacks:
 
 ```gdscript
 func capture_reconnect_state() -> Dictionary:
@@ -210,6 +210,11 @@ Session revocation. Restore runs on the fresh instance after normal setup and
 current-state bootstrap, with shared operations disabled during the callback.
 It must only populate local UI, never submit or schedule actions. The user acts
 again in the new Session; query current Actor Access and values when they do.
+The same callbacks also retain an Actor window's local navigation when its view
+is released and recreated within the running World application. Capture follows
+its `closed` signal; restoration follows `opened(actor)` and may defer rendering
+that needs current SDK reads. This opt-in state is keyed by Package, scene and
+Actor. It contains no shared Actor data or unfinished action state.
 An Actor window is reopened only if it remains readable. Leaving or application
 termination discards these in-memory drafts. This does not promise static/cache
 reset or preemption of arbitrary Package code.
@@ -621,6 +626,21 @@ to 1 MiB of UTF-8. Check outcomes such as `display_unavailable`,
 An OS that silently supplies an empty clipboard cannot always distinguish denial
 from genuinely empty text. A GM cannot grant another device permission.
 
+### Shared Actor portraits — Edition 2029 revision 25
+
+`await sdk.portraits.choose() -> ActorPortraitResult` opens a host-owned native
+file picker for PNG, JPEG or WebP. The host validates an 8 MiB input limit and
+fits the image within 512 × 512 while retaining its aspect ratio. The result
+supplies `texture: Texture2D` and normalized PNG `image: PackedByteArray`.
+Package code receives no filesystem path. Cancellation returns a failed result
+with `code == "cancelled"`; callers leave the previous Actor data unchanged.
+
+Save `image` through an ordinary permitted Actor update. These bytes belong to
+the shared World and are included in its normal sharing and persistence.
+`sdk.portraits.decode(image) -> ActorPortraitResult` produces a local texture
+from those bytes. Native resources returned for presentation are never saved in
+Actor data. Clearing a portrait is an ordinary Actor field removal.
+
 ### Named network operations
 
 Create an authored `ServiceDefinition` Resource with `name` matching a declaration
@@ -936,6 +956,23 @@ cancellation. Rookframe appends the raw Roll once, independently of the retained
 latest-twenty Action Log window. The Extension owns all meaning and publishes any
 separate resolution explicitly. Optional Packages and non-selected Systems cannot
 request Throws.
+
+### Requested Window Dice — Edition 2029 revision 26
+
+After a requested Throw has been accepted as pending, its target Participant's
+System Presentation can call `sdk.dice.roll_requested(request_id, source)`.
+`source` is the registered root Control of that Package's full-viewport surface,
+usually `self` in its window script. The returned `SDK.OperationResult` reports whether the host
+presented the request in that surface. An absent or non-local pending request
+returns `not_ready`; an unowned or non-full-viewport source returns `invalid_window`.
+
+The host uses the Authority's immutable plan and the existing physical Throw,
+accepted Roll, replication, and Action Log paths. Repeating the same pending
+identity does not start new dice. Close preserves the running dice and accepted
+result. Explicit cancellation or a terminal request removes its transient dice.
+An unrelated later request uses the normal Dice Tray unless its authored workflow
+explicitly presents that request. Do not infer cancellation from Control visibility:
+the host may temporarily hide a surface during ordinary presentation.
 
 ### Rook appearance (Edition 2029 revision 10)
 

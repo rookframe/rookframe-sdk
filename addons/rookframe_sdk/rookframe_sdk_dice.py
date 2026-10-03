@@ -2,7 +2,7 @@
 
 
 def dice_sources(root: str, *, requested_throws: bool = False, session_throws: bool = False,
-                 cancellable_rolls: bool = False) -> dict[str, str]:
+                 cancellable_rolls: bool = False, window_rolls: bool = False) -> dict[str, str]:
     sources = {
         "dice_term.gd": '''extends Resource
 
@@ -165,5 +165,13 @@ func request_session_throw(request: HumanThrowRequest) -> HumanThrowResult:
 ## Requester or target cancellation. Completed raw Rolls remain unchanged.
 func cancel_throw(request_id: String) -> HumanThrowResult:
 \treturn HumanThrowResult.new(await WorldCapability.new().complete(_host, _host.CancelHumanThrow(request_id)))
+'''
+    if window_rolls:
+        sources["dice.gd"] += '''
+## Present this Participant's pending request in its owning full-viewport surface.
+## The Authority's immutable plan and accepted Roll remain unchanged. Retrying
+## the same identity never starts another Roll. Closed surfaces keep running dice.
+func roll_requested(request_id: String, source: Control) -> OperationResult:
+\treturn OperationResult.new(_host.PresentRequestedRoll(request_id, source))
 '''
     return sources

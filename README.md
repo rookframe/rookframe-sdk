@@ -1,11 +1,33 @@
-# Rookframe SDK Authoring Kit 0.32.8
+# Rookframe SDK Authoring Kit 0.32.20
 
-Edition 2029 revision 24 adds fixed `full-viewport` task placement and cancellation
+This release restores default collection metrics for existing wizard consumers
+and supplies compact glyph controls, Detail tab typography and fixed footer
+styles. It admits authored stock CenterContainer layout, integer Window sizes
+and the documented public field theme constants. Public content paging and
+native field focus remain available without exposing private Kit children.
+
+This kit admits the stock `LineEdit.text_changed` signal on Package-owned
+authored or constructed controls, carrying the native String callback value.
+
+Edition 2029 revision 26 adds `sdk.dice.roll_requested(request_id, source)`.
+An authored full-viewport surface can present its Participant's pending requested
+Throw as Window Dice using the accepted immutable plan. Closing that surface
+preserves its dice; the explicit request identity prevents unrelated requests
+from attaching to retained surfaces.
+
+Edition 2029 revision 25 adds host-owned Actor portrait selection and decoding.
+The result contains a texture for presentation and normalized PNG bytes for
+shared Actor data. Selection cancellation leaves existing data unchanged.
+
+This kit also admits stock read-only key callbacks and exposes collection focus
+return through the public UI Kit. Native input construction remains prohibited.
+
+Revision 24 adds fixed `full-viewport` task placement and cancellation
 of abandoned immediate physical Rolls by their caller-owned request identity.
 Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–24). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–26). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -20,7 +42,7 @@ The SDK does not introduce a replacement UI or signal framework.
 
 ## Install the two dependencies
 
-Use Godot **4.7.2**, Python **3.10+**, Git and the **.NET 8 runtime** on PATH.
+Use Godot **4.7.2**, Python **3.10+**, Git and the **.NET 10 runtime** on PATH.
 Install Godot's matching export templates for the local authoring host. The exporter produces a shared PCK, not an OS application.
 Rookframe currently tests this authoring path on macOS with Godot Mono; the tools
 accept an explicit Godot executable on every host.
@@ -38,8 +60,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.8", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "80118d6d5b4225697d6646208c89995b3e31c46d", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.18", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "1390e661fa80beb4ee4a5957837e63f8936db10e", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -88,7 +110,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/80118d6d5b4225697d6646208c89995b3e31c46d/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/1390e661fa80beb4ee4a5957837e63f8936db10e/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
