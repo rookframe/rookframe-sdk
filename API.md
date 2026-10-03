@@ -1259,7 +1259,8 @@ Root and selected-Rook contributions retain their existing layers.
 `actor` and `rook` IDs. An owned selected linked Rook supplies its Actor. A Player
 with exactly one owned Actor falls back to that Actor when no owned object
 supplies controls. Multiple owned Actors and GameMaster have no default. A
-selected Prop with available native controls takes priority. The System decides
+selected Prop with available native controls takes priority. Builder mode returns
+empty context and hides the Character HUD, including owned selections. The System decides
 whether that Actor has a Character HUD; Creature selection does not become a
 character fallback. Query context again on `context_changed`, and query Actor
 state on `sdk.world_changed`. Neither operation changes selection or World data.

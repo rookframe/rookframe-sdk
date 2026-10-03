@@ -32,7 +32,7 @@ of abandoned immediate physical Rolls by their caller-owned request identity.
 Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–26). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–27). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
