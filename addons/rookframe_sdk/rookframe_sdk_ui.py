@@ -141,3 +141,44 @@ func _init(device: int) -> void:
 \t_device = device
 ''',
     }
+
+
+def character_hud_sources(root: str) -> dict[str, str]:
+    return {
+        "character_hud_context.gd": f'''extends "{root}operation_result.gd"
+const ActorId = preload("{root}actor_id.gd")
+const RookId = preload("{root}rook_id.gd")
+## Null Actor means there is no owned character context. Selection is never changed.
+var actor: ActorId
+var rook: RookId
+func _init(result: Dictionary) -> void:
+\tsuper(result)
+\tif ok:
+\t\tvar value: Dictionary = result.value
+\t\tactor = ActorId.new(value.actor_id) if not str(value.actor_id).is_empty() else null
+\t\trook = RookId.new(value.rook_id) if not str(value.rook_id).is_empty() else null
+''',
+        "character_hud.gd": f'''extends RefCounted
+const Contribution = preload("{root}contribution.gd")
+const CharacterHudContext = preload("{root}character_hud_context.gd")
+const OperationResult = preload("{root}operation_result.gd")
+signal context_changed
+var _host: Object
+func _init(host: Object) -> void:
+\t_host = host
+\t_host.CharacterHudContextChanged.connect(_changed)
+func _changed() -> void:
+\tcontext_changed.emit()
+## The selected System may mount one authored full-rectangle Control, with mouse_filter IGNORE.
+## It owns its children and hides its root for unsupported Actor types or empty context.
+## Rookframe places it above floating tasks, below docks and full-viewport tasks.
+func mount(entry: Contribution) -> void:
+\t_host.RegisterContribution("character-hud", entry.scene)
+## Owned selection first; sole-owned-Actor Player fallback; no GM default.
+func context() -> CharacterHudContext:
+\treturn CharacterHudContext.new(_host.CharacterHudContext())
+## Open the existing native tray, preserving an already pending requested Throw.
+func open_dice_tray() -> OperationResult:
+\treturn OperationResult.new(_host.OpenDiceTray())
+''',
+    }

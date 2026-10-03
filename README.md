@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.20
+# Rookframe SDK Authoring Kit 0.32.21
 
 This release restores default collection metrics for existing wizard consumers
 and supplies compact glyph controls, Detail tab typography and fixed footer
@@ -8,6 +8,11 @@ native field focus remain available without exposing private Kit children.
 
 This kit admits the stock `LineEdit.text_changed` signal on Package-owned
 authored or constructed controls, carrying the native String callback value.
+
+Edition 2029 revision 27 adds the selected System Extension’s Character HUD
+contribution, owned selection/fallback context and native Dice Tray entry point.
+It uses authored Godot Controls above floating windows and below docks and
+Full-viewport Surfaces, without exposing host Nodes.
 
 Edition 2029 revision 26 adds `sdk.dice.roll_requested(request_id, source)`.
 An authored full-viewport surface can present its Participant's pending requested
@@ -27,7 +32,7 @@ of abandoned immediate physical Rolls by their caller-owned request identity.
 Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–26). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–27). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -60,8 +65,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.18", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "1390e661fa80beb4ee4a5957837e63f8936db10e", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.21", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "b8aa5fa929f0f352096d63a53f01bf1e0af39b70", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -110,7 +115,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/1390e661fa80beb4ee4a5957837e63f8936db10e/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/b8aa5fa929f0f352096d63a53f01bf1e0af39b70/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
