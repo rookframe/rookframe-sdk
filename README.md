@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.19
+# Rookframe SDK Authoring Kit 0.32.20
 
 This release restores default collection metrics for existing wizard consumers
 and supplies compact glyph controls, Detail tab typography and fixed footer
