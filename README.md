@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.21
+# Rookframe SDK Authoring Kit 0.32.23
 
 This release restores default collection metrics for existing wizard consumers
 and supplies compact glyph controls, Detail tab typography and fixed footer
@@ -8,6 +8,11 @@ native field focus remain available without exposing private Kit children.
 
 This kit admits the stock `LineEdit.text_changed` signal on Package-owned
 authored or constructed controls, carrying the native String callback value.
+
+Edition 2029 revision 28 adds `sdk.windows.open_actor_task(surface, actor, task)`
+and `Window.opened_task(actor, task)`. An authored task receives copied Package
+context and remains bound to its initiating Actor through selection changes.
+Ordinary Actor inspection and its private draft behavior remain unchanged.
 
 Edition 2029 revision 27 adds the selected System Extension’s Character HUD
 contribution, owned selection/fallback context and native Dice Tray entry point.
@@ -32,7 +37,7 @@ of abandoned immediate physical Rolls by their caller-owned request identity.
 Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–27). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–28). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
@@ -65,7 +70,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.21", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.23", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "b8aa5fa929f0f352096d63a53f01bf1e0af39b70", "include": ["rookframe/ui"]})
 ```
 

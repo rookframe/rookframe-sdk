@@ -466,4 +466,27 @@ func decode(image: PackedByteArray) -> ActorPortraitResult:
         sdk += f'\nconst CharacterHud = preload("{root}character_hud.gd")\nconst CharacterHudContext = preload("{root}character_hud_context.gd")\nvar _character_hud: CharacterHud\nvar character_hud: CharacterHud:\n\tget:\n\t\treturn _character_hud\n'
         sdk = sdk.replace("\t_rails = Rails.new(host)", "\t_rails = Rails.new(host)\n\t_character_hud = CharacterHud.new(host)", 1)
         sources["package_sdk_facade.gd"] = sdk
+    if edition == "2029" and revision >= 28:
+        sources["windows.gd"] += '''
+
+## Open an Actor-bound task with copied Package-owned context. The task remains
+## bound to this Actor when the Participant changes tabletop selection.
+func open_actor_task(surface: ExtensionSurface, actor: ActorId, task: Dictionary) -> OperationResult:
+\treturn OperationResult.new(_host.OpenActorTaskWindowWithPresentation(
+\t\tsurface.scene,
+\t\tactor.value,
+\t\tsurface.initial_presentation(),
+\t\ttask
+\t))
+'''
+        sources["window.gd"] += '''
+
+## Explicit task openings do not restore a previous inspection draft.
+func _rookframe_open_actor_task(actor_id: String, task: Dictionary) -> void:
+\topened_task(SDK.ActorId.new(actor_id), task)
+
+## Package-owned copied context; use domain capabilities to validate its source.
+func opened_task(actor: SDK.ActorId, task: Dictionary) -> void:
+\tpass
+'''
     return {name: header + source for name, source in sources.items()}

@@ -1277,3 +1277,29 @@ workflows through existing domain capabilities, retaining their initiating Actor
 and source independently of subsequent HUD context changes. Use
 `sdk.windows.open_actor(surface, actor)` for the completed full-viewport sheet;
 that sheet retains Requested Window Dice.
+
+
+### Actor task handoff — Edition 2029 revision 28
+
+`sdk.windows.open_actor_task(surface, actor, task) -> SDK.OperationResult` opens
+an admitted Package-authored Extension Surface bound to the supplied Actor and
+delivers `Window.opened_task(actor, task)`. The task is an ordinary Package-owned
+Dictionary with string keys and plain values (null, bool, int, float, String),
+Arrays and Dictionaries;
+Rookframe validates it and copies its nested containers before delivery. Private
+context is bounded to 32 levels, 4,096 values and 64 KiB. The host does not
+interpret the Package's route, source entry or options. Actor access
+and the window lifetime follow `open_actor`: loss of readable access releases
+the view, and actions still validate Owner access through domain capabilities.
+
+The Actor and task remain independent of subsequent tabletop selection. Every
+explicit task opening delivers its supplied context when the same Actor view
+is already open. Opening another Actor or requesting inspection while a task
+is open returns a failed result and retains the original task binding; close
+that task first. Ordinary inspection switching resumes after closure.
+Explicit task opening does not restore a previous inspection draft.
+Package code decides whether to accept another task while one is active and
+cancels live actions through the ordinary window `closed` signal. Plain
+`open_actor` continues to invoke `opened(actor)` and retain its existing draft
+behavior. This API is available to the active Package Presentation and admits
+only that Package's scenes; no host Nodes or cross-Package authority are exposed.
