@@ -1,10 +1,9 @@
-# Rookframe SDK Authoring Kit 0.32.23
+# Rookframe SDK Authoring Kit 0.32.24
 
-This release restores default collection metrics for existing wizard consumers
-and supplies compact glyph controls, Detail tab typography and fixed footer
-styles. It admits authored stock CenterContainer layout, integer Window sizes
-and the documented public field theme constants. Public content paging and
-native field focus remain available without exposing private Kit children.
+This release admits authored stock `AtlasTexture` resources that frame already
+admitted Package textures. Serialized atlas properties remain type checked;
+scripts, unrelated resources and native API escalation remain rejected. Loaded
+and authored atlas values use the existing `Texture2D` capability.
 
 This kit admits the stock `LineEdit.text_changed` signal on Package-owned
 authored or constructed controls, carrying the native String callback value.
