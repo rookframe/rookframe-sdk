@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.22
+# Rookframe SDK Authoring Kit 0.32.23
 
 This release restores default collection metrics for existing wizard consumers
 and supplies compact glyph controls, Detail tab typography and fixed footer
@@ -70,7 +70,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.22", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.23", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "b8aa5fa929f0f352096d63a53f01bf1e0af39b70", "include": ["rookframe/ui"]})
 ```
 
