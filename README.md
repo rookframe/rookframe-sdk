@@ -1,6 +1,17 @@
-# Rookframe SDK Authoring Kit 0.32.29
+# Rookframe SDK Authoring Kit 0.32.30
 
-This release records the stock TextEdit-to-Control inheritance used by the
+This release admits script-free, Package-owned `FontVariation` resources based
+on the original public `assets/fonts/Inter-VariableFont_opsz,wght.ttf`. Authored
+`variation_opentype` accepts a finite `wght` coordinate; `opentype_features`
+accepts `tnum: 1` for tabular figures. Stock integer tags and the reviewed string
+names are supported, with ambiguous duplicate aliases refused. The original
+font and its source/imported dependency bytes remain bound to checked loading.
+It also admits the stock serialized StyleBoxFlat shadow properties:
+`shadow_color` (Color), `shadow_offset` (Vector2), and `shadow_size` (integer).
+These exact Resource rules add no constructors or GDScript native operations.
+SDK Editions, APIs, parser and public UI Kit/font bytes are unchanged.
+
+The kit records the stock TextEdit-to-Control inheritance used by the
 unchanged public TextArea. Inspected Package scenes and their reviewed public
 UI children retain owned provenance for existing Control presentation methods.
 TextEdit construction and editor-specific operations remain unadmitted. The
