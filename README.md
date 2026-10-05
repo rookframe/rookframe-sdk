@@ -1,6 +1,10 @@
-# Rookframe SDK Authoring Kit 0.32.24
+# Rookframe SDK Authoring Kit 0.32.25
 
-This release admits authored stock `AtlasTexture` resources that frame already
+This release replaces inline Actor portraits with retained World filepaths and
+adds authority-side conversion of saved image bytes. Regenerate portrait callers
+and save only the returned filepath through ordinary Actor/World operations.
+
+The kit also admits authored stock `AtlasTexture` resources that frame already
 admitted Package textures. Serialized atlas properties remain type checked;
 scripts, unrelated resources and native API escalation remain rejected. Loaded
 and authored atlas values use the existing `Texture2D` capability.
@@ -43,8 +47,9 @@ Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
 Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–29). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
-2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
-by the host. The kit supplies a
+2027:8 / 2028:5 authors retain SDK 0.7.0. Unchanged generated capabilities keep
+their existing contracts. Earlier inline-byte portrait callers must regenerate
+and adopt the filepath API; the old portrait gameplay API is replaced. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
 `build`, `publish-github` and `catalogue` commands. It is an authoring dependency; only the generated facade
 ships in a Package. The UI Kit is a separate source dependency.
