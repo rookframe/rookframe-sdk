@@ -107,7 +107,8 @@ The generated `Rail.push`, `sdk.windows.open`, and `sdk.windows.open_actor`
 operations submit that portable first-open presentation to Rookframe. It is an
 initial author preference, not World state: the Participant may move or redock
 the retained window, and Rookframe owns safe-area clamping and responsive
-fallbacks. Facades generated for earlier revisions call their original host
+fallbacks. Apart from the replaced inline-byte portrait API (whose callers
+must regenerate and adopt filepaths), earlier facades call their original host
 operations and expose no initial-presentation fields.
 
 ### Fixed full-viewport tasks — 2029 revision 24
