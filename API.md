@@ -651,9 +651,16 @@ Actor data. Clearing a portrait is an ordinary Actor field removal.
 Authority-only conversion operation for existing saved inline image values.
 It synchronously validates and retains their exact bytes and returns `path`;
 it does not assign an Actor field, grant access or commit Package World data.
-A System converts its existing values at startup and commits filepaths through
-ordinary permitted Actor and World mutations before Participant admission.
-If retention fails, preserve the inline value and report the startup failure.
+A selected System converts existing values through synchronous
+`migrate_actor_data(data: Variant) -> Variant` and
+`migrate_world_data(data: Variant) -> Variant` Implementation callbacks. Authority
+supplies copied saved values before `start()` and Participant admission, including
+on dedicated Authority. Return pure replacement values; do not await operations
+or start gameplay. The host validates and durably commits one complete candidate
+only after every callback succeeds, preserving Actor identities and access.
+`retain` is available only inside this migration scope, without granting normal
+gameplay mutation permission. If retention fails, preserve the inline value and
+call stock `push_error` to refuse startup without accepting the candidate.
 The portrait picker and decoder use only filepaths; inline bytes are not a
 second portrait representation for normal gameplay.
 

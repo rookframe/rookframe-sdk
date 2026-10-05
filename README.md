@@ -30,7 +30,9 @@ from attaching to retained surfaces.
 
 Edition 2029 revision 29 adds authority-side retention for saved inline portrait
 conversion. Shared portraits now use World-relative filepaths; regenerate the
-facade and replace saved byte values once during Authority startup.
+facade and replace saved byte values through synchronous System saved-data
+migration callbacks before Authority startup. Dedicated Authority uses the same
+conversion without requiring a local Participant.
 
 Edition 2029 revision 25 introduced host-owned Actor portrait selection and decoding.
 The result contains a local texture and a retained World-relative filepath for

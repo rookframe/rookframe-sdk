@@ -498,4 +498,29 @@ func _rookframe_open_actor_task(actor_id: String, task: Dictionary) -> void:
 func opened_task(actor: SDK.ActorId, task: Dictionary) -> void:
 \tpass
 '''
+    if edition == "2029" and revision >= 29 and implementation:
+        sources["implementation.gd"] = sources["implementation.gd"].replace(
+            '\t\tsdk = SDK.new(get_meta("rookframe_sdk"))',
+            '\t\tif sdk == null:\n\t\t\tsdk = SDK.new(get_meta("rookframe_sdk"))', 1)
+        sources["implementation.gd"] += '''
+
+## Authority calls these synchronously on copied saved data before start().
+## Retain images through sdk.portraits; do not start gameplay or await operations.
+## Return pure replacement data. push_error rejects the complete migration candidate.
+func migrate_actor_data(data: Variant) -> Variant:
+\treturn data
+
+func migrate_world_data(data: Variant) -> Variant:
+\treturn data
+
+func _rookframe_migrate_actor_data(data: Variant) -> Variant:
+\tif sdk == null:
+\t\tsdk = SDK.new(get_meta("rookframe_sdk"))
+\treturn migrate_actor_data(data)
+
+func _rookframe_migrate_world_data(data: Variant) -> Variant:
+\tif sdk == null:
+\t\tsdk = SDK.new(get_meta("rookframe_sdk"))
+\treturn migrate_world_data(data)
+'''
     return {name: header + source for name, source in sources.items()}
