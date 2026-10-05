@@ -1,6 +1,13 @@
-# Rookframe SDK Authoring Kit 0.32.27
+# Rookframe SDK Authoring Kit 0.32.28
 
-This release binds the existing public `theme/task_action.tres` FontVariation
+This release admits the stock serialized `StyleBoxFlat.draw_center` Boolean and
+four numeric `expand_margin_*` render properties on inspected Package-owned
+native Resources. They can draw focus borders outside the Control rectangle
+without expanding its clickable area. Exact Resource type, Script effects,
+ownership and dependency checks remain required; no GDScript operation is added.
+SDK Editions, APIs, parser and public UI Kit bytes are unchanged.
+
+The kit binds the existing public `theme/task_action.tres` FontVariation
 (Inter 700) for authored font overrides on Package-owned native Controls,
 including attached or inherited scripts. The public display font remains
 supported. Resource closure, hashes, type and ownership checks still apply.
@@ -89,7 +96,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.27", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.28", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "b8aa5fa929f0f352096d63a53f01bf1e0af39b70", "include": ["rookframe/ui"]})
 ```
 
