@@ -1,9 +1,11 @@
-# Rookframe SDK Authoring Kit 0.32.26
+# Rookframe SDK Authoring Kit 0.32.27
 
-This release admits the inspected public `FontVariation` resource in authored
-font overrides on Package-owned native Controls with attached or inherited
-scripts. Resource closure, type and ownership checks still apply. SDK Edition
-2029 remains at revision 29, with unchanged APIs, parser and public UI Kit bytes.
+This release binds the existing public `theme/task_action.tres` FontVariation
+(Inter 700) for authored font overrides on Package-owned native Controls,
+including attached or inherited scripts. The public display font remains
+supported. Resource closure, hashes, type and ownership checks still apply.
+SDK Edition 2029 remains at revision 29, with unchanged APIs, parser and public
+UI Kit bytes.
 
 The kit replaces inline Actor portraits with retained World filepaths and
 adds authority-side conversion of saved image bytes. Regenerate portrait callers
@@ -87,7 +89,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.26", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.27", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "b8aa5fa929f0f352096d63a53f01bf1e0af39b70", "include": ["rookframe/ui"]})
 ```
 
