@@ -666,12 +666,20 @@ The portrait picker and decoder use only filepaths; inline bytes are not a
 second portrait representation for normal gameplay.
 
 ```gdscript
+var prior: Dictionary = actor.data
+var expected := str(prior.get("portrait", ""))
+var revision := int(prior.get("portrait_revision", 0))
 var selected := await sdk.portraits.choose()
 if selected.ok:
-    # A System action merges this field into current Authority Actor data.
+    # This System checks its portrait field/revision and merges into latest data.
     await sdk.system_actions.submit("sheet.portrait", {
-        "actor": actor.id.value, "path": selected.path})
+        "actor": actor.id.value, "path": selected.path,
+        "expected": expected, "expected_revision": revision})
 ```
+
+The portrait revision in this example is System-owned mutation state, separate
+from the image filepath. It prevents an older upload from overwriting a newer
+accepted choice/reset while allowing unrelated HP or inventory updates.
 
 ### Named network operations
 

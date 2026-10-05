@@ -459,8 +459,8 @@ func decode(path: String) -> ActorPortraitResult:
 '''
         if revision >= 29:
             sources["actor_portraits.gd"] += '''
-## Authority-only conversion of an existing saved inline portrait into a World file.
-## Retains supplied bytes unchanged. Assign the result through ordinary mutations.
+## Authority saved-data migration only. Retain an existing inline portrait unchanged.
+## Return its filepath inside the copied saved value; the host commits the candidate.
 func retain(image: PackedByteArray) -> ActorPortraitResult:
 \treturn ActorPortraitResult.new(_scope._host.RetainActorPortrait(image))
 '''
