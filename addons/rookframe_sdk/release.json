@@ -11,7 +11,7 @@
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "21bec5026989441a961eabe5b3c725b2d46950020fd6ac2cf4f7e27d72b73656",
+    "checker/Rookframe.PackageCheck.dll": "2ededc378e1cdba03733cb9a12e7eb9565bf057d1bb68bbcba97c07307146f67",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -299,5 +299,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "f8bbde90801354ff8506a6a8652a09c77fb69f05"
+  "sourceRevision": "ded5d6434d7be07466752168ea4db5d1cc1ca246"
 }
