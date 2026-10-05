@@ -626,20 +626,44 @@ to 1 MiB of UTF-8. Check outcomes such as `display_unavailable`,
 An OS that silently supplies an empty clipboard cannot always distinguish denial
 from genuinely empty text. A GM cannot grant another device permission.
 
-### Shared Actor portraits — Edition 2029 revision 25
+### Shared Actor portraits — Edition 2029 revision 29
 
 `await sdk.portraits.choose() -> ActorPortraitResult` opens a host-owned native
-file picker for PNG, JPEG or WebP. The host validates an 8 MiB input limit and
-fits the image within 512 × 512 while retaining its aspect ratio. The result
-supplies `texture: Texture2D` and normalized PNG `image: PackedByteArray`.
-Package code receives no filesystem path. Cancellation returns a failed result
+file picker for PNG, JPEG or WebP. The host retains the original file bytes,
+format and dimensions in the shared World before success. The result supplies
+`texture: Texture2D` for local presentation and `path: String`, a World-relative
+filepath such as `portraits/goblin.png`. Package code receives no absolute device
+filepath or raw filesystem access. Cancellation returns a failed result
 with `code == "cancelled"`; callers leave the previous Actor data unchanged.
 
-Save `image` through an ordinary permitted Actor update. These bytes belong to
-the shared World and are included in its normal sharing and persistence.
-`sdk.portraits.decode(image) -> ActorPortraitResult` produces a local texture
-from those bytes. Native resources returned for presentation are never saved in
+Save `path` through an ordinary permitted Actor update or Package-owned World-data
+update. The mutation uses normal Authority acceptance; selecting a file does not
+assign it to an Actor. Multiple Actors may use the same filepath. Retained World
+files are shared with every Participant and preserved with their World.
+`sdk.portraits.decode(path) -> ActorPortraitResult` resolves the local file and
+produces a texture without rewriting the image. A file still being acquired or
+unavailable returns a failed result; refresh after the ordinary World change
+notification and retry decoding. Fit the texture in authored UI while preserving
+its proportions. Native resources returned for presentation are never saved in
 Actor data. Clearing a portrait is an ordinary Actor field removal.
+
+`sdk.portraits.retain(image: PackedByteArray) -> ActorPortraitResult` is an
+Authority-only conversion operation for existing saved inline image values.
+It synchronously validates and retains their exact bytes and returns `path`;
+it does not assign an Actor field, grant access or commit Package World data.
+A System converts its existing values at startup and commits filepaths through
+ordinary permitted Actor and World mutations before Participant admission.
+If retention fails, preserve the inline value and report the startup failure.
+The portrait picker and decoder use only filepaths; inline bytes are not a
+second portrait representation for normal gameplay.
+
+```gdscript
+var selected := await sdk.portraits.choose()
+if selected.ok:
+    # A System action merges this field into current Authority Actor data.
+    await sdk.system_actions.submit("sheet.portrait", {
+        "actor": actor.id.value, "path": selected.path})
+```
 
 ### Named network operations
 

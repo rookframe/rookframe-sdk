@@ -24,9 +24,15 @@ Throw as Window Dice using the accepted immutable plan. Closing that surface
 preserves its dice; the explicit request identity prevents unrelated requests
 from attaching to retained surfaces.
 
-Edition 2029 revision 25 adds host-owned Actor portrait selection and decoding.
-The result contains a texture for presentation and normalized PNG bytes for
-shared Actor data. Selection cancellation leaves existing data unchanged.
+Edition 2029 revision 29 adds authority-side retention for saved inline portrait
+conversion. Shared portraits now use World-relative filepaths; regenerate the
+facade and replace saved byte values once during Authority startup.
+
+Edition 2029 revision 25 introduced host-owned Actor portrait selection and decoding.
+The result contains a local texture and a retained World-relative filepath for
+ordinary Actor or World data. Original image bytes, format and dimensions remain
+unchanged. Multiple Actors may share a file. Selection cancellation leaves
+existing Actor data unchanged.
 
 This kit also admits stock read-only key callbacks and exposes collection focus
 return through the public UI Kit. Native input construction remains prohibited.
@@ -36,7 +42,7 @@ of abandoned immediate physical Rolls by their caller-owned request identity.
 Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–28). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–29). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
 by the host. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
