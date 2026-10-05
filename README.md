@@ -1,11 +1,18 @@
-# Rookframe SDK Authoring Kit 0.32.28
+# Rookframe SDK Authoring Kit 0.32.29
 
-This release admits the stock serialized `StyleBoxFlat.draw_center` Boolean and
+This release records the stock TextEdit-to-Control inheritance used by the
+unchanged public TextArea. Inspected Package scenes and their reviewed public
+UI children retain owned provenance for existing Control presentation methods.
+TextEdit construction and editor-specific operations remain unadmitted. The
+existing basic native property contract is unchanged; theme/focus and Resource
+operations retain their specific ownership, type and dependency checks.
+SDK Editions, APIs, parser and public UI Kit bytes are unchanged.
+
+The kit also admits the stock serialized `StyleBoxFlat.draw_center` Boolean and
 four numeric `expand_margin_*` render properties on inspected Package-owned
 native Resources. They can draw focus borders outside the Control rectangle
 without expanding its clickable area. Exact Resource type, Script effects,
 ownership and dependency checks remain required; no GDScript operation is added.
-SDK Editions, APIs, parser and public UI Kit bytes are unchanged.
 
 The kit binds the existing public `theme/task_action.tres` FontVariation
 (Inter 700) for authored font overrides on Package-owned native Controls,
@@ -96,7 +103,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.28", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.29", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "b8aa5fa929f0f352096d63a53f01bf1e0af39b70", "include": ["rookframe/ui"]})
 ```
 
