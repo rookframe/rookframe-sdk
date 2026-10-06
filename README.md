@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.38
+# Rookframe SDK Authoring Kit 0.32.39
 
 This version binds the public Silkbound Ledger theme, fonts, textures and
 collection component. Package-owned Controls can apply admitted font/style
@@ -127,8 +127,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.38", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "fb9b720e68b57e6a992c709768d0a6c2465594ac", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.39", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "ee195cac502bcedc02e6bc5af744cd2558042734", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -251,7 +251,7 @@ not Rookframe C# source or a project to build. Keep the complete bundle together
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/fb9b720e68b57e6a992c709768d0a6c2465594ac/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/ee195cac502bcedc02e6bc5af744cd2558042734/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
@@ -542,3 +542,9 @@ SDK 0.31.0 also admits stock Button text clipping for compact native tab layouts
 
 SDK 0.31.1 preserves canonical LF script bytes during Package preparation on
 Windows, so relocated generated facades pass the same exact admission checks.
+
+The shared UI Kit also provides `paginated_text_area` for fixed-page Silkbound
+writing. Its complete-text `value` and `value_changed` contract retains drafts
+across page turns; `get_pager()` composes its native pager into a fixed footer.
+Reading surfaces can retain their one-page pager with
+`paginated_content.always_show_pager`.
