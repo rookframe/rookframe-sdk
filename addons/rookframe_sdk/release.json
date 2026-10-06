@@ -1,5 +1,5 @@
 {
-  "version": "0.32.34",
+  "version": "0.32.35",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,11 +7,11 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "2af9fd4d5849d4545cd8f3cf1b7f8eeb66db1a46"
+    "commit": "6147692cbc7c7992e8f1a6af4f2be095c0910953"
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "607ce09f9e9931182e1f4c59123355227642b4323ace9d3be7e3f8c6822605e8",
+    "checker/Rookframe.PackageCheck.dll": "60412265cc6b564ce61b70b365f47d44f2db7527fbee85d9411f3355d0c14433",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -23,7 +23,7 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "plugin.cfg": "ae67fea8a4b600551b9263444369f9e8c1651a86cd77c6d820e962e9c09fcc80",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "920ee57e98e9582b1d48fe82dd4487b081a3e3e48ff542476592dd9bf574a416",
+    "rookframe_authoring.py": "0ddde2e9ea04cb2dab3c94d09541f523c293058b239116c011e5362e1ed6b96f",
     "rookframe_authoring_checks.py": "d1f93358d1f959f352622734b8b020e295080fcd10c805cc34b00f3cdd58ab68",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "2e1183ee702542bb90c9bb4eba94a954bdfcf82ac86a419a03d33b61ae98da64",
@@ -312,12 +312,12 @@
     "theme/silkbound_medium.tres": "3d10e06044bda5ace0a4a31c28b2e799b7631c927fef72f22a8a429f8bceec75",
     "theme/silkbound_regular.tres": "39bd4ed6b7476bfa4d4448648fc603a53bca99bc1778891b32d0ae568dc17d3d",
     "theme/silkbound_semibold.tres": "c945fbf65dedf32c5b2df23364f2d1a22a11cb67ee20fad6a8c8cacd322ce2d7",
-    "theme/silkbound_theme.tres": "4c7417ac210abb6e7532afa8ad220a4d5f284d33b5fc1cc60fcaef74ad358d34",
+    "theme/silkbound_theme.tres": "6249278e5a4608862c8a25405def000ab6fc69cccfd857ff74291893ae5bec76",
     "theme/task_action.tres": "5b49c53152fe0fe8fc1592e6d9d309ae3137c3e886419fa255c1d6fefa7852fa",
     "theme/task_display.tres": "c4afa9f034e357d017a68bd12439a3f2fd7a87999fdaeed47f95bbc9df1b6b51",
     "theme/task_wordmark.tres": "6b6e91853b0bd018ca598fc132ec1e8d6a1a5ff3ea8b74143a5abe0fc1b0564f",
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "9194ab90a82ed16606563325f74d7c6070f41680"
+  "sourceRevision": "731d5766ba07d050dc77e12da771c7dbace9eafa"
 }
