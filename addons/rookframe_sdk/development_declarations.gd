@@ -32,7 +32,8 @@ func sources_changed(paths: PackedStringArray) -> void:
 func queue_update() -> void:
 	if not _queued and not _stopped:
 		_queued = true
-		_publish.call_deferred()
+		# Import progress must run on a frame signal, outside the deferred message queue.
+		EditorInterface.get_base_control().get_tree().process_frame.connect(_publish, CONNECT_ONE_SHOT)
 
 
 func _publish() -> void:
