@@ -107,7 +107,8 @@ The generated `Rail.push`, `sdk.windows.open`, and `sdk.windows.open_actor`
 operations submit that portable first-open presentation to Rookframe. It is an
 initial author preference, not World state: the Participant may move or redock
 the retained window, and Rookframe owns safe-area clamping and responsive
-fallbacks. Facades generated for earlier revisions call their original host
+fallbacks. Apart from the replaced inline-byte portrait API (whose callers
+must regenerate and adopt filepaths), earlier facades call their original host
 operations and expose no initial-presentation fields.
 
 ### Fixed full-viewport tasks — 2029 revision 24
@@ -626,20 +627,59 @@ to 1 MiB of UTF-8. Check outcomes such as `display_unavailable`,
 An OS that silently supplies an empty clipboard cannot always distinguish denial
 from genuinely empty text. A GM cannot grant another device permission.
 
-### Shared Actor portraits — Edition 2029 revision 25
+### Shared Actor portraits — Edition 2029 revision 29
 
 `await sdk.portraits.choose() -> ActorPortraitResult` opens a host-owned native
-file picker for PNG, JPEG or WebP. The host validates an 8 MiB input limit and
-fits the image within 512 × 512 while retaining its aspect ratio. The result
-supplies `texture: Texture2D` and normalized PNG `image: PackedByteArray`.
-Package code receives no filesystem path. Cancellation returns a failed result
+file picker for PNG, JPEG or WebP. The host retains the original file bytes,
+format and dimensions in the shared World before success. The result supplies
+`texture: Texture2D` for local presentation and `path: String`, a World-relative
+filepath such as `portraits/goblin.png`. Package code receives no absolute device
+filepath or raw filesystem access. Cancellation returns a failed result
 with `code == "cancelled"`; callers leave the previous Actor data unchanged.
 
-Save `image` through an ordinary permitted Actor update. These bytes belong to
-the shared World and are included in its normal sharing and persistence.
-`sdk.portraits.decode(image) -> ActorPortraitResult` produces a local texture
-from those bytes. Native resources returned for presentation are never saved in
+Save `path` through an ordinary permitted Actor update or Package-owned World-data
+update. The mutation uses normal Authority acceptance; selecting a file does not
+assign it to an Actor. Multiple Actors may use the same filepath. Retained World
+files are shared with every Participant and preserved with their World.
+`sdk.portraits.decode(path) -> ActorPortraitResult` resolves the local file and
+produces a texture without rewriting the image. A file still being acquired or
+unavailable returns a failed result; refresh after the ordinary World change
+notification and retry decoding. Fit the texture in authored UI while preserving
+its proportions. Native resources returned for presentation are never saved in
 Actor data. Clearing a portrait is an ordinary Actor field removal.
+
+`sdk.portraits.retain(image: PackedByteArray) -> ActorPortraitResult` is an
+Authority-only conversion operation for existing saved inline image values.
+It synchronously validates and retains their exact bytes and returns `path`;
+it does not assign an Actor field, grant access or commit Package World data.
+A selected System converts existing values through synchronous
+`migrate_actor_data(data: Variant) -> Variant` and
+`migrate_world_data(data: Variant) -> Variant` Implementation callbacks. Authority
+supplies copied saved values before `start()` and Participant admission, including
+on dedicated Authority. Return pure replacement values; do not await operations
+or start gameplay. The host validates and durably commits one complete candidate
+only after every callback succeeds, preserving Actor identities and access.
+`retain` is available only inside this migration scope, without granting normal
+gameplay mutation permission. If retention fails, preserve the inline value and
+call stock `push_error` to refuse startup without accepting the candidate.
+The portrait picker and decoder use only filepaths; inline bytes are not a
+second portrait representation for normal gameplay.
+
+```gdscript
+var prior: Dictionary = actor.data
+var expected := str(prior.get("portrait", ""))
+var revision := int(prior.get("portrait_revision", 0))
+var selected := await sdk.portraits.choose()
+if selected.ok:
+    # This System checks its portrait field/revision and merges into latest data.
+    await sdk.system_actions.submit("sheet.portrait", {
+        "actor": actor.id.value, "path": selected.path,
+        "expected": expected, "expected_revision": revision})
+```
+
+The portrait revision in this example is System-owned mutation state, separate
+from the image filepath. It prevents an older upload from overwriting a newer
+accepted choice/reset while allowing unrelated HP or inventory updates.
 
 ### Named network operations
 

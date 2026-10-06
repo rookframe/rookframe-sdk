@@ -188,7 +188,7 @@ func request(path: String, method: HttpMethod.Value = HttpMethod.Value.GET, body
 ''',
     })
     sources["portrait_result.gd"] = f'''extends "{root}integration_result.gd"
-## A decoded, fitted 512 x 512 native image. No Script/Resource file is evaluated.
+## A decoded native image for local presentation. No Script/Resource file is evaluated.
 var texture: Texture2D
 func _init(result: Dictionary) -> void:
 \tsuper(result)

@@ -433,11 +433,11 @@ func _rookframe_open_definition(package_id: String, local_id: String) -> void:
 
     if edition == "2029" and revision >= 25:
         sources["actor_portrait_result.gd"] = f'''extends "{root}portrait_result.gd"
-## Normalized image bytes can be saved in Actor data and travel with its World.
-var image: PackedByteArray
+## A retained World-relative filepath. Save this value through ordinary Actor data.
+var path: String
 func _init(result: Dictionary) -> void:
 \tsuper(result)
-\timage = result.get("image", PackedByteArray())
+\tpath = result.get("path", "")
 '''
         sources["actor_portraits.gd"] = f'''extends RefCounted
 const ServiceScope = preload("{root}service_scope.gd")
@@ -445,15 +445,24 @@ const ActorPortraitResult = preload("{root}actor_portrait_result.gd")
 var _scope: ServiceScope
 func _init(scope: ServiceScope) -> void:
 \t_scope = scope
-## Host-owned image-file selection. Cancel leaves the Actor untouched.
-## Save the returned image bytes through an ordinary Actor update when ready.
+## Host-owned selection retains the original file in the shared World before success.
+## Assign the returned filepath through an ordinary permitted Actor/World update.
+## Cancel or acquisition failure leaves the existing Actor reference untouched.
 func choose() -> ActorPortraitResult:
 \tvar selected: Dictionary = await _scope._complete(_scope._host.ChooseActorPortrait())
 \tif not selected.get("ok", false):
 \t\treturn ActorPortraitResult.new(selected)
-\treturn decode(selected.get("data", PackedByteArray()))
-func decode(image: PackedByteArray) -> ActorPortraitResult:
-\treturn ActorPortraitResult.new(_scope._host.DecodeActorPortrait(image))
+\treturn decode(selected.get("text", ""))
+## Local display only; the host resolves the filepath inside this installation's World.
+func decode(path: String) -> ActorPortraitResult:
+\treturn ActorPortraitResult.new(_scope._host.DecodeActorPortrait(path))
+'''
+        if revision >= 29:
+            sources["actor_portraits.gd"] += '''
+## Authority saved-data migration only. Retain an existing inline portrait unchanged.
+## Return its filepath inside the copied saved value; the host commits the candidate.
+func retain(image: PackedByteArray) -> ActorPortraitResult:
+\treturn ActorPortraitResult.new(_scope._host.RetainActorPortrait(image))
 '''
         sdk = sources["package_sdk_facade.gd"]
         sdk += f'\nconst ActorPortraits = preload("{root}actor_portraits.gd")\nconst ActorPortraitResult = preload("{root}actor_portrait_result.gd")\nvar _portraits: ActorPortraits\nvar portraits: ActorPortraits:\n\tget:\n\t\treturn _portraits\n'
@@ -488,5 +497,30 @@ func _rookframe_open_actor_task(actor_id: String, task: Dictionary) -> void:
 ## Package-owned copied context; use domain capabilities to validate its source.
 func opened_task(actor: SDK.ActorId, task: Dictionary) -> void:
 \tpass
+'''
+    if edition == "2029" and revision >= 29 and implementation:
+        sources["implementation.gd"] = sources["implementation.gd"].replace(
+            '\t\tsdk = SDK.new(get_meta("rookframe_sdk"))',
+            '\t\tif sdk == null:\n\t\t\tsdk = SDK.new(get_meta("rookframe_sdk"))', 1)
+        sources["implementation.gd"] += '''
+
+## Authority calls these synchronously on copied saved data before start().
+## Retain images through sdk.portraits; do not start gameplay or await operations.
+## Return pure replacement data. push_error rejects the complete migration candidate.
+func migrate_actor_data(data: Variant) -> Variant:
+\treturn data
+
+func migrate_world_data(data: Variant) -> Variant:
+\treturn data
+
+func _rookframe_migrate_actor_data(data: Variant) -> Variant:
+\tif sdk == null:
+\t\tsdk = SDK.new(get_meta("rookframe_sdk"))
+\treturn migrate_actor_data(data)
+
+func _rookframe_migrate_world_data(data: Variant) -> Variant:
+\tif sdk == null:
+\t\tsdk = SDK.new(get_meta("rookframe_sdk"))
+\treturn migrate_world_data(data)
 '''
     return {name: header + source for name, source in sources.items()}

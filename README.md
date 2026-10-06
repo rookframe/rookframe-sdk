@@ -1,10 +1,45 @@
-# Rookframe SDK Authoring Kit 0.32.23
+# Rookframe SDK Authoring Kit 0.32.30
 
-This release restores default collection metrics for existing wizard consumers
-and supplies compact glyph controls, Detail tab typography and fixed footer
-styles. It admits authored stock CenterContainer layout, integer Window sizes
-and the documented public field theme constants. Public content paging and
-native field focus remain available without exposing private Kit children.
+This release admits script-free, Package-owned `FontVariation` resources based
+on the original public `assets/fonts/Inter-VariableFont_opsz,wght.ttf`. Authored
+`variation_opentype` accepts a finite `wght` coordinate; `opentype_features`
+accepts `tnum: 1` for tabular figures. Stock integer tags and the reviewed string
+names are supported, with ambiguous duplicate aliases refused. The original
+font and its source/imported dependency bytes remain bound to checked loading.
+It also admits the stock serialized StyleBoxFlat shadow properties:
+`shadow_color` (Color), `shadow_offset` (Vector2), and `shadow_size` (integer).
+These exact Resource rules add no constructors or GDScript native operations.
+SDK Editions, APIs, parser and public UI Kit/font bytes are unchanged.
+
+The kit records the stock TextEdit-to-Control inheritance used by the
+unchanged public TextArea. Inspected Package scenes and their reviewed public
+UI children retain owned provenance for existing Control presentation methods.
+TextEdit construction and editor-specific operations remain unadmitted. The
+existing basic native property contract is unchanged; theme/focus and Resource
+operations retain their specific ownership, type and dependency checks.
+SDK Editions, APIs, parser and public UI Kit bytes are unchanged.
+
+The kit also admits the stock serialized `StyleBoxFlat.draw_center` Boolean and
+four numeric `expand_margin_*` render properties on inspected Package-owned
+native Resources. They can draw focus borders outside the Control rectangle
+without expanding its clickable area. Exact Resource type, Script effects,
+ownership and dependency checks remain required; no GDScript operation is added.
+
+The kit binds the existing public `theme/task_action.tres` FontVariation
+(Inter 700) for authored font overrides on Package-owned native Controls,
+including attached or inherited scripts. The public display font remains
+supported. Resource closure, hashes, type and ownership checks still apply.
+SDK Edition 2029 remains at revision 29, with unchanged APIs, parser and public
+UI Kit bytes.
+
+The kit replaces inline Actor portraits with retained World filepaths and
+adds authority-side conversion of saved image bytes. Regenerate portrait callers
+and save only the returned filepath through ordinary Actor/World operations.
+
+The kit also admits authored stock `AtlasTexture` resources that frame already
+admitted Package textures. Serialized atlas properties remain type checked;
+scripts, unrelated resources and native API escalation remain rejected. Loaded
+and authored atlas values use the existing `Texture2D` capability.
 
 This kit admits the stock `LineEdit.text_changed` signal on Package-owned
 authored or constructed controls, carrying the native String callback value.
@@ -25,9 +60,17 @@ Throw as Window Dice using the accepted immutable plan. Closing that surface
 preserves its dice; the explicit request identity prevents unrelated requests
 from attaching to retained surfaces.
 
-Edition 2029 revision 25 adds host-owned Actor portrait selection and decoding.
-The result contains a texture for presentation and normalized PNG bytes for
-shared Actor data. Selection cancellation leaves existing data unchanged.
+Edition 2029 revision 29 adds authority-side retention for saved inline portrait
+conversion. Shared portraits now use World-relative filepaths; regenerate the
+facade and replace saved byte values through synchronous System saved-data
+migration callbacks before Authority startup. Dedicated Authority uses the same
+conversion without requiring a local Participant.
+
+Edition 2029 revision 25 introduced host-owned Actor portrait selection and decoding.
+The result contains a local texture and a retained World-relative filepath for
+ordinary Actor or World data. Original image bytes, format and dimensions remain
+unchanged. Multiple Actors may share a file. Selection cancellation leaves
+existing Actor data unchanged.
 
 This kit also admits stock read-only key callbacks and exposes collection focus
 return through the public UI Kit. Native input construction remains prohibited.
@@ -37,9 +80,10 @@ of abandoned immediate physical Rolls by their caller-owned request identity.
 Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–28). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
-2027:8 / 2028:5 authors retain SDK 0.7.0. Existing emitted facades remain supported
-by the host. The kit supplies a
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–29). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+2027:8 / 2028:5 authors retain SDK 0.7.0. Unchanged generated capabilities keep
+their existing contracts. Earlier inline-byte portrait callers must regenerate
+and adopt the filepath API; the old portrait gameplay API is replaced. The kit supplies a
 Package-local facade, an optional editor plugin, and `init`, `facade`, `check`,
 `build`, `publish-github` and `catalogue` commands. It is an authoring dependency; only the generated facade
 ships in a Package. The UI Kit is a separate source dependency.
@@ -70,7 +114,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.23", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.30", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "b8aa5fa929f0f352096d63a53f01bf1e0af39b70", "include": ["rookframe/ui"]})
 ```
 

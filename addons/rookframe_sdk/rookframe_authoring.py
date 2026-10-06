@@ -20,9 +20,9 @@ from rookframe_package_build import (BUILD_SCHEMA,
     deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.32.23"
+SDK_VERSION = "0.32.30"
 SDK_EDITION = "2029"
-SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 28}
+SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 29}
 UI_VERSION = "v1.0.0-rc.1"
 UI_COMMIT = "b8aa5fa929f0f352096d63a53f01bf1e0af39b70"
 RESOURCE_EXPORT = "package"
@@ -34,7 +34,7 @@ class AuthoringError(RuntimeError):
 
 def check_edition(edition: str, revision: int) -> None:
     if type(revision) is not int or not 1 <= revision <= SDK_EDITIONS.get(edition, 0):
-        raise AuthoringError("SDK.REVISION: This kit authors 2029 revisions 1–28, 2027 revisions 1–7 and 2028 revisions 1–4. Use SDK 0.7.0 to author 2027:8 or 2028:5, or migrate integrations to 2029:1.")
+        raise AuthoringError("SDK.REVISION: This kit authors 2029 revisions 1–29, 2027 revisions 1–7 and 2028 revisions 1–4. Use SDK 0.7.0 to author 2027:8 or 2028:5, or migrate integrations to 2029:1.")
 
 
 def json_text(value: object) -> str:
