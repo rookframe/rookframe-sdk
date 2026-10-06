@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.32
+# Rookframe SDK Authoring Kit 0.32.33
 
 This release admits script-free, Package-owned `FontVariation` resources based
 on the original public `assets/fonts/Inter-VariableFont_opsz,wght.ttf`. Authored
@@ -94,9 +94,11 @@ integration behind those contracts. Use ordinary GDScript calculations, Resource
 Godot controls and signals, and public UI Kit components for their native roles.
 The SDK does not introduce a replacement UI or signal framework.
 
-SDK 0.32.32 binds the approved Silkbound Ledger Theme, font resources and
+SDK 0.32.33 binds the approved Silkbound Ledger Theme, font resources and
 Miniature list/preview browser from the public UI Kit. The approved linen uses
-a lossless runtime tile so native SVG import does not alter its fine weave. Existing surfaces opt in
+a lossless runtime tile so native SVG import does not alter its fine weave.
+Stock FontFile resources retain the original EB Garamond data and native shaping
+with prerendered glyph coverage for the approved reference appearance. Existing surfaces opt in
 by assigning that Theme; SDK Edition operations and revisions are unchanged.
 
 ## Install the two dependencies
@@ -119,8 +121,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.32", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "50217506c56f748e8701e466916dd2180d80578f", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.33", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "fbc32ed1987cb891405fcfa2dbe91f8f7e640f6f", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -169,7 +171,7 @@ Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/50217506c56f748e8701e466916dd2180d80578f/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/fbc32ed1987cb891405fcfa2dbe91f8f7e640f6f/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.

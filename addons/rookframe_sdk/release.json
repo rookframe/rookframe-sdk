@@ -1,5 +1,5 @@
 {
-  "version": "0.32.32",
+  "version": "0.32.33",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,11 +7,11 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "50217506c56f748e8701e466916dd2180d80578f"
+    "commit": "fbc32ed1987cb891405fcfa2dbe91f8f7e640f6f"
   },
   "files": {
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "e4db70b618b2d94085cecb54b6d5280fe25987e0ee7bbd3658c34ec50bc865f3",
+    "checker/Rookframe.PackageCheck.dll": "292af92a33605b55fab69e1f62d77c16f6fb92df1f040efb95016a2304c00dd6",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -23,7 +23,7 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "plugin.cfg": "ae67fea8a4b600551b9263444369f9e8c1651a86cd77c6d820e962e9c09fcc80",
     "plugin.gd": "a4cf242b03816a8d3b08135b3735b6e630106c3bd885c8bd7f8d4b0ef456adf4",
-    "rookframe_authoring.py": "9b928916395a575f810f3a2854de5089fd5d35a49c4b69953a43cf8fa27c2714",
+    "rookframe_authoring.py": "bfce635c9d5994efbab2a45163382cd3ccbd29ec9c2a71fc787b62938f950ef0",
     "rookframe_authoring_checks.py": "d1f93358d1f959f352622734b8b020e295080fcd10c805cc34b00f3cdd58ab68",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
     "rookframe_package_build.py": "2e1183ee702542bb90c9bb4eba94a954bdfcf82ac86a419a03d33b61ae98da64",
@@ -68,6 +68,9 @@
     "assets/fonts/eb-garamond/EBGaramond[wght].ttf": "ef9512f92f6d579e5dc75af59a5a4b1b8b47d2eda89e00b954d44520e5369027",
     "assets/fonts/eb-garamond/METADATA.pb": "be94098be975a66281842ed599baefa14959eff9da14c87250678e905f6043f2",
     "assets/fonts/eb-garamond/OFL.txt": "0985066662eb755ed3683ae5482a81a9195b49ce3f7e165cc2388b3dbece7dd7",
+    "assets/fonts/eb-garamond/prerendered/ink.res": "3cf023f72bba03aeb1a7c4cb96db2aed42de66b0b6393c076a107ed70d0b895c",
+    "assets/fonts/eb-garamond/prerendered/italic.res": "f54fb4aba6be779006c0aa9af90e5ca2baf903a952388c8bf8adbda9ab874001",
+    "assets/fonts/eb-garamond/prerendered/roman.res": "862e777477dc060f07df6c65078b6028f067fafdabd496dac6debc18112a3320",
     "assets/frames/focus.png": "b8f75d13385af3bbb0e67feaf0c88335929f05071e36e263d879d5e79ecd4b22",
     "assets/frames/managed-surface.png": "f3bb784353e54722338b6f1a541ab531514ec0ac2d7ccb7740d63d669c0861cb",
     "assets/frames/primary-hover.png": "8a7920bc950edf87ff698882daec98b9d6ebf665785da730c358aee9a9db89fc",
@@ -77,7 +80,7 @@
     "assets/frames/secondary-normal.png": "583f9da9fa91edf30e4831e5cc52c9e73cddf2f4228046be053c6e8e0f87be25",
     "assets/frames/secondary-pressed.png": "72f1b0e005d908ddbda9cff953a9ca3782586ff9f724d2168128dc5fa426e390",
     "assets/frames/section.png": "c71d301e2ff39ccf881c768263471eedbca52923130f8a3c850a06aaa36ba9cc",
-    "assets/silkbound-ledger/README.md": "f9d62f62bde4588759b5a254f477671f5fa16cb4759f784b9d042f6acfe85426",
+    "assets/silkbound-ledger/README.md": "cfa5bc5074037cb2eea46f545ccc75c7fc686e5c859815eb309949f1e8be4aca",
     "assets/silkbound-ledger/linen.png": "6c7d92a17944c5e06bb8141d59e265739f87207391d10d8605286bfc64d117df",
     "assets/silkbound-ledger/linen.svg": "5b5493b6247e31b453f1fef0d9d679884fbf0ff7a29c416b548bb70128f517e7",
     "assets/silkbound-ledger/ribbon.svg": "ac70caaede80905a6086ff0f5e111680dfb7dba9fec0d1e67c2a5a74ce04da25",
@@ -305,16 +308,16 @@
     "icons/world.svg": "6a7b1695690e86e5d812772448301131a82801bef24805faae865044ed4a4f35",
     "theme/fullscreen_task_theme.tres": "70ad9f94f06341d96c9fa40d1a590523f4fe8a384d680e8eae7174694ec1502d",
     "theme/rookframe_theme.tres": "e473c69bd7dcd97b113f8d0a2a0d7f21f0608a539f7ec4abc81b2bc5cedbe054",
-    "theme/silkbound_italic.tres": "688b529eeb760b56b0fbc529c2c0523ac0612a1c3389ca8ef82e9000b3657a49",
-    "theme/silkbound_medium.tres": "2ea8ad9f62ffe95a01548897d4a33c4aea61521464453ffa027b3c20a265854f",
-    "theme/silkbound_regular.tres": "934def03e19ba0c786c084142c082a016f180ea13498d1b5643b918858b556ff",
-    "theme/silkbound_semibold.tres": "a458db8a15eeedda1b2a6d33a006cc6e88800af08639ae829d5a03370558e1f9",
-    "theme/silkbound_theme.tres": "a8a4e9faaa68e962514b1b267db271d44d7c930e0e4489053f499eef5831c3c4",
+    "theme/silkbound_italic.tres": "5931af2afe43de4d3e13aaa01f1aab103641404a498ee333c7ee8dc7a5726636",
+    "theme/silkbound_medium.tres": "3d10e06044bda5ace0a4a31c28b2e799b7631c927fef72f22a8a429f8bceec75",
+    "theme/silkbound_regular.tres": "39bd4ed6b7476bfa4d4448648fc603a53bca99bc1778891b32d0ae568dc17d3d",
+    "theme/silkbound_semibold.tres": "c945fbf65dedf32c5b2df23364f2d1a22a11cb67ee20fad6a8c8cacd322ce2d7",
+    "theme/silkbound_theme.tres": "3b5594ef0ca2e231d924cf050f9e540bae658e98b6420bbbf8a4c4464ac2ed25",
     "theme/task_action.tres": "5b49c53152fe0fe8fc1592e6d9d309ae3137c3e886419fa255c1d6fefa7852fa",
     "theme/task_display.tres": "c4afa9f034e357d017a68bd12439a3f2fd7a87999fdaeed47f95bbc9df1b6b51",
     "theme/task_wordmark.tres": "6b6e91853b0bd018ca598fc132ec1e8d6a1a5ff3ea8b74143a5abe0fc1b0564f",
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "da815d2f436a5230b194ec4f499de33e32b18647"
+  "sourceRevision": "23955069974790acd2a936a045f2abcd275c2bae"
 }
