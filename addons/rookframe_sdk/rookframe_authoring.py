@@ -17,14 +17,14 @@ import uuid
 from rookframe_sdk_facade import facade_sources
 from rookframe_authoring_checks import check_dependencies, configured_profiles, verify
 from rookframe_package_build import (BUILD_SCHEMA,
-    deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
+    copy_author_project, deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.32.30"
+SDK_VERSION = "0.32.37"
 SDK_EDITION = "2029"
 SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 29}
 UI_VERSION = "v1.0.0-rc.1"
-UI_COMMIT = "b8aa5fa929f0f352096d63a53f01bf1e0af39b70"
+UI_COMMIT = "8ff45908b6627f7b827c56685dd1afbbe39246b9"
 RESOURCE_EXPORT = "package"
 
 
@@ -72,7 +72,10 @@ def read_presets(project: Path) -> configparser.ConfigParser:
     return config
 
 
-def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: str = SDK_EDITION) -> None:
+def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: str = SDK_EDITION,
+               content_only: bool = False) -> None:
+    if content_only and (kind != "optional" or ui):
+        raise AuthoringError("INIT.CONFLICT: A content-only Package must be optional and has no initial UI.")
     presets_path = project / "export_presets.cfg"
     if presets_path.exists() and not presets_path.is_file():
         raise AuthoringError("INIT.CONFLICT: export_presets.cfg must be a regular file.")
@@ -89,6 +92,8 @@ def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: s
                     "sdk": {"edition": edition, "minimumRevision": 1},
                     "rookframeCompatibility": {"minimum": "0.1.0", "verified": "0.1.0"},
                     "implementation": {"entryPoint": "logic/implementation.gd"}}
+        if content_only:
+            del manifest["implementation"]
     identity = uuid.UUID(package_id)
     if identity.version != 4 or str(identity) != package_id:
         raise AuthoringError("INIT.CONFLICT: Package ID must be a canonical UUIDv4.")
@@ -102,6 +107,8 @@ def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: s
         "rookframe.json": json_text(manifest),
         ".rookframe/authoring.lock.json": json_text(lock),
     }
+    if not (project / ".gitignore").exists():
+        proposed[".gitignore"] = ".godot/\n.plugged/\naddons/rookframe_sdk/\naddons/gd-plug/\naddons/webrtc_native/lib/\nrookframe/ui/\nrookframe/development/\n.rookframe-development/\n.rookframe-development.pck\n.rookframe/development.json\n.rookframe/development-runtime.json\nbuild/\n__pycache__/\n"
     proposed.update({f"{package_root}/sdk/{name}": source
                      for name, source in facade_sources(package_id, revision, SDK_VERSION, edition, implementation="implementation" in manifest, presentations=bool(manifest.get("presentations")) or (ui and not manifest_path.exists())).items()})
     if ui and not manifest_path.exists():
@@ -130,9 +137,9 @@ func _plugging() -> void:
         proposed[f"{package_root}/logic/implementation.gd"] = f'extends "res://{package_root}/sdk/implementation.gd"\n'
     if not (project / "project.godot").exists():
         proposed["project.godot"] = 'config_version=5\n[application]\nconfig/name=' + json.dumps(name) + '\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n'
-        if ui:
-            proposed["project.godot"] = proposed["project.godot"].replace('[rendering]',
-                f'run/main_scene="res://{package_root}/ui/window.tscn"\n[editor_plugins]\nenabled=PackedStringArray("res://addons/rookframe_sdk/plugin.cfg")\n[rendering]')
+        main = f'run/main_scene="res://{package_root}/ui/window.tscn"\n' if ui else ""
+        proposed["project.godot"] = proposed["project.godot"].replace('[rendering]',
+            main + '[editor_plugins]\nenabled=PackedStringArray("res://addons/rookframe_sdk/plugin.cfg")\n[rendering]')
     config = read_presets(project)
     existing_names = {config.get(s, "name", fallback="").strip('"'): s
                       for s in config.sections() if not s.endswith(".options")}
@@ -148,23 +155,26 @@ func _plugging() -> void:
             additions.append(preset(index, profile, package_id))
             index += 1
     # Preflight every owned/generated collision before adding any scaffolding.
-    for relative in (*proposed, "export_presets.cfg"):
+    for relative in (*proposed, "export_presets.cfg", package_root):
         path = project / relative
         if path.is_symlink() or any(parent.is_symlink() for parent in path.parents if parent != project and project in parent.parents):
             raise AuthoringError(f"INIT.CONFLICT: {relative} traverses a symbolic link.")
+    if (project / package_root).exists() and not (project / package_root).is_dir():
+        raise AuthoringError("INIT.CONFLICT: The Package root must be a directory.")
     for relative, content in proposed.items():
         path = project / relative
         if path.exists() and relative != "rookframe.json" and path.read_text(encoding="utf-8") != content:
             raise AuthoringError(f"INIT.CONFLICT: {relative} differs; reconcile it explicitly. No files were overwritten.")
         if any(parent.exists() and not parent.is_dir() for parent in path.parents):
             raise AuthoringError(f"INIT.CONFLICT: Parent of {relative} is not a directory.")
+    (project / package_root).mkdir(parents=True, exist_ok=True)
     for relative, content in proposed.items():
         path = project / relative
         if not path.exists():
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(content.encode("utf-8"))
     if additions:
-        with (project / "export_presets.cfg").open("a") as output:
+        with (project / "export_presets.cfg").open("a", encoding="utf-8") as output:
             output.write("\n" + "\n".join(additions))
 
 
@@ -230,8 +240,7 @@ def check_project(project: Path, godot: Path, work: Path) -> tuple[dict, list[st
         if path.is_symlink():
             raise AuthoringError(f"SOURCE.SYMLINK: Materialize {path} before author checking.")
     snapshot = work / "check"
-    shutil.copytree(project, snapshot, ignore=shutil.ignore_patterns(
-        ".godot", ".git", "build", "bin", "obj", "__pycache__"))
+    copy_author_project(project, snapshot)
     root = snapshot / f"rookframe/packages/{manifest['id']}"
     normalize_binary_resources(godot, snapshot, root)
     run_godot(godot, snapshot, "--editor", "--import")
@@ -293,12 +302,17 @@ def main() -> int:
         from rookframe_publication import main as publication_main
         return publication_main(sys.argv[1:])
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("init", "facade", "check", "build"))
+    parser.add_argument("command", choices=("init", "facade", "register", "install-dependencies", "check", "build"))
     parser.add_argument("--project", type=Path, default=Path.cwd())
     parser.add_argument("--name", default="My Package")
     parser.add_argument("--kind", choices=("optional", "system-extension"), default="optional")
     parser.add_argument("--edition", choices=tuple(SDK_EDITIONS), default=SDK_EDITION)
     parser.add_argument("--ui", action="store_true", help="Scaffold an authored scene and a Rail-to-window Presentation for a new Package.")
+    parser.add_argument("--content-only", action="store_true", help="Create an optional Package without scripts or UI.")
+    parser.add_argument("--scene")
+    parser.add_argument("--entry-id")
+    parser.add_argument("--entry-type")
+    parser.add_argument("--presentation")
     parser.add_argument("--godot", type=Path, default=Path(os.environ.get("ROOKFRAME_GODOT", "/Applications/Godot_mono.app/Contents/MacOS/Godot")))
     parser.add_argument("--output", type=Path)
     parser.add_argument("--graphical", action="store_true", help="Use the graphical export renderer when required by the host.")
@@ -306,11 +320,20 @@ def main() -> int:
     try:
         project = args.project.resolve()
         if args.command == "init":
-            initialize(project, args.name, args.kind, args.ui, args.edition)
+            initialize(project, args.name, args.kind, args.ui, args.edition, args.content_only)
             result = {"status": "initialized", "project": str(project)}
         elif args.command == "facade":
             check_facade(project, generate_missing=True)
             result = {"status": "facade_checked"}
+        elif args.command == "install-dependencies":
+            from rookframe_authoring_entries import install_dependencies
+            result = install_dependencies(project)
+        elif args.command == "register":
+            from rookframe_authoring_entries import register
+            if not args.scene or not args.entry_id or not args.entry_type:
+                raise AuthoringError("Choose a scene, entry ID and Content type or UI slot.")
+            result = register(project, args.scene, args.entry_id, args.name,
+                              args.entry_type, args.presentation)
         else:
             with tempfile.TemporaryDirectory(prefix="rookframe-author-") as directory:
                 work = Path(directory)

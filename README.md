@@ -1,6 +1,11 @@
-# Rookframe SDK Authoring Kit 0.32.30
+# Rookframe SDK Authoring Kit 0.32.37
 
-This release admits script-free, Package-owned `FontVariation` resources based
+This release adds Package creation, scene registration and the **Development World** editor dock. Run the compiled
+Rookframe development runtime from the Package's own Godot project, then save
+scripts and reimport models without restarting the World. Unpublished Packages
+need no published baseline. See [development setup](#run-a-development-world-without-rookframe-source).
+
+The SDK also admits script-free, Package-owned `FontVariation` resources based
 on the original public `assets/fonts/Inter-VariableFont_opsz,wght.ttf`. Authored
 `variation_opentype` accepts a finite `wght` coordinate; `opentype_features`
 accepts `tnum: 1` for tabular figures. Stock integer tags and the reviewed string
@@ -98,8 +103,9 @@ The SDK does not introduce a replacement UI or signal framework.
 
 Use Godot **4.7.2**, Python **3.10+**, Git and the **.NET 10 runtime** on PATH.
 Install Godot's matching export templates for the local authoring host. The exporter produces a shared PCK, not an OS application.
-Rookframe currently tests this authoring path on macOS with Godot Mono; the tools
-accept an explicit Godot executable on every host.
+The tools accept an explicit Godot executable on every host. Development mode
+requires a matching stock Godot .NET editor and compiled runtime bundle for the
+local OS and CPU architecture.
 
 Start with a normal `project.godot`. Install gd-plug's bootstrap at
 `addons/gd-plug/plug.gd` using its [upstream instructions](https://github.com/imjp94/gd-plug).
@@ -114,8 +120,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.30", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "b8aa5fa929f0f352096d63a53f01bf1e0af39b70", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.37", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "8ff45908b6627f7b827c56685dd1afbbe39246b9", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -155,16 +161,90 @@ use the local gd-plug Git object store, with no network fetch or execution.
 ## Author in Godot
 
 Enable **Rookframe SDK** in Project Settings → Plugins for an existing project.
-A newly initialized UI project enables it automatically. On editor entry the
+A newly initialized project enables it automatically. On editor entry the
 plugin generates a missing facade or diagnoses a stale one. Project → Tools
 provides **Rookframe: Check Package** and **Rookframe: Build Package**. These
 commands report in Output and may take a moment while Godot prepares copies.
 Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
 
+The dock's **Package** tab works in a blank Godot project with the SDK add-on
+installed. Enter a name, choose **Extension with UI**, **Content pack** or
+**System Extension**, and choose **Create Package**. Then choose **Install
+authoring dependencies** to install the locked UI Kit and gd-plug bootstrap.
+This preserves existing files and refuses conflicting dependency bytes.
+
+Save your scenes, scripts and imported models below the Package directory shown
+in the dock: `res://rookframe/packages/<package-id>/`. Other subdirectories are
+your choice. Select a saved scene with **Use open scene** or **Browse**, give it
+a stable ID and choose **Register scene**:
+
+- For UI, choose a left/right Rail window, Package UI root, selected-Rook slot,
+  or (for Systems) Actor Creation. Attach ordinary Godot scripts to the scene's
+  Controls. Registration creates typed SDK descriptors and a generated
+  Presentation wrapper which also calls your existing `compose()`.
+- For models, choose Prop, Wall Style, Surface Finish or Miniature. **Prepare
+  model scene** creates an editable wrapper that retains the imported model
+  instance. Props receive a starting box collider; inspect it before registering.
+  Walls and finishes need a single-surface mesh named `Surface`, with UVs and a
+  native 3D material. Walls run along +X with +Y up; finishes lie in XZ.
+  Preparation adds scale and sample-span metadata. One Godot unit is one World unit.
+
+Registration updates the Manifest. Content appears in the corresponding tools
+of the running Development World after import. Adding a file alone does not
+register Content or place an instance in the World. Registering an additional
+UI entry also updates the running Presentation. Commit `.rookframe/ui-entries.json`
+with the generated descriptors and wrapper; customize your original Presentation
+and scenes. If you edit the generated wrapper directly, registration refuses to
+overwrite it.
+
+## Run a Development World without Rookframe source
+
+Install the compiled development support supplied with Rookframe and open this
+project in its matching **Godot .NET** editor. Open **Project → Tools → Rookframe:
+Development World**. In the dock, choose the runtime's
+`rookframe-development-runtime.json`, a local World name, and any published
+Package Manifest URLs you want to use. An optional Package also needs a published
+System Manifest URL; an editable System supplies the System itself. The editable
+Package does not need a published release.
+
+Choose **Save and prepare**. First setup offers a one-time **Save and reopen
+editor** action so Godot can apply its native launch/Game-tab settings. Then
+**Run development World** or normal Play opens Rookframe inside Godot. Save
+scripts and scenes, or reimport models, to update the running World. Repeated
+Run clicks in the dock keep the current session. Errors appear in Godot's
+Debugger and Output; fix and save to retry.
+
+The World, Actors, links and piece positions survive supported hot reloads.
+Reimported model hierarchy replaces the affected model nodes, including nested
+scenes; their transient node fields initialize again. Godot applies ordinary
+live script and scene edits, including retained script members. Reload does not
+rerun `_ready()`/`start()` on retained Implementation instances. Content and
+Presentation declarations update live; saving Presentation code recomposes its
+authored UI with fresh transient Control state. A failed replacement keeps the previous usable UI. SDK Edition,
+Implementation entry point, Package identity/version and the session's Package
+selection are chosen before Play. Godot's restrictions on changing a
+script's native base class still apply.
+
+Rookframe blocks network hosting and joining for the entire development process.
+Only the selected source Package bypasses publication and code/hash admission;
+every other Package uses normal public HTTPS acquisition and local verification.
+This mode runs your trusted author code; it is not an installed-Package sandbox.
+
+The dock works in this project directly. Its local settings and data are
+`.rookframe/development.json`, `.rookframe/development-runtime.json`,
+`.rookframe-development/`, `.rookframe-development.pck`, `rookframe/development/`, `.godot/` and the staged
+native libraries in `addons/webrtc_native/lib/`. Ignore them
+in source control. Reopening the same World name keeps its data; another name
+creates a separate World. Clearing `.godot/` is recoverable by preparing again.
+The matching runtime bundle contains the application PCK and compiled libraries,
+not Rookframe C# source or a project to build. Keep the complete bundle together.
+
+## Authored scenes and UI
+
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/b8aa5fa929f0f352096d63a53f01bf1e0af39b70/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/8ff45908b6627f7b827c56685dd1afbbe39246b9/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
@@ -214,7 +294,8 @@ rebuilding the same version deliberately creates another identity.
 Edition/revision metadata, and the recommended independent UI release's hashes.
 The standalone `Rookframe.PackageCheck.dll` is a framework-dependent author tool
 compiled from the production verifier sources, not a Rookframe application or
-private host assembly dependency. .NET is required only by author checking/build.
+private host assembly dependency. .NET is required by author checking/build and
+the compiled development runtime; published Package code remains GDScript.
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Imported architectural materials
