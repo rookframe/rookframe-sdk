@@ -1,4 +1,11 @@
-# Rookframe SDK Authoring Kit 0.32.37
+# Rookframe SDK Authoring Kit 0.32.38
+
+This version binds the public Silkbound Ledger theme, fonts, textures and
+collection component. Package-owned Controls can apply admitted font/style
+resources and change reviewed presentation properties on stock `duplicate()`
+copies. Shared resources stay read-only. Public composition slots keep their
+owning component's provenance; stock OptionButton item icons are type checked.
+SDK Editions and gameplay APIs remain unchanged.
 
 This release adds Package creation, scene registration and the **Development World** editor dock. Run the compiled
 Rookframe development runtime from the Package's own Godot project, then save
@@ -120,7 +127,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.37", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.38", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "fb9b720e68b57e6a992c709768d0a6c2465594ac", "include": ["rookframe/ui"]})
 ```
 
