@@ -13,7 +13,7 @@
     "authoring.gd": "d9807132da59e18899a93b5da5732fa36dc630293b18f019d777b0d3b264afd5",
     "authoring.tscn": "d0669c81d7cf2a91f5075b01ec9411faf95a8ff8746d3651de6aac7bbc700fbe",
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "21803e6560f82aaf15ab38dbc3e7b5777f801cfb64dfd71f862b51cd9915497d",
+    "checker/Rookframe.PackageCheck.dll": "59a07389ea2d868e832e9ad6085f696484b765366fc21247baea67090ba13422",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -25,7 +25,7 @@
     "checker/unicode.LICENSE": "6a18c5fac70d7860b57f5b72b4e2c9a1ba6b3d2741eef7ff9767c5379364f10d",
     "development.gd": "fc0f69dc2bbf03a330857a84073cd30e84c17e45676b47c3fe05679ef2c1d99e",
     "development.tscn": "4e51bc071d2b0a7821af3136e5f1e6f95571288d48eda01ca3c0258f0ad3db47",
-    "development_declarations.gd": "32747470bcb45a624a51aadf3d31c835af552b52108398c647bc79eda92b8415",
+    "development_declarations.gd": "ed4a6af835b780c36524145a1ccd2a56bf9962ac0454eb36c989466d968fc03b",
     "development_entry.tscn": "33c554612afb670c66e45a8dafb77aa8ca2c3ca99481c2a607bb11a3a0868c14",
     "development_importer.gd": "59b1f3dfaf559a4666cb459d0ba8897f1c10bcdbde229461429cff363b2a5016",
     "plugin.cfg": "04e437e2b0150e8227dabec8551feec76f5d658334c304eed539a4b86c42e68d",
@@ -339,5 +339,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "d698848f5e2a1c2137bff3a1a0e2cc122307f748"
+  "sourceRevision": "b0b1b80ef22fd0b40497d4bdf240bbedd8bfbc79"
 }

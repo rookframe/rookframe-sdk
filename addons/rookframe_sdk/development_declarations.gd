@@ -32,7 +32,7 @@ func sources_changed(paths: PackedStringArray) -> void:
 func queue_update() -> void:
 	if not _queued and not _stopped:
 		_queued = true
-		# Import progress must run on a frame signal, outside the deferred message queue.
+		# Coalesce resource notifications at the next editor frame.
 		EditorInterface.get_base_control().get_tree().process_frame.connect(_publish, CONNECT_ONE_SHOT)
 
 
@@ -70,7 +70,6 @@ func _publish() -> void:
 	file.close()
 	_manifest = source
 	_paths.clear()
-	if FileAccess.file_exists(PATH + ".import"):
-		filesystem.reimport_files(PackedStringArray([PATH]))
-	else:
-		filesystem.scan()
+	# The native scan schedules imports safely, including after an external scene
+	# reload. Synchronous reimport_files can reenter a deferred editor reload.
+	filesystem.scan()
