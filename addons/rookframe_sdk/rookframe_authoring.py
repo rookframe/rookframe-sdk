@@ -17,10 +17,10 @@ import uuid
 from rookframe_sdk_facade import facade_sources
 from rookframe_authoring_checks import check_dependencies, configured_profiles, verify
 from rookframe_package_build import (BUILD_SCHEMA,
-    deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
+    copy_author_project, deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.32.35"
+SDK_VERSION = "0.32.36"
 SDK_EDITION = "2029"
 SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 29}
 UI_VERSION = "v1.0.0-rc.1"
@@ -130,9 +130,9 @@ func _plugging() -> void:
         proposed[f"{package_root}/logic/implementation.gd"] = f'extends "res://{package_root}/sdk/implementation.gd"\n'
     if not (project / "project.godot").exists():
         proposed["project.godot"] = 'config_version=5\n[application]\nconfig/name=' + json.dumps(name) + '\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n'
-        if ui:
-            proposed["project.godot"] = proposed["project.godot"].replace('[rendering]',
-                f'run/main_scene="res://{package_root}/ui/window.tscn"\n[editor_plugins]\nenabled=PackedStringArray("res://addons/rookframe_sdk/plugin.cfg")\n[rendering]')
+        main = f'run/main_scene="res://{package_root}/ui/window.tscn"\n' if ui else ""
+        proposed["project.godot"] = proposed["project.godot"].replace('[rendering]',
+            main + '[editor_plugins]\nenabled=PackedStringArray("res://addons/rookframe_sdk/plugin.cfg")\n[rendering]')
     config = read_presets(project)
     existing_names = {config.get(s, "name", fallback="").strip('"'): s
                       for s in config.sections() if not s.endswith(".options")}
@@ -164,7 +164,7 @@ func _plugging() -> void:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_bytes(content.encode("utf-8"))
     if additions:
-        with (project / "export_presets.cfg").open("a") as output:
+        with (project / "export_presets.cfg").open("a", encoding="utf-8") as output:
             output.write("\n" + "\n".join(additions))
 
 
@@ -230,8 +230,7 @@ def check_project(project: Path, godot: Path, work: Path) -> tuple[dict, list[st
         if path.is_symlink():
             raise AuthoringError(f"SOURCE.SYMLINK: Materialize {path} before author checking.")
     snapshot = work / "check"
-    shutil.copytree(project, snapshot, ignore=shutil.ignore_patterns(
-        ".godot", ".git", "build", "bin", "obj", "__pycache__"))
+    copy_author_project(project, snapshot)
     root = snapshot / f"rookframe/packages/{manifest['id']}"
     normalize_binary_resources(godot, snapshot, root)
     run_godot(godot, snapshot, "--editor", "--import")

@@ -1,6 +1,11 @@
-# Rookframe SDK Authoring Kit 0.32.35
+# Rookframe SDK Authoring Kit 0.32.36
 
-This release admits script-free, Package-owned `FontVariation` resources based
+This release adds the **Development World** editor dock. Run the compiled
+Rookframe development runtime from the Package's own Godot project, then save
+scripts and reimport models without restarting the World. Unpublished Packages
+need no published baseline. See [development setup](#run-a-development-world-without-rookframe-source).
+
+The SDK also admits script-free, Package-owned `FontVariation` resources based
 on the original public `assets/fonts/Inter-VariableFont_opsz,wght.ttf`. Authored
 `variation_opentype` accepts a finite `wght` coordinate; `opentype_features`
 accepts `tnum: 1` for tabular figures. Stock integer tags and the reviewed string
@@ -94,7 +99,7 @@ integration behind those contracts. Use ordinary GDScript calculations, Resource
 Godot controls and signals, and public UI Kit components for their native roles.
 The SDK does not introduce a replacement UI or signal framework.
 
-SDK 0.32.35 binds the approved Silkbound Ledger Theme, font resources and
+SDK 0.32.36 binds the approved Silkbound Ledger Theme, font resources and
 Miniature list/preview browser from the public UI Kit. The approved linen uses
 a lossless runtime tile so native SVG import does not alter its fine weave.
 Stock FontFile resources retain the original EB Garamond data and native shaping
@@ -105,8 +110,9 @@ by assigning that Theme; SDK Edition operations and revisions are unchanged.
 
 Use Godot **4.7.2**, Python **3.10+**, Git and the **.NET 10 runtime** on PATH.
 Install Godot's matching export templates for the local authoring host. The exporter produces a shared PCK, not an OS application.
-Rookframe currently tests this authoring path on macOS with Godot Mono; the tools
-accept an explicit Godot executable on every host.
+The tools accept an explicit Godot executable on every host. Development mode
+requires a matching stock Godot .NET editor and compiled runtime bundle for the
+local OS and CPU architecture; current development acceptance runs on Windows.
 
 Start with a normal `project.godot`. Install gd-plug's bootstrap at
 `addons/gd-plug/plug.gd` using its [upstream instructions](https://github.com/imjp94/gd-plug).
@@ -121,7 +127,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.35", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.36", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "6147692cbc7c7992e8f1a6af4f2be095c0910953", "include": ["rookframe/ui"]})
 ```
 
@@ -162,11 +168,52 @@ use the local gd-plug Git object store, with no network fetch or execution.
 ## Author in Godot
 
 Enable **Rookframe SDK** in Project Settings → Plugins for an existing project.
-A newly initialized UI project enables it automatically. On editor entry the
+A newly initialized project enables it automatically. On editor entry the
 plugin generates a missing facade or diagnoses a stale one. Project → Tools
 provides **Rookframe: Check Package** and **Rookframe: Build Package**. These
 commands report in Output and may take a moment while Godot prepares copies.
 Set `ROOKFRAME_PYTHON` if Python is not on the editor's PATH.
+
+## Run a Development World without Rookframe source
+
+Install the compiled development support supplied with Rookframe and open this
+project in its matching **Godot .NET** editor. Open **Project → Tools → Rookframe:
+Development World**. In the dock, choose the runtime's
+`rookframe-development-runtime.json`, a local World name, and any published
+Package Manifest URLs you want to use. An optional Package also needs a published
+System Manifest URL; an editable System supplies the System itself. The editable
+Package does not need a published release.
+
+Choose **Save and prepare**. First setup offers a one-time **Save and reopen
+editor** action so Godot can apply its native launch/Game-tab settings. Then
+**Run development World** or normal Play opens Rookframe inside Godot. Save
+scripts and scenes, or reimport models, to update the running World. Repeated
+Run clicks in the dock keep the current session. Errors appear in Godot's
+Debugger and Output; fix and save to retry.
+
+The World, Actors, links and piece positions survive supported hot reloads.
+Reimported model hierarchy replaces the affected model nodes, including nested
+scenes; their transient node fields initialize again. Godot applies ordinary
+live script and scene edits, including retained script members. Reload does not
+rerun `_ready()`/`start()`. Manifest declarations, SDK Editions and the session's
+Package selection are chosen before Play. Godot's restrictions on changing a
+script's native base class still apply.
+
+Rookframe blocks network hosting and joining for the entire development process.
+Only the selected source Package bypasses publication and code/hash admission;
+every other Package uses normal public HTTPS acquisition and local verification.
+This mode runs your trusted author code; it is not an installed-Package sandbox.
+
+The dock works in this project directly. Its local settings and data are
+`.rookframe/development.json`, `.rookframe/development-runtime.json`,
+`.rookframe-development/`, `.rookframe-development.pck`, `.godot/` and the staged
+native libraries in `addons/webrtc_native/lib/`. Ignore them
+in source control. Reopening the same World name keeps its data; another name
+creates a separate World. Clearing `.godot/` is recoverable by preparing again.
+The matching runtime bundle contains the application PCK and compiled libraries,
+not Rookframe C# source or a project to build. Keep the complete bundle together.
+
+## Authored scenes and UI
 
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
@@ -221,7 +268,8 @@ rebuilding the same version deliberately creates another identity.
 Edition/revision metadata, and the recommended independent UI release's hashes.
 The standalone `Rookframe.PackageCheck.dll` is a framework-dependent author tool
 compiled from the production verifier sources, not a Rookframe application or
-private host assembly dependency. .NET is required only by author checking/build.
+private host assembly dependency. .NET is required by author checking/build and
+the compiled development runtime; published Package code remains GDScript.
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency notices.
 
 ## Imported architectural materials
