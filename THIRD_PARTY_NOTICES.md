@@ -9,5 +9,7 @@ included in the Tree-sitter runtime. The source inventory and local Godot gramma
 patch are retained in Rookframe's `native/gdscript-parser/` directory.
 
 The UI Kit is acquired separately and retains its own notices and asset licenses.
-The optional gd-plug bootstrap in the Calendar example retains its upstream MIT
-license; it is not bundled into a Package archive.
+The editor's dependency installer acquires gd-plug at commit
+`209276d1f00d14b49b74403d9839f29598e9a8eb`, including its upstream MIT license.
+The Calendar example also retains its bootstrap license. Neither bootstrap is
+bundled into a Package archive.

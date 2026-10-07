@@ -1,21 +1,69 @@
 @tool
 extends EditorPlugin
 
+var _development: Control
+var _dock: EditorDock
+var _importer: EditorImportPlugin
+var _declarations: RefCounted
 
 func _enter_tree() -> void:
 	if OS.get_environment("ROOKFRAME_AUTHOR_COPY") == "1":
 		return
+	_importer = preload("res://addons/rookframe_sdk/development_importer.gd").new()
+	add_import_plugin(_importer)
+	_declarations = preload("res://addons/rookframe_sdk/development_declarations.gd").new()
+	resource_saved.connect(_declarations.source_saved)
+	scene_saved.connect(_scene_saved)
+	var filesystem := EditorInterface.get_resource_filesystem()
+	filesystem.filesystem_changed.connect(_declarations.queue_update)
+	filesystem.resources_reimported.connect(_declarations.sources_changed)
+	filesystem.resources_reload.connect(_declarations.sources_changed)
+	_declarations.queue_update()
 	add_tool_menu_item("Rookframe: Check Package", _check)
 	add_tool_menu_item("Rookframe: Build Package", _build_package)
 	if FileAccess.file_exists("res://rookframe.json"):
 		_run("facade")
+		if FileAccess.file_exists("res://.rookframe/development.json"):
+			# Apply project metadata during editor startup, before GameView reads it.
+			var settings := EditorInterface.get_editor_settings()
+			settings.set_project_metadata("game_view", "embed_on_play", true)
+			settings.set_project_metadata("game_view", "make_floating_on_play", false)
+	_dock = preload("res://addons/rookframe_sdk/development.tscn").instantiate()
+	_development = _dock.get_node("Tabs/Development/Content")
+	_dock.get_node("Tabs/Package/Package").package_changed.connect(_declarations.sources_changed)
+	add_dock(_dock)
+	add_tool_menu_item("Rookframe: Development World", _dock.make_visible)
 
 
 func _exit_tree() -> void:
 	if OS.get_environment("ROOKFRAME_AUTHOR_COPY") == "1":
 		return
+	if _declarations != null:
+		_declarations.stop()
+		resource_saved.disconnect(_declarations.source_saved)
+		scene_saved.disconnect(_scene_saved)
+		var filesystem := EditorInterface.get_resource_filesystem()
+		filesystem.filesystem_changed.disconnect(_declarations.queue_update)
+		filesystem.resources_reimported.disconnect(_declarations.sources_changed)
+		filesystem.resources_reload.disconnect(_declarations.sources_changed)
+		_declarations = null
+	if _importer != null:
+		remove_import_plugin(_importer)
+		_importer = null
 	remove_tool_menu_item("Rookframe: Check Package")
 	remove_tool_menu_item("Rookframe: Build Package")
+	if is_instance_valid(_dock):
+		remove_tool_menu_item("Rookframe: Development World")
+		remove_dock(_dock)
+		_dock.queue_free()
+
+
+func _build() -> bool:
+	return not is_instance_valid(_development) or _development.can_run()
+
+
+func _scene_saved(path: String) -> void:
+	_declarations.sources_changed(PackedStringArray([path]))
 
 
 func _check() -> void:
@@ -34,6 +82,7 @@ func _run(command: String) -> void:
 		python = "python" if OS.get_name() == "Windows" else "python3"
 	var output: Array = []
 	var status := OS.execute(python, PackedStringArray([
+		"-X", "utf8",
 		ProjectSettings.globalize_path("res://addons/rookframe_sdk/rookframe_authoring.py"),
 		command, "--project", ProjectSettings.globalize_path("res://"),
 		"--godot", OS.get_executable_path(),

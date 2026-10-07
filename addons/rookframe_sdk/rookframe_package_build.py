@@ -21,6 +21,9 @@ import uuid
 
 BUILD_METADATA = "artifacts/build.json"
 BUILD_SCHEMA = "rookframe-package-build-v1"
+AUTHOR_STATE = {".godot", "__pycache__", ".git", "build", "bin", "obj", ".plugged",
+                ".rookframe-development", ".rookframe-development.pck"}
+DEVELOPMENT_CONFIG = {"development.json", "development-runtime.json"}
 TEXT_RESOURCES = {
     ".gd",
     ".tscn",
@@ -61,24 +64,19 @@ def run_godot(godot: Path, project: Path, *arguments: str) -> str:
 
 def source_identity(source: Path) -> str:
     digest = hashlib.sha256()
+    development_files = development_native_files(source)
     for path in sorted(source.rglob("*")):
         if (
             not path.is_file()
             or any(
                 part
-                in {
-                    ".godot",
-                    "__pycache__",
-                    ".git",
-                    "build",
-                    "bin",
-                    "obj",
-                    ".plugged",
-                    "rookframe_ui_kit_provenance.json",
-                }
+                in AUTHOR_STATE | {"rookframe_ui_kit_provenance.json"}
                 for part in path.relative_to(source).parts
             )
             or path.is_relative_to(source / "rookframe/ui")
+            or path.is_relative_to(source / "rookframe/development")
+            or path.parent == source / ".rookframe" and path.name in DEVELOPMENT_CONFIG
+            or path.relative_to(source).as_posix() in development_files
         ):
             continue
         relative = path.relative_to(source).as_posix().encode()
@@ -86,6 +84,27 @@ def source_identity(source: Path) -> str:
         digest.update(struct.pack("<Q", len(relative)) + relative)
         digest.update(struct.pack("<Q", len(contents)) + contents)
     return digest.hexdigest()
+
+
+def copy_author_project(source: Path, destination: Path) -> None:
+    development_files = development_native_files(source)
+    def ignore(directory, names):
+        ignored = AUTHOR_STATE
+        if Path(directory) == source / ".rookframe":
+            ignored = ignored | DEVELOPMENT_CONFIG
+        if Path(directory) == source / "rookframe":
+            ignored = ignored | {"development"}
+        return (set(names) & ignored) | {name for name in names
+            if (Path(directory) / name).relative_to(source).as_posix() in development_files}
+    shutil.copytree(source, destination, ignore=ignore)
+
+
+def development_native_files(source: Path) -> set[str]:
+    inventory = source / ".rookframe/development-runtime.json"
+    if not inventory.is_file():
+        return set()
+    return {name for name in json.loads(inventory.read_text(encoding="utf-8")).get("files", [])
+            if name.startswith(("addons/webrtc_native/lib/", "addons/zylann.voxel/bin/"))}
 
 
 def new_build_id() -> str:
@@ -178,11 +197,7 @@ def prepare_profile(
     source_root = f"res://rookframe/packages/{package_id}/"
     runtime_root = f"res://rookframe/package-artifacts/{build_id}/{profile}/"
     project = destination / "project"
-    shutil.copytree(
-        source,
-        project,
-        ignore=shutil.ignore_patterns(".godot", ".git", "build", "bin", "obj"),
-    )
+    copy_author_project(source, project)
     old_root = project / source_root.removeprefix("res://")
     # A precise preparation failure is preferable to silently exporting binary
     # references at their old identity. Native binary normalization is handled
