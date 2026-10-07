@@ -20,6 +20,7 @@ REQUIRED_FEATURE = "live-declarations"
 CONFIG_SCHEMA = "rookframe-development-v1"
 PACK = ".rookframe-development.pck"
 NATIVE_ROOT = "addons/webrtc_native/lib/"
+TERRAIN_ROOT = "addons/zylann.voxel/bin/"
 RUN_ARGS = (f"--main-pack {PACK} --scene res://rookframe/application/ApplicationRoot.tscn"
             " -- --development=res://.rookframe/development.json")
 
@@ -41,6 +42,13 @@ def native_library(target: str, architecture: str) -> str:
         return "libwebrtc_native.macos.template_debug.universal.framework"
     suffix = {"windows": "dll", "linux": "so"}[target]
     return f"libwebrtc_native.{target}.template_debug.{architecture}.{suffix}"
+
+
+def terrain_library(target: str, architecture: str) -> str:
+    if target == 'macos':
+        return 'libvoxel.macos.editor.universal.framework'
+    suffix = {'windows': 'dll', 'linux': 'so'}[target]
+    return f'libvoxel.{target}.editor.{architecture}.{suffix}'
 
 
 def member(root: Path, name: str) -> Path:
@@ -94,19 +102,26 @@ def prepare(project: Path, bundle_path: Path, godot_version: str, architecture: 
     files = bundle.get("files", {})
     native = "native/" + native_library(bundle["platform"], architecture)
     native_binary = native + "/" + Path(native).stem + ".dylib" if bundle["platform"] == "macos" else native
+    terrain = "native/" + terrain_library(bundle["platform"], architecture)
+    terrain_binary = terrain + "/" + Path(terrain).stem if bundle["platform"] == "macos" else terrain
     if "Rookframe.pck" not in files or "managed/Rookframe.dll" not in files or native_binary not in files:
         raise ValueError("DEVELOPMENT.RUNTIME: Incomplete runtime bundle; reinstall development support.")
+    if 'voxel-terrain' in bundle.get('features', []) and terrain_binary not in files:
+        raise ValueError("DEVELOPMENT.RUNTIME: Missing terrain library; reinstall development support.")
     ownership = project / ".rookframe/development-runtime.json"
     previous = json.loads(ownership.read_text(encoding="utf-8")) if ownership.exists() else {}
     checked = []
     for name, expected in files.items():
         is_native = name == native or bundle["platform"] == "macos" and name.startswith(native + "/")
+        is_terrain = name == terrain or bundle["platform"] == "macos" and name.startswith(terrain + "/")
+        is_native = is_native or is_terrain
         if name != "Rookframe.pck" and not name.startswith("managed/") and not is_native:
             raise ValueError(f"DEVELOPMENT.RUNTIME: Unsupported member {name}.")
         source = member(bundle_path.parent, name)
         if not source.is_file() or digest(source) != expected:
             raise ValueError(f"DEVELOPMENT.RUNTIME: Damaged or incomplete runtime file: {name}.")
-        target = (PACK if name == "Rookframe.pck" else NATIVE_ROOT + name[len("native/"):] if is_native
+        native_root = TERRAIN_ROOT if is_terrain else NATIVE_ROOT
+        target = (PACK if name == "Rookframe.pck" else native_root + name[len("native/"):] if is_native
                   else ".godot/mono/temp/bin/Debug/" + name[len("managed/"):])
         destination = member(project, target)
         if is_native and destination.exists() and target not in previous.get("files", []):
@@ -118,7 +133,7 @@ def prepare(project: Path, bundle_path: Path, godot_version: str, architecture: 
         raise ValueError(f"DEVELOPMENT.COLLISION: Move the existing {PACK} before preparing this project.")
     targets = {target.relative_to(project).as_posix() for _, target, _ in checked}
     obsolete = [member(project, name) for name in previous.get("files", [])
-                if name not in targets and (name == PACK or name.startswith((".godot/mono/temp/bin/Debug/", NATIVE_ROOT)))]
+                if name not in targets and (name == PACK or name.startswith((".godot/mono/temp/bin/Debug/", NATIVE_ROOT, TERRAIN_ROOT)))]
     # Record ownership before staging. An interrupted copy can then be repaired
     # instead of mistaking our partially prepared PCK for an author's file.
     ownership.write_text(json.dumps({"bundle": str(bundle_path), "files": sorted(

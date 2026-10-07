@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.32.41
+# Rookframe SDK Authoring Kit 0.32.42
 
 This version binds the public Silkbound Ledger theme, fonts, textures and
 collection component. Package-owned Controls can apply admitted font/style
@@ -106,6 +106,13 @@ integration behind those contracts. Use ordinary GDScript calculations, Resource
 Godot controls and signals, and public UI Kit components for their native roles.
 The SDK does not introduce a replacement UI or signal framework.
 
+SDK 0.32.36 binds the approved Silkbound Ledger Theme, font resources and
+Miniature list/preview browser from the public UI Kit. The approved linen uses
+a lossless runtime tile so native SVG import does not alter its fine weave.
+Stock FontFile resources retain the original EB Garamond data and native shaping
+with prerendered glyph coverage for the approved reference appearance. Existing surfaces opt in
+by assigning that Theme; SDK Edition operations and revisions are unchanged.
+
 ## Install the two dependencies
 
 Use Godot **4.7.2**, Python **3.10+**, Git and the **.NET 10 runtime** on PATH.
@@ -127,7 +134,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.41", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.42", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "9a124f5b5ebcf03a064b314771a303f3ca11d83f", "include": ["rookframe/ui"]})
 ```
 

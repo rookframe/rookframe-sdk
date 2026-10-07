@@ -104,7 +104,7 @@ def development_native_files(source: Path) -> set[str]:
     if not inventory.is_file():
         return set()
     return {name for name in json.loads(inventory.read_text(encoding="utf-8")).get("files", [])
-            if name.startswith("addons/webrtc_native/lib/")}
+            if name.startswith(("addons/webrtc_native/lib/", "addons/zylann.voxel/bin/"))}
 
 
 def new_build_id() -> str:
