@@ -1,5 +1,5 @@
 {
-  "version": "0.32.39",
+  "version": "0.32.40",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -7,13 +7,13 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "ee195cac502bcedc02e6bc5af744cd2558042734"
+    "commit": "9cb673ba892fb88398f256b5e007ebece0eebdf6"
   },
   "files": {
     "authoring.gd": "d9807132da59e18899a93b5da5732fa36dc630293b18f019d777b0d3b264afd5",
     "authoring.tscn": "d0669c81d7cf2a91f5075b01ec9411faf95a8ff8746d3651de6aac7bbc700fbe",
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "eb273511e47cf5c56aec3bffb8506001219df31093c7f77c90dc5d9f37a84fc9",
+    "checker/Rookframe.PackageCheck.dll": "8a532edc8ecedd15920a97dbc1b361553961afbbddb5a60574bd6c44a41dcf5b",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -30,7 +30,7 @@
     "development_importer.gd": "59b1f3dfaf559a4666cb459d0ba8897f1c10bcdbde229461429cff363b2a5016",
     "plugin.cfg": "4e7915f8893d8244033a5f831e771527f940f07875ed4e882ef80d184779ce64",
     "plugin.gd": "21891a36a3d319554328d91ac51829db47f6cff2f2a95a32ef1ece7c3a5f24d6",
-    "rookframe_authoring.py": "534a26b1e269a04668298ce9a70818e287520ea4ed5003f83d6c6c09e4265e11",
+    "rookframe_authoring.py": "e9e6ddd1863891c0ef519760018f7d325df5ea5d8338f21c3419cd36fcc6ada4",
     "rookframe_authoring_checks.py": "d1f93358d1f959f352622734b8b020e295080fcd10c805cc34b00f3cdd58ab68",
     "rookframe_authoring_entries.py": "7261e17ec3beea9b8c716db1bce1fe0f1a52516d07725da5379b643231b4251c",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
@@ -134,13 +134,13 @@
     "components/data/paginated_choices.gd": "4f2d303ad8defa41924de9e2091be344109f64dd82521f5da93ef34d4aa6188d",
     "components/data/paginated_choices.gd.uid": "f9be3895a9300ef5cf298b08447182f81c2664f19032ed329b5ab2751860ec2a",
     "components/data/paginated_choices.tscn": "4f79b67a8855e1f751b076563bc29516467e4a4380844596d29c8a7379ea4053",
-    "components/data/paginated_content.gd": "b7b52be86760b8703bb7687fa124ba0ed47356e7a1f26d45706085f7a6bf2aff",
+    "components/data/paginated_content.gd": "38a6aa5056265a582816bc0e2b022f542da2222c2f9219b39340010239f06c9e",
     "components/data/paginated_content.gd.uid": "8e3e31ec118a3730280304861d40a8e2a9c3f35636ddd452a08ad90d84e136f0",
     "components/data/paginated_content.tscn": "814fe75cefee1e05f3db43c5b18785ab7185724e1288bd5be529ac8475867c9b",
     "components/data/roll_row.gd": "59b244d338870ad51a3ef440f42544cf522aa80ae4224a48fe38b9012bacd64a",
     "components/data/roll_row.gd.uid": "cd67435f08e6caee77c6bb9fdbe7ef9e28856266f32ef38124e6b84c647bbcea",
     "components/data/roll_row.tscn": "06108eeb4c869e7e6ab9cbf69bf86f59f6e10a51b454d8ed47b42bef4ed5141a",
-    "components/data/silkbound_collection.gd": "f9f3320e12174961195d90f3a63f698fee7f1794db0747e79b600e4ffa62b6d7",
+    "components/data/silkbound_collection.gd": "ffe434b54395141937eb76681eb493e095e97e5cfa6a0556e40c236f712009cf",
     "components/data/silkbound_collection.gd.uid": "a1d238b4330cf726d5e15a4f9f527ede6c304c048e6f5e9a502695bd0a0e1cc5",
     "components/data/silkbound_collection.tscn": "8742f93c9b9293b4401825886b6b99379e4f6c4ce21616c40eb0aef6791a3e85",
     "components/data/structured_row.gd": "751aa8403546398f8eca52162e72fbbebb40895a27e67972954c144f9da16f17",
@@ -174,7 +174,7 @@
     "components/forms/package_choice.gd.uid": "bfd9f44134483a33ef2672e280e1a3def4938822c3eb8e061c6aebe102455a70",
     "components/forms/package_choice.tscn": "0efa1df917b08180f871160c9aa83393053cb3a1599b21151ca559a8e3db30e1",
     "components/forms/package_choice_card.tscn": "06438f0e315a5fdb710df3aed16b9f9b2ab2c2fdcead0d7c83f47f9ebc02c98a",
-    "components/forms/paginated_text_area.gd": "c9bbaefe07c2f8c85191325267153b1c3a1f2b5f4d211adcac482a9889286170",
+    "components/forms/paginated_text_area.gd": "0bb1c5ff08a56adc64fde0f4dadfa6899f656067ac7ce15ec0440f025ba26d71",
     "components/forms/paginated_text_area.gd.uid": "c8a8642881d02dd81ef5f028148aaad5675aba75951ddc9e8daf01021f6bc2b6",
     "components/forms/paginated_text_area.tscn": "e8f5a5f4faa2ac360417c36e1d6a8838405f6e863b0f997efbca0669d5ba32bf",
     "components/forms/search_field.gd": "750968b54bb501d9df02556e793f4c605300a27033518f6558fd3bd2c822f6d7",
@@ -230,7 +230,7 @@
     "icons/back.svg": "b2bd0f02eea19067ebf3837eecef57e889e888d08f4db30d831123a3623898db",
     "icons/bolt.svg": "e9e604de1b0643296f34ed1c1b9a5533e1c76f14d12f6a0eb4e0e2f1dcda38d7",
     "icons/builder.svg": "f84e1b47247867a58f96d7014d2b0271fb0690719e4480f9bc2f924fa2c1043d",
-    "icons/character/ATTRIBUTION.md": "e82c1647a41133702c2c518db351fa899a2346e587d771fe1358826a24db4c82",
+    "icons/character/ATTRIBUTION.md": "d99e94bac7a7fedfd7be71c75087679532ac2af5dcbc1a1ed252fe196100108f",
     "icons/character/EQUIPMENT-ATTRIBUTION.md": "13ed069b4baaa67fe5c4445066484a42a7215d7e580cd349b9c7a1a05eae8733",
     "icons/character/agility.svg": "c0db58c25eb1a1677ab056fb1827b7fb965a646d3140ad1f8726e2868e796a0b",
     "icons/character/armor.svg": "10a72765ad8c857dec8449613b2a09bff88c07462f46deffc50cc6a020460aea",
@@ -254,6 +254,7 @@
     "icons/character/strength.svg": "3e549f31e5ab57499384dc8cb317959137da69cb7779d5cd45dd0a9480a9b645",
     "icons/character/sword.svg": "ef5c77990595dad52ae0d6dd560878454381aee5700ec6a4e69ed3ab84a38f1d",
     "icons/character/toughness.svg": "f76c1d0fdc645d3ffb664eb2d298275bfd9a7e7da2fa675363e3d51843f4c7f4",
+    "icons/character/use.svg": "645e688d26581f665adb2da682ef6e4bcce637864cbb6ee0190f44abe311bdb1",
     "icons/check.svg": "4fc7958f4d5de9048ccae9ffd1b8343c4a31611c3879a8c8c1bc6f64c5f66f46",
     "icons/chevron-left.svg": "d3f06693e33e53cd5f2eab3f558551f5821b0ecb319c4cf5fcae513de5b8c20a",
     "icons/chevron-right.svg": "ea3a0dbaf1cf04c502028c5aad50bcb9c3b498613cccaf4e0464dd8b67601317",
@@ -335,12 +336,12 @@
     "theme/silkbound_row.tres": "a446bfb2a2abafafa5d6526b6d1e4a04269056e8a8ba3e4e590157ef45231203",
     "theme/silkbound_row_hover.tres": "d55c60da28d9f0156cdb799cd39b66d909ef0c5d9627b6f00a19fb6c3f273e9a",
     "theme/silkbound_semibold.tres": "c945fbf65dedf32c5b2df23364f2d1a22a11cb67ee20fad6a8c8cacd322ce2d7",
-    "theme/silkbound_theme.tres": "fe0c8dd7281ea0a741a58962fd6c71d6588a5356a2b700d4960eaec3b6926a2c",
+    "theme/silkbound_theme.tres": "54f19378719c3e38b294ad3e780e6df1e2175e6dd321c333f214273e10766382",
     "theme/task_action.tres": "5b49c53152fe0fe8fc1592e6d9d309ae3137c3e886419fa255c1d6fefa7852fa",
     "theme/task_display.tres": "c4afa9f034e357d017a68bd12439a3f2fd7a87999fdaeed47f95bbc9df1b6b51",
     "theme/task_wordmark.tres": "6b6e91853b0bd018ca598fc132ec1e8d6a1a5ff3ea8b74143a5abe0fc1b0564f",
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "6210619362d1daf7eae1cb0c2ea76b2537477f10"
+  "sourceRevision": "487dcc28c603698063112759727d1fb042142b1e"
 }
