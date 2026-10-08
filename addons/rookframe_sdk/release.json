@@ -1,5 +1,5 @@
 {
-  "version": "0.32.43",
+  "version": "0.32.44",
   "editions": {
     "2027": 7,
     "2028": 4,
@@ -13,7 +13,7 @@
     "authoring.gd": "d9807132da59e18899a93b5da5732fa36dc630293b18f019d777b0d3b264afd5",
     "authoring.tscn": "d0669c81d7cf2a91f5075b01ec9411faf95a8ff8746d3651de6aac7bbc700fbe",
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "f69db4c9fdc72ae41ac9a1a473adf2f9bb91864c8a462a2ea0777c5dc9c557f9",
+    "checker/Rookframe.PackageCheck.dll": "fe42825a4a87bbb98ec6c1711b980223f41fea6f55c21fe03e6b7d5e4599dd79",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -28,9 +28,9 @@
     "development_declarations.gd": "ed4a6af835b780c36524145a1ccd2a56bf9962ac0454eb36c989466d968fc03b",
     "development_entry.tscn": "33c554612afb670c66e45a8dafb77aa8ca2c3ca99481c2a607bb11a3a0868c14",
     "development_importer.gd": "59b1f3dfaf559a4666cb459d0ba8897f1c10bcdbde229461429cff363b2a5016",
-    "plugin.cfg": "8fd8535b88e34bea90436f9122cffd3e2a68fa952a483627e6656ad9829df35c",
+    "plugin.cfg": "8c197a013271c75c774b485af89009359b8a1e87cbc93d165a210bbd1322ba15",
     "plugin.gd": "21891a36a3d319554328d91ac51829db47f6cff2f2a95a32ef1ece7c3a5f24d6",
-    "rookframe_authoring.py": "94eb96defa51fdce30fd43e78d7014d34c1374f1e172e5b66ab40ecd5c8aaeee",
+    "rookframe_authoring.py": "ca453055781e4963a68404eb6ceddc3b65dc32bb8b9c658bd1d0efde5fc52ee1",
     "rookframe_authoring_checks.py": "d1f93358d1f959f352622734b8b020e295080fcd10c805cc34b00f3cdd58ab68",
     "rookframe_authoring_entries.py": "7261e17ec3beea9b8c716db1bce1fe0f1a52516d07725da5379b643231b4251c",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
@@ -344,5 +344,5 @@
     "tokens.gd": "db73466ce7b132f31a04285d7e00ca9f1016c03fddadc1a35806c83cc006ddfa",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "664a2132a8162ef23ddabe80bb73f94bcb95a051"
+  "sourceRevision": "72279d3bef4b8ff8e2bd015cbb1cd621ba48c6e1"
 }

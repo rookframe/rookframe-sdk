@@ -1,4 +1,10 @@
-# Rookframe SDK Authoring Kit 0.32.43
+# Rookframe SDK Authoring Kit 0.32.44
+
+This release adds reviewed stock HUD presentation operations: checked
+Texture2D icon overrides on owned Controls, read-only texture dimensions and
+mouse/touch press positions, Rect2 point containment, and horizontal alignment
+constants. Input construction and mutation remain refused. Use a matching
+Rookframe runtime with the HUD admission policy.
 
 This release binds the approved full-screen character wizard and shared Silkbound
 confirmation dialogs. It retires the duplicate full-screen Miniature picker and
@@ -138,7 +144,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.43", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.44", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "604b5fd443c59f2edc9099fa81899897fca417ab", "include": ["rookframe/ui"]})
 ```
 
