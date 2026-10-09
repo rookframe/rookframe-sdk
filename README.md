@@ -151,7 +151,7 @@ func request_quit(exit_code := -1) -> bool:
 
 func _plugging() -> void:
     plug("rookframe/rookframe-sdk", {"tag": "v0.32.45", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "604b5fd443c59f2edc9099fa81899897fca417ab", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "65b29750d7fc26a32172e6da8c1cf9aeb10678e3", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -274,7 +274,7 @@ not Rookframe C# source or a project to build. Keep the complete bundle together
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/604b5fd443c59f2edc9099fa81899897fca417ab/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/65b29750d7fc26a32172e6da8c1cf9aeb10678e3/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
