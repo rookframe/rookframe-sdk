@@ -1,4 +1,10 @@
-# Rookframe SDK Authoring Kit 0.32.44
+# Rookframe SDK Authoring Kit 0.32.45
+
+Edition 2029 revision 30 adds `sdk.rooks.select(id)` for the selected System’s
+local Rook switchers. It selects a controlled Rook in the current Scene during
+play and smoothly flies the local camera to the chosen Rook while preserving
+its mode, angle and zoom. It leaves targets and shared World state unchanged.
+Use a matching runtime and regenerate the Package facade.
 
 This release adds reviewed stock HUD presentation operations: checked
 Texture2D icon overrides on owned Controls, read-only texture dimensions and
@@ -51,7 +57,7 @@ The kit binds the existing public `theme/task_action.tres` FontVariation
 (Inter 700) for authored font overrides on Package-owned native Controls,
 including attached or inherited scripts. The public display font remains
 supported. Resource closure, hashes, type and ownership checks still apply.
-SDK Edition 2029 remains at revision 29, with unchanged APIs, parser and public
+Those typography operations retain revision 29 compatibility, with unchanged parser and public
 UI Kit bytes.
 
 The kit replaces inline Actor portraits with retained World filepaths and
@@ -102,7 +108,7 @@ of abandoned immediate physical Rolls by their caller-owned request identity.
 Full-viewport tasks retain underlying windows, host authored child tasks, and
 render their dice locally while accepted results remain shared. See [API.md](API.md).
 
-Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–29). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
+Author ordinary Godot Packages for SDK Edition 2029 (revisions 1–30). The kit also authors 2027 revisions 1–7 and 2028 revisions 1–4;
 2027:8 / 2028:5 authors retain SDK 0.7.0. Unchanged generated capabilities keep
 their existing contracts. Earlier inline-byte portrait callers must regenerate
 and adopt the filepath API; the old portrait gameplay API is replaced. The kit supplies a
@@ -144,7 +150,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.44", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.32.45", "include": ["addons/rookframe_sdk"]})
     plug("rookframe/rookframe-ui-kit", {"commit": "604b5fd443c59f2edc9099fa81899897fca417ab", "include": ["rookframe/ui"]})
 ```
 

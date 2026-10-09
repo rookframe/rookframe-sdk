@@ -1343,3 +1343,12 @@ cancels live actions through the ordinary window `closed` signal. Plain
 `open_actor` continues to invoke `opened(actor)` and retain its existing draft
 behavior. This API is available to the active Package Presentation and admits
 only that Package's scenes; no host Nodes or cross-Package authority are exposed.
+
+## Local Rook selection (Edition 2029 revision 30)
+
+`rooks.select(id)` selects one controlled Rook in the current Scene for this
+Participant. It is available to the active System Presentation in play mode,
+refuses selection during a Rook movement, and returns an `OperationResult`.
+Selection changes the ordinary HUD context and smoothly flies the local camera to the
+Rook, preserving the camera mode, angle and zoom. It does not target or move the
+Rook, grant access, or save World data. Read the current selection with `rooks.selected()`.

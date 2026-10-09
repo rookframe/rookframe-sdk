@@ -210,6 +210,14 @@ func cleanup(operation: SDK.Cleanup) -> void:
                               rook_hiding=edition == "2029" and revision >= 18,
                               miniature_browser=edition == "2029" and revision >= 19,
                               stacked_windows=edition == "2029" and revision >= 22)
+        if edition == "2029" and revision >= 30:
+            world["rooks.gd"] += '''
+## Select a controlled Rook in the current Scene for this Participant only.
+## Requires the active System Presentation in play mode. Does not move, target,
+## grant access, or mutate World data. Refused during an active Rook movement.
+func select(id: RookId) -> OperationResult:
+\treturn OperationResult.new(_host.SelectRook(id.value))
+'''
         action_log = edition == "2029" and revision >= 5
         if action_log:
             from rookframe_sdk_action_log import action_log_sources
