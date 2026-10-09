@@ -7,13 +7,13 @@
   },
   "uiKit": {
     "version": "v1.0.0-rc.1",
-    "commit": "69a3035b78c1f17892430b2546d1855a5dd03290"
+    "commit": "65b29750d7fc26a32172e6da8c1cf9aeb10678e3"
   },
   "files": {
     "authoring.gd": "d9807132da59e18899a93b5da5732fa36dc630293b18f019d777b0d3b264afd5",
     "authoring.tscn": "d0669c81d7cf2a91f5075b01ec9411faf95a8ff8746d3651de6aac7bbc700fbe",
     "checker/Rookframe.PackageCheck.deps.json": "0767099f9b3cafbda3deec2d6c3747ef4cdbdd9f26503caf1942b2633e33c096",
-    "checker/Rookframe.PackageCheck.dll": "a4f07c83f259d668ee5442d58966ef454d95e0be49f37ef4319c433e09f1f6f3",
+    "checker/Rookframe.PackageCheck.dll": "e9055eeadd5fa28da10a72de0912ac28d2fff8140bd09743c8c80281c49abd6c",
     "checker/Rookframe.PackageCheck.runtimeconfig.json": "418fe341dd982abd0d865d01e87672924098430b388c76799f48d3de3bfae7a8",
     "checker/runtimes/linux-arm64/native/librookframe_gdscript_parser.so": "859b99f5dbc92c3f5fdd14abd3fb144693e2f63ef3b83adb3e2a7f39284de435",
     "checker/runtimes/linux-x64/native/librookframe_gdscript_parser.so": "a264580c2b3c15a1419b15406776e15970cdb700a21080d721fc4e96f8e32bd9",
@@ -30,7 +30,7 @@
     "development_importer.gd": "59b1f3dfaf559a4666cb459d0ba8897f1c10bcdbde229461429cff363b2a5016",
     "plugin.cfg": "d5216c9d4526c84e4b01ac948b778c53a6069375cde69d9ce8c49c2225ae8503",
     "plugin.gd": "21891a36a3d319554328d91ac51829db47f6cff2f2a95a32ef1ece7c3a5f24d6",
-    "rookframe_authoring.py": "6904540eaf854f639136a8fe8dd169224e67de6e40c12109e362d462d8f89bd3",
+    "rookframe_authoring.py": "ceda05ac8952bba815e7cca0a77be65b218a71693c537ddeb8310fe8d05eec60",
     "rookframe_authoring_checks.py": "d1f93358d1f959f352622734b8b020e295080fcd10c805cc34b00f3cdd58ab68",
     "rookframe_authoring_entries.py": "7261e17ec3beea9b8c716db1bce1fe0f1a52516d07725da5379b643231b4251c",
     "rookframe_authoring_scenes.py": "f7f3996e4d9af84604f95367ae292c48d358f25f3249fa8530859588090a1073",
@@ -206,8 +206,8 @@
     "components/forms/image_field.tscn": "d0fac098d5dea1929ca4951a2ae830983aa634366b9cb6f74aa26339162765c7",
     "components/forms/package_choice.gd": "25403ed1eb41faeffdf4416b1d5f67b97d8e3c0271d242a230177a32724d350d",
     "components/forms/package_choice.gd.uid": "bfd9f44134483a33ef2672e280e1a3def4938822c3eb8e061c6aebe102455a70",
-    "components/forms/package_choice.tscn": "24c96e3f78b7aedcf6e923c3ed177725d33a2d61b67ec909b62cead4f8e54663",
-    "components/forms/package_choice_card.tscn": "84982cf24d07b96b3d2be3415760127891bd582498c27ee43443bfbd999c7482",
+    "components/forms/package_choice.tscn": "330694cc580d57c3917152f690b97d8700cd85e66d5715376385e8b34fe7da95",
+    "components/forms/package_choice_card.tscn": "2b7d170906de1600e34b496488377d9f0345c393613a6151fe458e1445e1e585",
     "components/forms/paginated_text_area.gd": "4701843fe9f9e1e6a35759d3dd894b63671ba2989402da2253333ccd266a2a8a",
     "components/forms/paginated_text_area.gd.uid": "c8a8642881d02dd81ef5f028148aaad5675aba75951ddc9e8daf01021f6bc2b6",
     "components/forms/paginated_text_area.tscn": "1774d74092f21fb67f122c49e7f4afaae296d2392e459351509ec273cc44b613",
@@ -248,7 +248,7 @@
     "components/overlays/dialog.gd": "090f700438b95d7af29a0039ca0d8e90f88c9755dca9e4f0b4816f36fe1572ea",
     "components/overlays/dialog.gd.uid": "e871e7842adc4c2d74bb922249188e0b040cc012bf2b52a1f00dcc349323db2a",
     "components/overlays/dialog.tscn": "295507ebd960237351027a61288943924e969b27f0b366aac39968affb35a65e",
-    "components/overlays/file_picker_dialog.gd": "cfa3d81227f135f42f690eb8889e732da6739223cff2640466caee98de01e279",
+    "components/overlays/file_picker_dialog.gd": "12d75bb6c7627ec4b01128d3a89e87e588df254b7a3743c2a70aadc3acae2b4d",
     "components/overlays/file_picker_dialog.gd.uid": "3ca2f5f30bbf6cecd3a245225c854a800861b2a86bf1cdcc3457d88412500b57",
     "components/overlays/file_picker_dialog.tscn": "90f4f2cea8ec26cbc0e0d095e541c46997fb29b76ff06e14e1c40a84635184f7",
     "components/surfaces/fullscreen_wizard.gd": "80b1028e27603cf26d7226af29a270ad1c207b112827807ae48ca54a28ce1819",
@@ -395,5 +395,5 @@
     "tokens.gd": "47ebe00c2b180167b47c7598e83923ca8f020b40c8fdad2a4f924916dabf1c70",
     "tokens.gd.uid": "00f03104b55bd8e092807a165909d67a9a59c0bcc7ac404771f0b20ad597deac"
   },
-  "sourceRevision": "11a55202d6313852dcf4ef453f10bfcc4f4dbc3e"
+  "sourceRevision": "bdf265cd2b81e0a1265f978c3ca860a8de2cf216"
 }
