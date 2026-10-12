@@ -246,6 +246,13 @@ func handle_system_intent(context: SDK.SystemActionContext, name: String, data: 
         if edition == "2029" and revision >= 13:
             world["targeting.gd"] += f'\nconst OperationResult = preload("{root}operation_result.gd")\n'
             world["targeting.gd"] += '\n## Temporarily reveal the tabletop; Done restores window placement and focus.\nfunc choose() -> OperationResult:\n\treturn OperationResult.new(_host.ChooseTargets())\n'
+        if edition == "2029" and revision >= 33:
+            from rookframe_sdk_announcements import announcement_sources, extend_reporting
+            world.update(announcement_sources(root))
+            extend_reporting(world, root)
+        if edition == "2029" and revision >= 34:
+            from rookframe_sdk_action_flows import extend_action_flows
+            extend_action_flows(world)
         sources.update(world)
         sdk = sources["package_sdk_facade.gd"]
         for filename in world:
@@ -266,6 +273,8 @@ func handle_system_intent(context: SDK.SystemActionContext, name: String, data: 
             capabilities.append(("system_actions", "SystemActions"))
         if action_log:
             capabilities.append(("action_log", "ActionLog"))
+        if edition == "2029" and revision >= 33:
+            capabilities.append(("announcements", "Announcements"))
         for name, type_name in capabilities:
             sdk += f"\nvar _{name}: {type_name}\nvar {name}: {type_name}:\n\tget:\n\t\treturn _{name}\n"
             initialization = f"\n\t_{name} = {type_name}.new(host)"
@@ -531,4 +540,36 @@ func _rookframe_migrate_world_data(data: Variant) -> Variant:
 \t\tsdk = SDK.new(get_meta("rookframe_sdk"))
 \treturn migrate_world_data(data)
 '''
+    if edition == "2029" and revision >= 31:
+        sources["extension_surface.gd"] = sources["extension_surface.gd"].replace(
+            "@export var scene: PackedScene",
+            "@export var scene: PackedScene\n## Content-sized task beside the tabletop; authored content supplies Close.\n@export var content_sized := false").replace(
+            '"placement": initial_placement,', '"placement": initial_placement,\n\t\t"contentSized": content_sized,')
+        sources["targeting.gd"] += f'''
+const RookId = preload("{root}rook_id.gd")
+## Show an animated range around a Rook and constrain local picking to one target.
+## The action window remains visible. Existing targets are retained for validation.
+func begin_range(source: RookId, metres: float, caption: String = "") -> OperationResult:
+\treturn OperationResult.new(_host.BeginLabeledTargetRange(source.value if source != null else "", metres, caption))
+func end_range() -> OperationResult:
+\treturn OperationResult.new(_host.EndTargetRange())
+'''
+        sources["human_throw_request.gd"] += '''
+## Immutable ability/base term shown in the host tray.
+@export var base_modifier: int = 0
+## Allow situation adjustment by -20..+20 without changing dice or base.
+@export var allow_modifier := false
+'''
+        sources["human_throw_result.gd"] = sources["human_throw_result.gd"].replace(
+            "var sequence: int = 0",
+            "var sequence: int = 0\nvar base_modifier: int = 0\nvar allow_modifier := false\n## Accepted total modifier, including the base exactly once.\nvar modifier: int = 0").replace(
+            'var value: Dictionary = result.get("value", {})', 'var value: Dictionary = result.get("value", {})\n\t\tbase_modifier = value.get("base_modifier", 0)\n\t\tallow_modifier = value.get("allow_modifier", false)\n\t\tmodifier = value.get("modifier", 0)' )
+        sources["system_action_context.gd"] = sources["system_action_context.gd"].replace(
+            "_host.SystemIntentRequestThrow(_token, request.request_id, request.participant_id, request.to_records())",
+            "(_host.SystemIntentRequestModifiedThrow(_token, request.request_id, request.participant_id, request.to_records(), request.base_modifier, request.allow_modifier) if request.base_modifier != 0 or request.allow_modifier else _host.SystemIntentRequestThrow(_token, request.request_id, request.participant_id, request.to_records()))")
+    if edition == "2029" and revision >= 32:
+        sources["extension_surface.gd"] = sources["extension_surface.gd"].replace(
+            "@export var scene: PackedScene",
+            "@export var scene: PackedScene\n## Hide tabletop rails while this surface is visible; closing restores them.\n@export var hide_rails := false").replace(
+            '"placement": initial_placement,', '"placement": initial_placement,\n\t\t"hideRails": hide_rails,')
     return {name: header + source for name, source in sources.items()}

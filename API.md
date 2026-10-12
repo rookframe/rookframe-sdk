@@ -81,6 +81,25 @@ Direct Godot behavior within authored Package UI and the independently versioned
 UI Kit remain their existing contracts. Use public component properties and
 signals for Package-internal behavior, without depending on private child paths.
 
+### Modular action surfaces — authoring kit 0.32.47
+
+Instance `res://rookframe/ui/components/surfaces/action_panel/action_panel.tscn`
+for the offset leather composition. Its public `get_header_slot()`,
+`get_sections_slot()` and `get_footer_slot()` return VBoxContainers;
+`get_emblem_slot()` returns a CenterContainer. These are ordinary owned UI
+containers. The exported `compact`, `show_footer` and `show_emblem` properties
+control composition without recreating content. Add instances of
+`action_section.tscn` under the sections slot and put native Controls inside them.
+
+Godot's **Editable Children** exposes the same slots visually. Their stable scene
+paths are `Header/Leaf/HeaderSlot`, `Header/Emblem/Leaf/EmblemSlot`,
+`Sections/SectionsSlot` and `Footer/Leaf/FooterSlot`. Other internal paths are not
+an authoring interface. The UI Kit's `docs/action-panel.md` and runnable
+`examples/action-panel/action_panel_example.tscn` cover both authoring paths.
+Rules, rolls, target selection and permissions remain Package/SDK domain work;
+the panel contains presentation only. The current host and matching UI Kit are
+required, with no new Edition 2029 domain revision.
+
 ## Atomic Actor creation — 2029 revision 9
 
 `await sdk.actors.create_atomic(definition, choices, child_requests)` creates
@@ -100,6 +119,18 @@ The Publisher may configure these ordinary exported fields on an
   `"right"`.
 - `initial_dock_width`: an optional logical-pixel width. Zero asks Rookframe for
   its responsive default.
+- `content_sized` (revision 31): use the authored Control’s combined minimum
+  size, clamped to the safe area. The compact surface supplies its own close
+  control and material; host header, footer and scrolling are omitted. Minimum
+  size changes relayout the surface. Native `visible = false` on the authored
+  root hides its compact host frame too, without closing the task. A pending
+  action can keep this false during Dice Tray handoffs and reveal it only when
+  its next decision is ready.
+- `hide_rails` (revision 32): hide the left, right and contextual Builder rails
+  while this surface is visible. Closing, replacing or temporarily hiding it
+  restores the rails according to the current workspace state. Defaults to false;
+  another visible surface that also requests hidden rails keeps them hidden.
+  Tabletop camera input and targeting remain available.
 - `initial_floating_rect`: an optional `Rect2`. An empty rectangle asks
   Rookframe for its responsive default.
 
@@ -812,6 +843,92 @@ a Package. New compatible provider declarations need no per-provider app build.
 The shipped example uses placeholder providers. Controlled evidence is not live
 provider certification; deployment still requires the provider's registration.
 
+## Announcements and recorded history (2029 revision 33)
+
+`sdk.action_log.write(message)` writes history and returns an `ActionLogResult` with
+the accepted `sequence`. It does **not** show an announcement. `publish` remains
+available for older callers with the same log-only behavior. Rich text runs, raw
+dice and System results belong to the recorded message; no button callbacks or
+interactive rule resolution belong in history.
+
+`sdk.announcements.announce(message)` independently broadcasts a compact
+`Announcement`. Its fields are `subject` (1–128 printable characters), `caption`
+(1–256), `icon` (`info`, `dice`, `attack`, `power`, `item`, `recovery`), `results`
+(up to 16 integers, never verdict strings), and optional `log_sequence` (zero
+means no link). The host owns layout, whole-strip hover/press, seven-second
+display and ink dissolve. Clicking opens Action Log at the linked record, or
+opens history when no record is linked. Recorded facts appear inline in read-only
+cards; they do not open a second detail window or contain gameplay controls.
+
+```gdscript
+var record := SDK.ActionLogMessage.new("Graveworm uses an item")
+record.text = [SDK.ActionLogText.new("One use spent. The table resolves its effects.")]
+var saved := await sdk.action_log.write(record)
+if saved.ok:
+    var notice := SDK.Announcement.new("Graveworm", "Uses the silver bell", "item")
+    notice.log_sequence = saved.sequence
+    var shown := await sdk.announcements.announce(notice)
+```
+
+In a System intent, `context.commit(changes, report)` and
+`context.commit_world_data(value, report)` return an `ActionLogResult`: `sequence`
+is the accepted report ID, or zero when no report was supplied.
+`context.write_action_log(report)` writes without Actor changes;
+`context.announce(notice)` broadcasts separately. Commit first, then announce
+only if accepted. A failed announcement never rolls back an accepted consequence.
+
+Both operations use authority-validated, reliable stock Godot RPCs to every
+currently connected Participant. Log records precede linked announcements;
+the authority includes the record snapshot so a click still works if the local
+twenty-entry history evicts it during display. An unavailable link is rejected
+with `not_found`. Announcements are transient: they are neither persisted nor
+replayed on join, reconnect, or history loading. Existing local history retention
+and missed-event semantics are unchanged. `ok` confirms authority acceptance,
+not that every participant read the announcement.
+
+Accepted physical Rolls record their raw dice **and** announce the numeric
+result. A requested Throw can attach that step to an existing flow instead of
+creating another row. Extension consequence reports do not replace its announcement.
+Use action windows for decisions and manual instructions, local feedback for
+rejected input, history for consequences, and explicit announcements for shared
+events worth briefly displaying.
+
+### One record per flow (2029 revision 34)
+
+`await sdk.action_log.update(sequence, message)` appends a step to an existing
+record. Its ID, original title, author and position remain stable; its summary
+shows the latest result. A non-roll `result` is a replaceable summary, not a
+historical fact: earlier summary labels such as "In progress" disappear when
+superseded. Record lasting outcomes in `text` (for example, "Critical success
+against the breath weapon."). Earlier text, raw dice and roll totals remain
+in the same list card.
+Requested Throw term names label their raw dice (for example, Damage and
+Protection); the host preserves these labels when saving and replicating records.
+The publishing Package and Participant (or GM) may update it. An unknown or
+evicted ID returns `not_found`; it never silently creates a second record.
+
+Inside a System intent, use `context.update_action_log(sequence, message)` or
+`context.commit(changes, report, sequence)` to combine an accepted consequence
+with a log update. The System validates rules and permissions as usual.
+
+```gdscript
+var started := context.write_action_log(SDK.ActionLogMessage.new("Shortsword attack"))
+if not started.ok:
+    return
+var request := SDK.HumanThrowRequest.new(id, participant, [SDK.DiceTerm.new("Attack", 20)])
+request.log_sequence = started.sequence
+context.request_throw(request)
+# Retain started.sequence in this live action. Further Throws use the same link;
+# report Hit/Miss and commit damage with context.commit(changes, report, sequence).
+```
+
+The host appends each linked physical Roll and links its numeric announcement to
+the same record. Updates carry the complete record over reliable authority RPCs;
+receivers replace by ID and ignore older revisions, including when they missed
+the initial entry. Local saving retains the steps. Updates do not announce or
+replay on reconnect. Each record supports at most 64 steps; a rejected update
+does not commit its accompanying Actor changes.
+
 ## Shared Action Log (2029 revision 5)
 
 Deliberately publish a completed outcome through `sdk.action_log.publish` from
@@ -845,8 +962,7 @@ characters; `tone` is `info`, `success`, `attention`, or `roll`. Markup is liter
 text. Links, buttons, callbacks and embedded UI are not message fields.
 
 Each Participant locally retains the latest twenty received entries, newest at the bottom.
-The host viewer shows four by default and expands into a scrollable retained
-window. Reading state is local to each Participant. Evicted entries have no
+The host viewer is a separate dockable history window with search and grouping. Reading state is local to each Participant. Evicted entries have no
 archive. Each application saves its received window locally and restores it when
 reconnecting or reopening that World. It does not recover missed entries from peers;
 histories may differ between Participants. Reports are sent one at a time by
@@ -988,6 +1104,16 @@ elif current.ok and current.status == "cancelled":
         await sdk.system_records.delete(waiting.id)
 ```
 
+Edition 2029 revision 31 adds `HumanThrowRequest.base_modifier` (default 0,
+−100…100) and `allow_modifier` (default false) to Authority System-action requests.
+The fixed pool cannot be edited. If enabled, the native tray adjusts the final
+modifier within ±20 of the base; Clear restores the base. Damage/protection
+requests leave adjustment disabled. Both fields are part of the immutable plan.
+`HumanThrowResult` includes `base_modifier`, `allow_modifier` and the accepted
+`modifier`; consume the latter once when interpreting the raw die faces.
+Resolved Roll totals and Action Log formulas already include it. These fields
+survive replication and World persistence; older saved requests default to zero.
+
 The target sees the existing native Dice Tray with the requested pool prefilled
 and editing locked. Dragging and releasing uses the normal physical dice path.
 Back, closing the tray, right-click, or releasing outside the tabletop is an
@@ -1092,7 +1218,21 @@ Actor ID and its complete replacement data. At most 32 Actors can change togethe
 
 ### Targeting handoff (2029 revision 13)
 
-`targeting.choose() -> OperationResult` starts the existing tabletop target picker from the Package’s active managed window. Visible windows temporarily yield the tabletop; Done restores their placements and focuses the source window. Read `targeting.snapshot()` or subscribe to `targeting.changed` for the committed selection. This does not submit an action or change access.
+`targeting.begin_range(source: RookId, metres: float, caption: String = "") -> OperationResult`
+(revision 31) shows a growing circle around the source Rook and keeps the
+Package’s active managed window visible while picking. An empty target set
+starts picking immediately. Existing targets remain selected so the Package
+can show an invalid preselection; further picks reject hidden/self/out-of-range
+Rooks and select one target at a time. The guide follows the source and clears
+when its window closes or the source becomes unavailable. The guide and distance
+marker are depth-tested 3D geometry. The optional caption expresses the range in
+the System's units (for example `5 ft`); empty uses metres. Caption is presentation
+only: metres remains the authoritative picking constraint.
+`targeting.end_range()` removes the guide and ends that picker. Distance uses
+committed Rook centers. Packages must still validate target identity and reach
+on Authority before resolving an action.
+
+`targeting.choose() -> OperationResult` starts the existing tabletop target picker from the Package’s active managed window. An active range guide keeps its compact window visible; otherwise visible windows temporarily yield the tabletop; Done restores their placements and focuses the source window. Read `targeting.snapshot()` or subscribe to `targeting.changed` for the committed selection. This does not submit an action or change access.
 
 ### Live Participant sessions (2029 revision 14)
 
@@ -1231,8 +1371,7 @@ The ordinary Node3D PackedScene keeps its required
 with +Y up and +Z facing away from the wall. Rookframe targets/validates accepted
 wall support, chooses pose, persists identity/attachment/height and replicates the
 complete state. Authors supply appearance and collision with ordinary Godot
-facilities; no script or host-node manipulation is needed. See
-[wall-mounted Prop authoring](../docs/implementation/wall-mounted-props.md).
+facilities; no script or host-node manipulation is needed.
 
 
 ## Actor Definitions in Library (Edition 2029 revision 21)

@@ -1,4 +1,25 @@
-# Rookframe SDK Authoring Kit 0.32.45
+# Rookframe SDK Authoring Kit 0.33.0
+
+This authoring kit binds the public UI Kit Action Panel and Action Section.
+Compose native Controls in their header, emblem, sections and footer slots,
+in an authored scene or through the typed slot getters. The production checker
+accepts Godot's Editable Children metadata on inspected instances while retaining
+all property and script checks. No additional SDK domain operation is required;
+the existing managed surface and targeting capabilities remain unchanged.
+
+Edition 2029 revision 33 separates explicit announcements from recorded history.
+Use `action_log.write`, `announcements.announce`, and accepted report sequences
+from System commits. See [the contract](API.md#announcements-and-recorded-history-2029-revision-33).
+
+Edition 2029 revision 32 adds the opt-in `ExtensionSurface.hide_rails` presentation
+setting. Rails are hidden only while that surface is visible; ordinary windows
+keep their existing behavior.
+
+Edition 2029 revision 31 adds content-sized managed surfaces, animated targeting
+ranges and requested-Throw modifiers. An action can show its compact authored
+Control while selecting a target, then send a fixed dice pool with its base
+modifier to the native Dice Tray. The tray alone adjusts the optional situation
+modifier. Use a matching runtime and regenerate the Package facade.
 
 Edition 2029 revision 30 adds `sdk.rooks.select(id)` for the selected System’s
 local Rook switchers. It selects a controlled Rook in the current Scene during
@@ -151,7 +172,7 @@ func request_quit(exit_code := -1) -> bool:
 
 func _plugging() -> void:
     plug("rookframe/rookframe-sdk", {"tag": "v0.32.45", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "65b29750d7fc26a32172e6da8c1cf9aeb10678e3", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "0f648a84779232e261a50e1a30e1fa54b42c6fa0", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -274,7 +295,7 @@ not Rookframe C# source or a project to build. Keep the complete bundle together
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
 scene using Godot's ordinary scene editor. The public Theme is
 `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/65b29750d7fc26a32172e6da8c1cf9aeb10678e3/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/0f648a84779232e261a50e1a30e1fa54b42c6fa0/docs).
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
