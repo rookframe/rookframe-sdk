@@ -12,7 +12,7 @@ import os
 
 from rookframe_sdk_facade import facade_sources
 
-CONTENT_TYPES = ("miniature", "prop", "wall_style", "surface_finish")
+CONTENT_TYPES = ("miniature", "prop", "wall_style", "surface_finish", "theme")
 UI_SLOTS = ("left", "right", "ui_root", "actor_creation", "selected_rook")
 
 
@@ -89,7 +89,10 @@ def register(project: Path, scene: str, entry_id: str, name: str, kind: str,
     resource = (project / scene.removeprefix("res://")).resolve()
     if not resource.is_relative_to(root.resolve()) or not resource.is_file():
         raise ValueError("Choose a saved scene inside this Package's UUID directory.")
-    if resource.suffix not in (".tscn", ".glb", ".gltf"):
+    if kind == "theme":
+        if resource.suffix != ".tres":
+            raise ValueError("Choose a native Godot Theme saved as a .tres resource.")
+    elif resource.suffix not in (".tscn", ".glb", ".gltf"):
         raise ValueError("Choose a Godot scene or imported glTF model.")
     relative = resource.relative_to(root.resolve()).as_posix()
     changes: dict[Path, str] = {}

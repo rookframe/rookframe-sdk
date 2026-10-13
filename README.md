@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.33.0
+# Rookframe SDK Authoring Kit 0.34.0
 
 This authoring kit binds the public UI Kit Action Panel and Action Section.
 Compose native Controls in their header, emblem, sections and footer slots,
@@ -171,13 +171,14 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.32.45", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "0f648a84779232e261a50e1a30e1fa54b42c6fa0", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.34.0", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "64c727b89fbf05834e8c7b4f34740d984b48b007", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
-UI version is `v1.0.0-rc.1`; its full commit is authoritative because the initial
-candidate label may move. This does not publish stable UI Kit 1.0.0.
+UI provenance records the `v1.0.0-rc.1` candidate; its full commit includes
+the `v1.1.0-rc.2` themes and the shared action panels and pins those resources
+for reproducible installation.
 Run from the author project, replacing `godot` with your executable:
 
 ```sh
@@ -293,9 +294,15 @@ not Rookframe C# source or a project to build. Keep the complete bundle together
 ## Authored scenes and UI
 
 Open `rookframe/packages/<package-id>/ui/window.tscn` to edit and run the initial
-scene using Godot's ordinary scene editor. The public Theme is
-`res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/0f648a84779232e261a50e1a30e1fa54b42c6fa0/docs).
+scene using Godot's ordinary scene editor. The current Fantasy and Cyberpunk
+Themes are `res://rookframe/ui/menu/MenuTheme.tres` and
+`res://rookframe/ui/menu/cyberpunk/CyberpunkTheme.tres`. The generated scenes still
+use the legacy `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/64c727b89fbf05834e8c7b4f34740d984b48b007/docs).
+The in-game host tools inherit the World’s selected Theme, including a native
+Theme declared by an enabled Package. The UI Kit’s `editor_*` variations style
+tool buttons, panels and labels; omitted items use the host defaults. Package
+Controls inherit the World theme unless they assign their own Theme or overrides.
 Use its semantic Theme variations and public component properties. Internal
 component child paths are not a stable API. Package resources and private
 libraries belong below the Package's own UUID namespace.
@@ -592,3 +599,45 @@ writing. Its complete-text `value` and `value_changed` contract retains drafts
 across page turns; `get_pager()` composes its native pager into a fixed footer.
 Reading surfaces can retain their one-page pager with
 `paginated_content.always_show_pager`.
+
+## World themes
+
+A Package can supply World appearances as ordinary Godot `Theme` resources.
+Declare them in a visual Content group (no Implementation or Presentation is
+needed for a theme-only Package):
+
+```json
+{"kind":"visual","entries":[
+  {"id":"jade","displayName":"Jade","type":"theme","payload":"ui/jade.tres"}
+]}
+```
+
+Use Godot's Theme editor to save `ui/jade.tres` inside the Package UUID directory,
+then add the declaration above to the Manifest's `content` array. The authoring
+CLI also accepts `register --scene <resource.tres> --entry-id jade --name Jade --entry-type theme`.
+Build, validate and publish through the usual Package workflow. Theme entries
+use the existing Package identity plus local Content ID; display names do not
+identify them. They are not placeable tabletop Content.
+
+The World creation **Packages** step offers Fantasy, Cyberpunk, and themes from
+the enabled System Extension and optional Packages. Fantasy is preselected.
+Removing a supplier during creation resets its theme choice to Fantasy. The
+World saves the choice and shares it with Participants. Legacy Worlds without a
+choice or an unavailable theme use Fantasy. The saved Package reference survives
+fallback and Package updates.
+
+These appearances style the World's tabletop tools and Package UI.
+A Package Theme is merged onto Fantasy with Godot's `Theme.merge_with`, so unprovided items keep their
+host defaults. Use the native type variations and items in
+the public UI Kit's `MenuTheme.tres` and `CyberpunkTheme.tres` as references.
+The `editor_*` variations style tabletop tool buttons, panels, and labels;
+Package Controls inherit the World Theme unless they assign their own Theme
+or overrides. Application routes choose their own Theme composition.
+
+Admission supports native Theme colors, integer constants and font sizes,
+base types, default font/size/scale, and inspected icon, StyleBox and font
+resources. Existing image, StyleBox and Inter-backed FontVariation rules apply.
+Theme resources and their Package dependency closure must contain no scripts:
+a startup appearance loads through the checked Package boundary without
+activating Package behavior. An unavailable Package or outdated local approval
+uses Fantasy; repair the installed Package through the Package library.

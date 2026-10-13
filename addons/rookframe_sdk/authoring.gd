@@ -3,6 +3,7 @@ extends VBoxContainer
 
 signal package_changed(paths: PackedStringArray)
 var _install_worker: Thread
+var _media_role := "gallery"
 const TYPES := ["prop", "wall_style", "surface_finish", "miniature",
 	"left", "right", "ui_root", "actor_creation", "selected_rook"]
 
@@ -22,18 +23,51 @@ func _ready() -> void:
 		if not %EntryId.has_focus():
 			%EntryId.text = _slug(value))
 	%EntryType.item_selected.connect(func(_index: int): _update_help())
+	%ChooseCover.pressed.connect(func(): _choose_media("cover"))
+	%AddMedia.pressed.connect(func(): _choose_media("gallery"))
+	%MediaPicker.file_selected.connect(func(path: String):
+		_run_tool(PackedStringArray(["media", "--file", path, "--role", _media_role,
+			"--caption", %MediaCaption.text.strip_edges()])))
+	%RemoveMedia.pressed.connect(func(): _change_media(0))
+	%MediaUp.pressed.connect(func(): _change_media(-1))
+	%MediaDown.pressed.connect(func(): _change_media(1))
 	refresh()
+
+
+func _choose_media(role: String) -> void:
+	_media_role = role
+	%MediaPicker.filters = PackedStringArray(["*.png,*.jpg,*.jpeg,*.webp ; Images"])
+	if role == "gallery": %MediaPicker.add_filter("*.ogv,*.mp4,*.webm", "Videos")
+	%MediaPicker.popup_centered_ratio(0.7)
+
+
+func _change_media(direction: int) -> void:
+	var selected: PackedInt32Array = %MediaItems.get_selected_items()
+	if selected.is_empty(): return
+	var path: String = %MediaItems.get_item_metadata(selected[0])
+	var args := PackedStringArray(["media", "--remove", path])
+	if direction != 0: args.append_array(["--move", str(direction)])
+	_run_tool(args)
 
 
 func refresh() -> void:
 	var exists := FileAccess.file_exists("res://rookframe.json")
 	%NewPackage.visible = not exists
 	%RegisterEntry.visible = exists
+	%ReleaseMedia.visible = exists
 	if exists:
 		var manifest = JSON.parse_string(FileAccess.get_file_as_string("res://rookframe.json"))
 		if manifest is Dictionary:
 			%EntryType.set_item_disabled(7, manifest.get("kind") != "system-extension")
 			%PackagePath.text = "Save Package scenes below:\nres://rookframe/packages/" + str(manifest.get("id", "")) + "/"
+			%MediaItems.clear()
+			var media: Dictionary = manifest.get("media", {})
+			var entries: Array = media.get("gallery", []).duplicate()
+			if media.get("cover") != null: entries.push_front(media.cover)
+			for entry in entries:
+				var label := "Cover" if entry == media.get("cover") else str(entry.type).capitalize()
+				var index: int = %MediaItems.add_item(label + " · " + str(entry.get("caption", entry.path.get_file())))
+				%MediaItems.set_item_metadata(index, entry.path)
 			%Presentation.clear()
 			for entry in manifest.get("presentations", []):
 				%Presentation.add_item(entry.id)

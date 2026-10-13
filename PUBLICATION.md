@@ -16,8 +16,10 @@ facade, exact dependency lock, presets, documentation and tests. Run the normal
 `check` and `build` commands. Keep the one checked complete output; a
 retry uploads those same bytes without rebuilding.
 
-Any public HTTPS host works. Upload the exact `rookframe.json` bytes and the
-one `.rookpackage` archive, then verify both URLs are public without credentials.
+Any public HTTPS host works. Upload the exact `rookframe.json` bytes, the one
+`.rookpackage` archive, and every declared media file. Each media file must be
+public at its explicit `url`, or at its filename beside the archive when `url`
+is omitted. Verify all URLs are public without credentials.
 Never rewrite a released version's assets or move its tag. Publish a new version
 when bytes need to change.
 
@@ -55,6 +57,26 @@ created the draft or an asset. Rerun the same command with the same archive and
 commit to inspect remote state and finish missing steps. A successful GitHub
 release does not imply a Catalogue submission, and a failed Catalogue request
 does not roll back or delete GitHub assets.
+
+## Cover images and videos
+
+In the Package tab, **Choose cover** sets the Package's cover image. **Add image
+or video** adds a gallery item with the entered caption. Remove or reorder items
+before building. Systems use the same media contract; Rookframe can use their
+cover as the default image when creating a game.
+
+```sh
+python3 addons/rookframe_sdk/rookframe_authoring.py media --project . --role cover --file /path/to/cover.png
+python3 addons/rookframe_sdk/rookframe_authoring.py media --project . --role gallery --file /path/to/tour.webm --caption "Package tour"
+```
+
+Media attachment selects Manifest format 2, which requires a Rookframe version
+with format-2 support. Images accept PNG, JPEG or WebP up to 16 MiB; videos accept
+OGV, MP4 or WebM up to 128 MiB. A cover must be an image. Up to 12 gallery items
+are supported. Media are packaged as inert files outside executable PCK data.
+GitHub publication uploads the checked media beside the archive and Manifest.
+Catalogue reads the public HTTPS URLs and displays the images and video controls.
+Changing a published release's artwork requires a new Package version.
 
 ## Register and authenticate
 

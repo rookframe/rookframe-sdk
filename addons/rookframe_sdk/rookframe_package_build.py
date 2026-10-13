@@ -328,6 +328,7 @@ def deterministic_archive(
     pcks: dict[str, bytes],
     shared_gd: dict[str, bytes],
     build_metadata: dict,
+    media: dict[str, bytes] | None = None,
 ) -> bytes:
     output = io.BytesIO()
     with zipfile.ZipFile(output, "w") as archive:
@@ -340,6 +341,7 @@ def deterministic_archive(
             for path, contents in sorted(shared_gd.items())
         )
         entries.append(("rookframe.json", manifest))
+        entries.extend(sorted((media or {}).items()))
         entries.append(
             (BUILD_METADATA, json.dumps(build_metadata, sort_keys=True).encode())
         )

@@ -230,6 +230,11 @@ def check_project(project: Path, godot: Path, work: Path) -> tuple[dict, list[st
         except (RuntimeError, OSError, ValueError, KeyError, configparser.Error) as error:
             errors.append(str(error))
     if manifest:
+        from rookframe_media import project_media
+        try:
+            project_media(project, manifest)
+        except (OSError, ValueError, KeyError) as error:
+            errors.append(str(error))
         prefix = f"res://rookframe/packages/{manifest['id']}/"
         for path in manifest_check.get("paths", []):
             if not path.startswith(prefix) or not (project / path[6:]).is_file():
@@ -276,9 +281,10 @@ def build_project(project: Path, godot: Path, work: Path, manifest: dict,
         pcks[profile], metadata["profiles"][profile] = export_prepared_profile(
             godot, prepared, profile_work, profile, runtime_root, headless=headless)
     staged = work / "candidate.rookpackage"
+    from rookframe_media import project_media
     staged.write_bytes(deterministic_archive(
         (project / "rookframe.json").read_bytes(), pcks,
-        shared_profile_sources(pcks, metadata), metadata))
+        shared_profile_sources(pcks, metadata), metadata, project_media(project, manifest)))
     checked = verify("artifact", staged, project / "rookframe/ui")
     check_revision(manifest, checked)
     output.parent.mkdir(parents=True, exist_ok=True)
@@ -302,7 +308,7 @@ def main() -> int:
         from rookframe_publication import main as publication_main
         return publication_main(sys.argv[1:])
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("init", "facade", "register", "install-dependencies", "check", "build"))
+    parser.add_argument("command", choices=("init", "facade", "register", "install-dependencies", "check", "build", "media"))
     parser.add_argument("--project", type=Path, default=Path.cwd())
     parser.add_argument("--name", default="My Package")
     parser.add_argument("--kind", choices=("optional", "system-extension"), default="optional")
@@ -313,6 +319,12 @@ def main() -> int:
     parser.add_argument("--entry-id")
     parser.add_argument("--entry-type")
     parser.add_argument("--presentation")
+    parser.add_argument("--file", type=Path)
+    parser.add_argument("--role", choices=("cover", "gallery"), default="gallery")
+    parser.add_argument("--caption", default="")
+    parser.add_argument("--url")
+    parser.add_argument("--remove")
+    parser.add_argument("--move", type=int, choices=(-1, 0, 1), default=0)
     parser.add_argument("--godot", type=Path, default=Path(os.environ.get("ROOKFRAME_GODOT", "/Applications/Godot_mono.app/Contents/MacOS/Godot")))
     parser.add_argument("--output", type=Path)
     parser.add_argument("--graphical", action="store_true", help="Use the graphical export renderer when required by the host.")
@@ -322,6 +334,9 @@ def main() -> int:
         if args.command == "init":
             initialize(project, args.name, args.kind, args.ui, args.edition, args.content_only)
             result = {"status": "initialized", "project": str(project)}
+        elif args.command == "media":
+            from rookframe_media import edit
+            result = edit(project, args.file, args.role, args.caption, args.url, args.remove, args.move)
         elif args.command == "facade":
             check_facade(project, generate_missing=True)
             result = {"status": "facade_checked"}

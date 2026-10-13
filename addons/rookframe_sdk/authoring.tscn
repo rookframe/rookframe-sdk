@@ -126,6 +126,55 @@ text = "Prepare model scene"
 unique_name_in_owner = true
 text = "Register scene"
 
+[node name="ReleaseMedia" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+
+[node name="Title" type="Label" parent="ReleaseMedia"]
+text = "Release images and videos"
+
+[node name="Help" type="Label" parent="ReleaseMedia"]
+text = "The cover also supplies the default image for games using this System. Attach PNG, JPEG or WebP images and OGV, MP4 or WebM videos before building your release."
+autowrap_mode = 3
+
+[node name="MediaItems" type="ItemList" parent="ReleaseMedia"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 110)
+
+[node name="MediaCaption" type="LineEdit" parent="ReleaseMedia"]
+unique_name_in_owner = true
+placeholder_text = "Caption for the next attachment (optional)"
+max_length = 200
+
+[node name="AddActions" type="HBoxContainer" parent="ReleaseMedia"]
+
+[node name="ChooseCover" type="Button" parent="ReleaseMedia/AddActions"]
+unique_name_in_owner = true
+text = "Choose cover…"
+
+[node name="AddMedia" type="Button" parent="ReleaseMedia/AddActions"]
+unique_name_in_owner = true
+text = "Add image or video…"
+
+[node name="EditActions" type="HBoxContainer" parent="ReleaseMedia"]
+
+[node name="RemoveMedia" type="Button" parent="ReleaseMedia/EditActions"]
+unique_name_in_owner = true
+text = "Remove"
+
+[node name="MediaUp" type="Button" parent="ReleaseMedia/EditActions"]
+unique_name_in_owner = true
+text = "Move up"
+
+[node name="MediaDown" type="Button" parent="ReleaseMedia/EditActions"]
+unique_name_in_owner = true
+text = "Move down"
+
+[node name="MediaPicker" type="EditorFileDialog" parent="."]
+unique_name_in_owner = true
+title = "Attach release media"
+access = 2
+file_mode = 0
+
 [node name="AuthorStatus" type="Label" parent="."]
 unique_name_in_owner = true
 autowrap_mode = 2

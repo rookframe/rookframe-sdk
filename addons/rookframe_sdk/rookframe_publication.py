@@ -7,6 +7,7 @@ import getpass
 import hashlib
 import http.cookiejar
 import json
+import mimetypes
 import os
 from pathlib import Path
 import re
@@ -280,6 +281,18 @@ def publish_checked_github(args) -> dict:
     if tag != "v" + manifest["version"]:
         raise PublicationError("github-destination", "The release tag must be v followed by the exact Manifest version.")
     names = release_assets(manifest, repo, tag)
+    from rookframe_media import assets as media_assets, validate_bytes
+    media = media_assets(manifest)
+    media_names = []
+    prefix = f"https://github.com/{repo}/releases/download/{tag}/"
+    for item in media:
+        url = public_url(item.get("url") or urllib.parse.urljoin(manifest["download"], Path(item["path"]).name))
+        name = url.removeprefix(prefix)
+        if not url.startswith(prefix) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,159}", name):
+            raise PublicationError("github-destination", "Every media URL must target a file in this versioned release.")
+        media_names.append(name)
+    if len(set([*names, *media_names])) != len(names) + len(media_names):
+        raise PublicationError("github-destination", "Every Manifest, archive and media asset needs a distinct filename.")
     head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=project, text=True).strip()
     if head != commit or subprocess.check_output(["git", "status", "--porcelain", "--untracked-files=normal"], cwd=project, text=True).strip():
         raise PublicationError("github-source", "Publish from a clean authoring checkout at the exact selected source commit.")
@@ -303,7 +316,15 @@ def publish_checked_github(args) -> dict:
         with tempfile.TemporaryDirectory(prefix="rookframe-release-") as folder:
             manifest_path = Path(folder) / names[0]
             manifest_path.write_bytes(manifest_bytes)
-            for name, path in ((names[0], manifest_path), (names[1], archive)):
+            uploads = [(names[0], manifest_path), (names[1], archive)]
+            with zipfile.ZipFile(archive) as contents:
+                for item, name in zip(media, media_names):
+                    data = contents.read(item["path"])
+                    validate_bytes(item["path"], data)
+                    path = Path(folder) / name
+                    path.write_bytes(data)
+                    uploads.append((name, path))
+            for name, path in uploads:
                 current = gh_json(f"repos/{repo}/releases/{release['id']}")
                 assets = [asset for asset in current["assets"] if asset["name"] == name]
                 if len(assets) > 1:
@@ -312,7 +333,7 @@ def publish_checked_github(args) -> dict:
                     assert_asset(repo, assets[0], path)
                 else:
                     endpoint = f"https://uploads.github.com/repos/{repo}/releases/{release['id']}/assets?name={urllib.parse.quote(name, safe='')}"
-                    result = subprocess.run(["gh", "api", endpoint, "--method", "POST", "-H", "Content-Type: application/octet-stream", "--input", str(path)], capture_output=True, text=True, timeout=300)
+                    result = subprocess.run(["gh", "api", endpoint, "--method", "POST", "-H", "Content-Type: " + (mimetypes.guess_type(name)[0] or "application/octet-stream"), "--input", str(path)], capture_output=True, text=True, timeout=300)
                     if result.returncode:
                         raise PublicationError("github-upload", f"Upload of {name} did not complete. Retry will inspect remote assets first.")
                     assert_asset(repo, json.loads(result.stdout), path)
