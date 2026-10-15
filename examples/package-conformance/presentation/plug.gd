@@ -7,4 +7,4 @@ func request_quit(exit_code := -1) -> bool:
 
 func _plugging() -> void:
 	plug("rookframe/rookframe-sdk", {"tag": "v0.13.1", "include": ["addons/rookframe_sdk"]})
-	plug("rookframe/rookframe-ui-kit", {"commit": "9de97beeede7f9d803e6ea0abef67730cdc84692", "include": ["rookframe/ui"]})
+	plug("rookframe/rookframe-ui-kit", {"commit": "1a4c4109d3f57508fc86ed712406f7d3d01d5131", "include": ["rookframe/ui"]})

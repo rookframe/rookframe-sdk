@@ -48,6 +48,15 @@ public UI Kit. Type hints use path-preloaded scripts, following
 [Godot's custom type support](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/static_typing.html#custom-variable-types).
 They do not require global `class_name` registrations or Package autoloads.
 
+For a toolbar launcher, instance the public
+`res://rookframe/ui/editor/EditorToolButton.tscn` and author its icon, tooltip and
+accessibility name. Let it inherit the active World Theme. Rookframe passes the
+rail's compact density to registered Kit buttons. Existing native launchers
+using `RookframeShellControl` receive the current Kit tool-button appearance and
+token-defined target size at the host boundary; their local legacy Theme and
+Theme overrides do not style host chrome. The authored button instance, content,
+input state and signal connections are retained.
+
 ## Ownership and errors
 
 A window is instantiated lazily on its first activation. Reopening, docking,

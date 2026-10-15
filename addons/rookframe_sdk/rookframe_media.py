@@ -45,8 +45,8 @@ def assets(manifest: dict) -> list[dict]:
             url = urllib.parse.urlsplit(item["url"])
             if url.scheme != "https" or not url.hostname or url.username or url.password or url.fragment:
                 raise ValueError("Published media requires public HTTPS URLs.")
-    if manifest.get("manifestVersion") != 2:
-        raise ValueError("Release media requires Manifest format 2.")
+    if manifest.get("manifestVersion") not in (2, 3):
+        raise ValueError("Release media requires Manifest format 2 or 3.")
     return items
 
 
@@ -124,7 +124,7 @@ def edit(project: Path, source: Path | None, role: str, caption: str = "",
             if (media.get("cover") or {}).get("path") == relative:
                 raise ValueError("That image is already the cover.")
             gallery.append(item)
-        manifest["manifestVersion"] = 2
+        manifest["manifestVersion"] = max(2, manifest.get("manifestVersion", 1))
         assets(manifest)
         destination = project / relative
         if not destination.resolve().is_relative_to(project.resolve()) or destination.is_symlink():

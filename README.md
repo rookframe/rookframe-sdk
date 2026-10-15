@@ -1,4 +1,4 @@
-# Rookframe SDK Authoring Kit 0.34.0
+# Rookframe SDK Authoring Kit 0.34.1
 
 This authoring kit binds the public UI Kit Action Panel and Action Section.
 Compose native Controls in their header, emblem, sections and footer slots,
@@ -171,8 +171,8 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.34.0", "include": ["addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-ui-kit", {"commit": "64c727b89fbf05834e8c7b4f34740d984b48b007", "include": ["rookframe/ui"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.34.1", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "1a4c4109d3f57508fc86ed712406f7d3d01d5131", "include": ["rookframe/ui"]})
 ```
 
 The SDK tag is an exact immutable authoring version. The separately recorded
@@ -298,7 +298,7 @@ scene using Godot's ordinary scene editor. The current Fantasy and Cyberpunk
 Themes are `res://rookframe/ui/menu/MenuTheme.tres` and
 `res://rookframe/ui/menu/cyberpunk/CyberpunkTheme.tres`. The generated scenes still
 use the legacy `res://rookframe/ui/theme/rookframe_theme.tres`; reusable scenes and their API
-are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/64c727b89fbf05834e8c7b4f34740d984b48b007/docs).
+are documented in the [UI Kit](https://github.com/rookframe/rookframe-ui-kit/tree/1a4c4109d3f57508fc86ed712406f7d3d01d5131/docs).
 The in-game host tools inherit the World’s selected Theme, including a native
 Theme declared by an enabled Package. The UI Kit’s `editor_*` variations style
 tool buttons, panels and labels; omitted items use the host defaults. Package
