@@ -5,7 +5,6 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import shutil
 import subprocess
 import tempfile
 import os
@@ -37,12 +36,8 @@ def install_dependencies(project: Path) -> dict:
                 "https://github.com/" + repository + ".git", str(target))
             git("-C", str(target), "fetch", "--quiet", "--depth=1", "origin", revision)
             git("-C", str(target), "checkout", "--quiet", "--detach", revision)
-        checkout("rookframe/rookframe-ui-kit", commit, work / "ui")
         checkout("imjp94/gd-plug", bootstrap, work / "plug")
-        files = {project / "rookframe/ui" / path.relative_to(work / "ui/rookframe/ui"): path.read_bytes()
-                 for path in (work / "ui/rookframe/ui").rglob("*") if path.is_file()}
-        if not files:
-            raise ValueError("The pinned UI Kit has no public UI files.")
+        files = {}
         files[project / "addons/gd-plug/plug.gd"] = (work / "plug/addons/gd-plug/plug.gd").read_bytes()
         files[project / "addons/gd-plug/LICENSE"] = (work / "plug/LICENSE").read_bytes()
         for path, contents in files.items():
@@ -50,19 +45,14 @@ def install_dependencies(project: Path) -> dict:
                 raise ValueError("Dependency files must stay inside the author project.")
             if path.exists() and path.read_bytes() != contents:
                 raise ValueError(f"Dependency installation would replace {path.relative_to(project)}. Preserve or reconcile that file first.")
-        cache = project / ".plugged/rookframe-ui-kit"
-        if not cache.resolve().is_relative_to(project.resolve()) or cache.is_symlink() or cache.parent.is_symlink():
-            raise ValueError("The dependency cache must be a real directory inside the author project.")
-        if not cache.exists():
-            cache.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copytree(work / "ui", cache)
-        else:
-            git("-C", str(cache), "fetch", "--quiet", "--depth=1",
-                "https://github.com/rookframe/rookframe-ui-kit.git", commit)
         for path, contents in files.items():
             if not path.exists():
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(contents)
+    from rookframe_ui_kit_install import install_runtime, write_provenance
+    selection = {"tag": lock["uiKit"]["version"], "commit": commit}
+    install_runtime(project, selection)
+    write_provenance(project, selection)
     return {"status": "dependencies_installed", "uiCommit": commit}
 
 

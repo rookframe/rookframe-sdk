@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import configparser
 import hashlib
-import io
-import tarfile
 import json
 from pathlib import Path
 import re
@@ -67,13 +65,10 @@ def verify(*arguments: str) -> dict:
 
 def committed_ui_files(checkout: Path, revision: str) -> dict[str, str]:
     """Hash the public release tree, independently of checkout line endings."""
-    archived = subprocess.check_output(["git", "-C", str(checkout), "archive", revision, "rookframe/ui"], timeout=30)
-    with tarfile.open(fileobj=io.BytesIO(archived)) as tree:
-        files = {member.name[len("rookframe/ui/"):]: hashlib.sha256(tree.extractfile(member).read()).hexdigest()
-                 for member in tree.getmembers() if member.isfile() and not member.name.endswith(".import")}
-    if not files:
-        raise RuntimeError("UI.CONTENTS: The selected UI release has no public resources.")
-    return files
+    from rookframe_ui_kit_install import committed_runtime, hashes
+    _, files = committed_runtime(checkout, revision)
+    return hashes({name: data for name, data in files.items() if not name.endswith(".import")})
+
 
 
 def check_dependencies(project: Path, sdk_version: str, ui_version: str, ui_commit: str) -> None:
@@ -81,8 +76,8 @@ def check_dependencies(project: Path, sdk_version: str, ui_version: str, ui_comm
     if lock.get("sdkAuthoringKitVersion") != sdk_version:
         raise RuntimeError("SDK.LOCK: Select the SDK's exact released version explicitly.")
     ui_pin = lock.get("uiKit", {})
-    if not re.fullmatch(r"v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?", ui_pin.get("version", "")) or not re.fullmatch(r"[0-9a-f]{40}", ui_pin.get("commit", "")):
-        raise RuntimeError("UI.LOCK: Record the UI Kit SemVer and full release commit.")
+    if not re.fullmatch(r"(?:[0-9a-f]{40}|v(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?)", ui_pin.get("version", "")) or not re.fullmatch(r"[0-9a-f]{40}", ui_pin.get("commit", "")):
+        raise RuntimeError("UI.LOCK: Record the UI Kit version (release tag or full commit) and full commit.")
     sdk = project / "addons/rookframe_sdk"
     metadata = json.loads((sdk / "release.json").read_text())
     if metadata.get("version") != sdk_version:
@@ -92,7 +87,7 @@ def check_dependencies(project: Path, sdk_version: str, ui_version: str, ui_comm
             raise RuntimeError(f"SDK.CONTENTS: Restore the exact SDK; {relative} was changed.")
     ui = project / "rookframe/ui"
     ui_files = metadata["uiFiles"]
-    if ui_pin != {"version": ui_version, "commit": ui_commit}:
+    if ui_pin != metadata["uiKit"]:
         # Other independently selected UI releases do not require an SDK release.
         # Compare the gd-plug checkout's committed tree without executing it.
         checkout = project / ".plugged/rookframe-ui-kit"

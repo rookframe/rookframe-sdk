@@ -4,3 +4,4 @@ addons/
 rookframe/ui/
 build/
 __pycache__/
+rookframe_ui_kit_provenance.json

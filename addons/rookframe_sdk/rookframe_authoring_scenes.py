@@ -36,9 +36,8 @@ window = SubResource("ExtensionWindow")
 
 
 def window_scene(name: str) -> str:
-    return f'''[gd_scene load_steps=3 format=3]
+    return f'''[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Theme" path="res://rookframe/ui/theme/rookframe_theme.tres" id="theme"]
 [ext_resource type="PackedScene" path="res://rookframe/ui/components/layout/section.tscn" id="section"]
 
 [node name="PackageWindow" type="VBoxContainer"]
@@ -48,7 +47,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
-theme = ExtResource("theme")
 
 [node name="Introduction" parent="." instance=ExtResource("section")]
 layout_mode = 2
@@ -57,23 +55,19 @@ description = "An extension for your World."
 
 [node name="Description" type="Label" parent="."]
 layout_mode = 2
-theme_type_variation = &"RookframeBody"
 text = "Replace this content with your authored scene."
 autowrap_mode = 2
 '''
 
 
 def rail_scene(name: str) -> str:
-    return f'''[gd_scene load_steps=3 format=3]
+    return f'''[gd_scene load_steps=2 format=3]
 
-[ext_resource type="Theme" path="res://rookframe/ui/theme/rookframe_theme.tres" id="theme"]
 [ext_resource type="Texture2D" path="res://rookframe/ui/icons/document.svg" id="icon"]
 
 [node name="PackageRailEntry" type="Button"]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
-theme = ExtResource("theme")
-theme_type_variation = &"RookframeShellControl"
 theme_override_constants/icon_max_width = 21
 icon = ExtResource("icon")
 expand_icon = false

@@ -90,6 +90,8 @@ def copy_author_project(source: Path, destination: Path) -> None:
     development_files = development_native_files(source)
     def ignore(directory, names):
         ignored = AUTHOR_STATE
+        if Path(directory) == source:
+            ignored = ignored | {"rookframe_ui_kit_provenance.json"}
         if Path(directory) == source / ".rookframe":
             ignored = ignored | DEVELOPMENT_CONFIG
         if Path(directory) == source / "rookframe":

@@ -15,16 +15,18 @@ import tempfile
 import uuid
 
 from rookframe_sdk_facade import facade_sources
+from rookframe_ui_kit import ui_kit_dependency
 from rookframe_authoring_checks import check_dependencies, configured_profiles, verify
 from rookframe_package_build import (BUILD_SCHEMA,
     copy_author_project, deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.34.1"
+SDK_VERSION = "0.35.0-rc.1"
 SDK_EDITION = "2029"
 SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 34}
-UI_VERSION = "v1.0.0-rc.1"
-UI_COMMIT = "1a4c4109d3f57508fc86ed712406f7d3d01d5131"
+UI_DEPENDENCY = ui_kit_dependency()
+UI_VERSION = UI_DEPENDENCY["tag"]
+UI_COMMIT = UI_DEPENDENCY["commit"]
 RESOURCE_EXPORT = "package"
 
 
@@ -52,7 +54,7 @@ runnable=false
 dedicated_server=false
 export_filter="selected_resources"
 include_filter="rookframe/packages/{package_id}/**"
-exclude_filter="rookframe.json,rookframe/ui/**,addons/**,.rookframe/**,.plugged/**,plug.gd,README.md,presentation/**"
+exclude_filter="rookframe.json,rookframe_ui_kit_provenance.json,rookframe/ui/**,addons/**,.rookframe/**,.plugged/**,plug.gd,README.md,presentation/**"
 export_path="build/{profile}.pck"
 script_export_mode=0
 encrypt_pck=false
@@ -108,7 +110,7 @@ def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: s
         ".rookframe/authoring.lock.json": json_text(lock),
     }
     if not (project / ".gitignore").exists():
-        proposed[".gitignore"] = ".godot/\n.plugged/\naddons/rookframe_sdk/\naddons/gd-plug/\naddons/webrtc_native/lib/\nrookframe/ui/\nrookframe/development/\n.rookframe-development/\n.rookframe-development.pck\n.rookframe/development.json\n.rookframe/development-runtime.json\nbuild/\n__pycache__/\n"
+        proposed[".gitignore"] = ".godot/\n.plugged/\naddons/rookframe_sdk/\naddons/gd-plug/\naddons/webrtc_native/lib/\nrookframe/ui/\nrookframe_ui_kit_provenance.json\nrookframe/development/\n.rookframe-development/\n.rookframe-development.pck\n.rookframe/development.json\n.rookframe/development-runtime.json\nbuild/\n__pycache__/\n"
     proposed.update({f"{package_root}/sdk/{name}": source
                      for name, source in facade_sources(package_id, revision, SDK_VERSION, edition, implementation="implementation" in manifest, presentations=bool(manifest.get("presentations")) or (ui and not manifest_path.exists())).items()})
     if ui and not manifest_path.exists():
@@ -121,17 +123,11 @@ def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: s
         proposed[f"{package_root}/ui/window_button.tscn"] = rail_scene(name)
         proposed[f"{package_root}/ui/window_button.tres"] = window_button(package_id)
     if not (project / "plug.gd").exists():
-        proposed["plug.gd"] = f'''extends "res://addons/gd-plug/plug.gd"
-
-
-func request_quit(exit_code := -1) -> bool:
-\treturn super.request_quit(0 if exit_code == -1 else exit_code)
-
-
-func _plugging() -> void:
-\tplug("rookframe/rookframe-sdk", {{"tag": "v{SDK_VERSION}", "include": ["addons/rookframe_sdk"]}})
-\tplug("rookframe/rookframe-ui-kit", {{"commit": "{UI_COMMIT}", "include": ["rookframe/ui"]}})
-'''
+        helper_root = Path(__file__).resolve().parent
+        for name in ("rookframe_ui_kit.gd", "rookframe_ui_kit_install.py"):
+            proposed[f".rookframe/{name}"] = (helper_root / name).read_text(encoding="utf-8")
+        proposed[".rookframe/ui-kit-dependency.json"] = json_text(UI_DEPENDENCY)
+        proposed["plug.gd"] = authoring_plug_script(SDK_VERSION, UI_COMMIT)
     implementation = manifest.get("implementation")
     if implementation and not manifest_path.exists():
         proposed[f"{package_root}/logic/implementation.gd"] = f'extends "res://{package_root}/sdk/implementation.gd"\n'
@@ -362,6 +358,44 @@ def main() -> int:
     except (RuntimeError, OSError, ValueError, KeyError, configparser.Error, subprocess.SubprocessError) as error:
         print(str(error), file=sys.stderr)
         return 1
+
+
+def authoring_plug_script(sdk_version: str, ui_commit: str) -> str:
+    return '''extends "res://addons/gd-plug/plug.gd"
+var ui_kit = preload("res://.rookframe/rookframe_ui_kit.gd").new()
+
+func _initialize() -> void:
+    if ui_kit.dependency.is_empty():
+        quit(1)
+        return
+    super._initialize()
+
+func request_quit(exit_code := -1) -> bool:
+    if not threadpool.is_all_thread_finished() or not threadpool.is_all_task_finished():
+        return false
+    var result := 0 if exit_code == -1 else exit_code
+    var args := OS.get_cmdline_args()
+    if result == 0 and ("install" in args or "update" in args):
+        result = ui_kit.write_provenance()
+    return super.request_quit(result)
+
+func install_plugin(plugin):
+    if plugin.name == "rookframe-ui-kit":
+        ui_kit.install(self, plugin)
+    else:
+        super.install_plugin(plugin)
+
+func update_plugin(plugin, checking=false):
+    if plugin.name == "rookframe-ui-kit":
+        if not checking:
+            ui_kit.install(self, plugin)
+        return false
+    return super.update_plugin(plugin, checking)
+
+func _plugging() -> void:
+    plug("rookframe/rookframe-sdk", {"tag": "vSDK_VERSION", "include": ["addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "UI_COMMIT", "include": ["rookframe/ui"]})
+'''.replace("SDK_VERSION", sdk_version).replace("UI_COMMIT", ui_commit)
 
 
 if __name__ == "__main__":
