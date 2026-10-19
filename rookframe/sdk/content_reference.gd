@@ -1,0 +1,8 @@
+extends Resource
+
+## Stable Package/local identity. Never a build path or a Package version.
+@export var package_id: String
+@export var local_id: String
+func _init(package: String = "", item: String = "") -> void:
+	package_id = package
+	local_id = item

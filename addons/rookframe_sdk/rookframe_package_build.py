@@ -23,7 +23,7 @@ BUILD_METADATA = "artifacts/build.json"
 BUILD_SCHEMA = "rookframe-package-build-v1"
 AUTHOR_STATE = {".godot", "__pycache__", ".git", "build", "bin", "obj", ".plugged",
                 ".rookframe-development", ".rookframe-development.pck"}
-DEVELOPMENT_CONFIG = {"development.json", "development-runtime.json"}
+DEVELOPMENT_CONFIG = {"development.json", "installed-application.json"}
 TEXT_RESOURCES = {
     ".gd",
     ".tscn",
@@ -57,7 +57,7 @@ def run_godot(godot: Path, project: Path, *arguments: str) -> str:
     output = result.stdout + result.stderr
     if result.returncode or "ERROR:" in output or "SCRIPT ERROR:" in output:
         raise RuntimeError(
-            f"Godot preparation failed ({' '.join(arguments)}):\n{output}"
+            f"Godot preparation failed (exit {result.returncode}; {' '.join(arguments)}):\n{output}"
         )
     return output
 
@@ -74,6 +74,7 @@ def source_identity(source: Path) -> str:
                 for part in path.relative_to(source).parts
             )
             or path.is_relative_to(source / "rookframe/ui")
+            or path.is_relative_to(source / "rookframe/sdk")
             or path.is_relative_to(source / "rookframe/development")
             or path.parent == source / ".rookframe" and path.name in DEVELOPMENT_CONFIG
             or path.relative_to(source).as_posix() in development_files
@@ -100,11 +101,11 @@ def copy_author_project(source: Path, destination: Path) -> None:
 
 
 def development_native_files(source: Path) -> set[str]:
-    inventory = source / ".rookframe/development-runtime.json"
+    inventory = source / ".rookframe/installed-application.json"
     if not inventory.is_file():
         return set()
     return {name for name in json.loads(inventory.read_text(encoding="utf-8")).get("files", [])
-            if name.startswith("addons/webrtc_native/lib/")}
+            if name.startswith(("dependencies/webrtc_native/lib/", "addons/webrtc_native/lib/"))}
 
 
 def new_build_id() -> str:
@@ -208,7 +209,7 @@ def prepare_profile(
     for path in sorted(project.rglob("*")):
         if not path.is_file() or path.suffix not in TEXT_RESOURCES:
             continue
-        if path.is_relative_to(project / "rookframe/ui"):
+        if path.is_relative_to(project / "rookframe/ui") or path.is_relative_to(project / "rookframe/sdk"):
             continue
         text = path.read_text(encoding="utf-8")
         text = relocate_strings(text, source_root, runtime_root, replacements)

@@ -1,20 +1,14 @@
-# Typed Package authoring — SDK 0.17.1
+# Package SDK API
 
-Edition 2029 revision 9 includes the typed UI, World, settings, physical-Throw,
-and initial managed-window presentation
-integration APIs below. The earlier Edition/revision headings record when shared
-facilities were introduced. Edition 2029 uses the typed `DeviceExperience` return
-from `presentation_experience()`.
+Install the SDK source from `rookframe-sdk`. This version exposes the Edition
+2029 C# API through revision 34. Section headings identify the underlying API's
+revision requirements; installing the SDK does not generate per-Package variants.
 
-SDK 0.17.1 also authors 2027 revisions 1–7 and 2028 revisions 1–4. For the
-operation-based integration API in 2027:8 / 2028:5, retain immutable SDK 0.7.0.
-Already generated Packages using those Editions remain supported by the host.
-
-Extend the generated Package-local Presentation base. It supplies a typed `sdk`
+Extend `res://rookframe/sdk/presentation.gd`. It supplies a typed `sdk`
 before calling `compose()`. A window-opening entry is an authored resource:
 
 ```gdscript
-extends "res://rookframe/packages/<id>/sdk/presentation.gd"
+extends "res://rookframe/sdk/presentation.gd"
 
 const CALENDAR_WINDOW_BUTTON: SDK.WindowButton = preload("res://rookframe/packages/<id>/ui/window_button.tres")
 
@@ -77,18 +71,12 @@ own disposal of rejected registration controls.
 
 Extend `sdk/implementation.gd` and override `start() -> void` when Implementation
 setup is needed. The SDK binds before `start()` in an installed World. The
-surrounding Node lifecycle remains native Godot. The generated base owns the
-metadata binding; Publisher code receives the typed facade directly.
+surrounding Node lifecycle remains native Godot. The SDK base owns the
+metadata binding; Publisher code receives the typed SDK directly.
 
-All files in the generated `sdk/` directory ship with the Package. They are
-checked against the exact authoring kit and receive the same production source
-and resource verification as other Package code. No generated file is exempt
-from admission. These UI facilities require Edition 2027 revision 1.
-The typed World and Content scopes below require revision 5 (Edition 2028 revision 2).
-
-Direct Godot behavior within authored Package UI and the independently versioned
-UI Kit remain their existing contracts. Use public component properties and
-signals for Package-internal behavior, without depending on private child paths.
+The SDK lives at `res://rookframe/sdk/` in both the author project and Rookframe.
+Package exports exclude this directory. Rookframe checks Package code against
+its own installed SDK source and checks authored Resources that reference it.
 
 ### Modular action surfaces — authoring kit 0.32.47
 
@@ -143,13 +131,11 @@ The Publisher may configure these ordinary exported fields on an
 - `initial_floating_rect`: an optional `Rect2`. An empty rectangle asks
   Rookframe for its responsive default.
 
-The generated `Rail.push`, `sdk.windows.open`, and `sdk.windows.open_actor`
+The `Rail.push`, `sdk.windows.open`, and `sdk.windows.open_actor`
 operations submit that portable first-open presentation to Rookframe. It is an
 initial author preference, not World state: the Participant may move or redock
 the retained window, and Rookframe owns safe-area clamping and responsive
-fallbacks. Apart from the replaced inline-byte portrait API (whose callers
-must regenerate and adopt filepaths), earlier facades call their original host
-operations and expose no initial-presentation fields.
+fallbacks.
 
 ### Fixed full-viewport tasks — 2029 revision 24
 
@@ -167,15 +153,6 @@ surface. Only the originating Participant renders that motion; accepted raw
 results still use the normal shared Action Log. Closing leaves a launched Roll
 running in the background. Settled dice disappear after approximately one second.
 
-## Migrating the initial 0.1.x example
-
-Update the exact SDK pin and authoring lock together. Replace the generated
-`sdk/` directory with the current `facade` command, extend its Presentation base,
-and move the button/window references into a `WindowButton` resource. Replace
-manual binding, button instantiation, opening signal wiring and `mount_rail`
-with `Rail.push`. Keep the authored button and window scenes. Initialization
-does not overwrite a Publisher's existing source to perform this migration.
-
 ## SDK 0.3.0: Edition 2027 revision 4 and Edition 2028 revision 1
 
 Both Editions retain the typed Rails, WindowButton and ExtensionSurface API.
@@ -191,7 +168,7 @@ order and Package-local insertion order; repeating a scene is idempotent.
 The host loads and mounts it, observes setup errors and removes it on shutdown.
 Package controls do not own the workspace or surface chrome.
 
-Authored window/contribution roots can extend generated `sdk/window.gd`. The host
+Authored window/contribution roots can extend `res://rookframe/sdk/window.gd`. The host
 binds its concrete `sdk` before native readiness; override `ready()` to initialize
 children. `sdk` remains null when running the scene alone in the editor.
 
@@ -214,7 +191,7 @@ Set `"defaultLocale": "de"` alongside `translations` for a German default; every
 domain must contain that explicitly declared default. Omitting `defaultLocale`
 preserves English source text as the default without requiring an English
 resource. Hardcoded Package text remains supported and is not translated by the
-host catalog. See [Application and Package language](https://github.com/rookframe/rookframe-godot/blob/main/docs/implementation/internationalization.md).
+host catalog.
 
 Override `cleanup(completed: SDK.Cleanup)` on an Implementation or Presentation;
 call `completed.complete()` when finished, immediately or after asynchronous
@@ -264,7 +241,7 @@ Content is declared semantically in the Manifest, rather than pushed from an
 Implementation. The host projects Library metadata before readiness and resolves
 payloads/previews through checked loading on demand. A Content Reference uses
 Package UUID/local ID, independently of a build UUID. A data-only Package has no
-Implementation, Presentation, Settings or generated executable SDK.
+Implementation, Presentation, Settings or executable SDK.
 
 Presentation settings show declared choices. Preparation checks replacement
 Control setup before retiring the live contribution set. Successful changes
@@ -349,7 +326,7 @@ receives all Actor data, grants and Actor–Rook links. Mutation requires Owner 
 `create_data(choices)` method, assigns a fresh Actor identity, and grants the
 bound confirming human creator Owner access. It never creates a Rook.
 
-Author definitions by extending `SDK.ActorDefinition` through its generated script
+Author definitions by extending `SDK.ActorDefinition` through its SDK script
 path and declaring the Resource in a System Content group. Use an Actor Creation
 contribution to open an `SDK.ExtensionSurface` with `sdk.windows.open(surface)`;
 the final authored confirmation button calls `sdk.actors.create(...)`.
@@ -486,9 +463,7 @@ The host owns the target picker and named Presence Cursors. Packages observe
 Targeting; they do not send cursor positions or acquire native multiplayer Nodes.
 Targets and cursors disappear with their owning Session and never enter the save.
 
-To adopt these additions, pin SDK `0.10.0`, declare Edition `2029` minimum revision
-`2` in the Manifest and authoring lock, and regenerate the complete facade. Earlier
-Editions retain their existing contract and reject these new operations. The
+These C# API operations require Edition `2029` revision `2` or later. The
 bounded Workshop uses the query → shared Hero calculation → awaited submission
 path; it also demonstrates Viewer presentation and GM access changes.
 
@@ -559,7 +534,7 @@ World activation/session within the same application. Editing the candidate
 requires a new warning before any restart can be accepted.
 
 A Presentation may assign an authored `SettingsViewDefinition` to its inherited
-`settings_view`. Its scene extends the generated `sdk/settings_view.gd` path.
+`settings_view`. Its scene extends the `res://rookframe/sdk/settings_view.gd` path.
 Override `edit()` to populate controls from the typed `draft` and `scope`.
 Control callbacks use `draft.set_text(descriptor, value)` and the other typed
 setters. Rookframe owns the containing form and complete Save; the custom view
@@ -605,9 +580,7 @@ publication. Default object/list editors also use structured controls, not JSON.
 ## Checked integrations — Edition 2029 revision 1
 
 This Edition replaces SDK 0.7 operation objects and polling with completed values.
-To migrate, set the Manifest and authoring lock to Edition `2029`, minimum revision
-`1`, pin SDK `0.8.0`, and regenerate the entire `sdk/` directory. Replace operation
-creation/polling with `await`, bind an `Account` from the `SecretSetting` once, and
+Use ordinary GDScript `await` for completion, bind an `Account` from the `SecretSetting` once, and
 pass it to `network.service`. Device experience is typed as in Edition 2028.
 
 The concrete SDK capabilities are `files`, `clipboard`, `network`, `secrets`,

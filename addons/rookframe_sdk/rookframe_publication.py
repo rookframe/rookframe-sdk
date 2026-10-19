@@ -188,12 +188,13 @@ def gh_json(endpoint: str, *, method: str = "GET", body: dict | None = None, opt
 
 
 def checked_build(project: Path, archive: Path) -> tuple[dict, bytes, dict]:
-    from rookframe_authoring_checks import configured_profiles, verify
+    from rookframe_authoring_checks import configured_profiles, configure_application, verify
     from rookframe_authoring import check_revision
     from rookframe_package_build import source_identity
     if archive.stat().st_size > 512 * 1024 * 1024:
         raise PublicationError("build-inspection", "Archive exceeds 512 MiB.")
-    checked = verify("artifact", archive, project / "rookframe/ui")
+    configure_application(project)
+    checked = verify("artifact", archive)
     with zipfile.ZipFile(archive) as contents:
         manifest_bytes = contents.read("rookframe.json")
         manifest = json.loads(manifest_bytes)

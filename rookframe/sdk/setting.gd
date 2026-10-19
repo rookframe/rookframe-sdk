@@ -1,0 +1,8 @@
+extends Resource
+enum Application { LIVE, RESTART_LOCAL, RESTART_WORLD }
+## Stable Package-local name. Rookframe supplies the Package namespace.
+## Application policy belongs to the containing setting; nested fields stay LIVE.
+@export var key: String
+@export var title: String
+@export_multiline var description: String
+@export var application: Application = Application.LIVE

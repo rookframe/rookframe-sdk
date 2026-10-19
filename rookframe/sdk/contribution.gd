@@ -1,0 +1,4 @@
+extends Resource
+
+## An authored Control scene; Rookframe owns its integration lifetime.
+@export var scene: PackedScene

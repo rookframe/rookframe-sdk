@@ -7,13 +7,13 @@ Install through Manager using the public Manifest URL; invited Players acquire t
 World’s required releases automatically. Local archive imports are prohibited for QA.
 Catalogue listing is optional. Select the published Packages needed by the World.
 
-- **Workshop System:** executable Edition 2029 revision 8; typed selected-Rook and System-only Actor Creation
+- **Workshop System:** executable; typed selected-Rook and System-only Actor Creation
   slots, native Actor-list presentation hooks, dedicated Actor creation and inspection windows, Actor Definitions and typed HeroData Resources. Confirming creates an independent Actor; Train queries its current data, adds one HP, and submits an update. A separate World journal rail entry creates, updates and deletes journal System Records.
-- **Tabletop Pieces:** data-only Edition 2027; semantic Miniature, Prop, Surface Finish and Wall Style
+- **Tabletop Pieces:** data-only; semantic Miniature, Prop, Surface Finish and Wall Style
   entries. No Implementation, Presentation or Settings callbacks run.
-- **Table Help:** Presentation-only Edition 2029 revision 5; one responsive Package UI Root contribution,
+- **Table Help:** Presentation-only; one responsive Package UI Root contribution,
   with no Implementation or Package Settings. Share a table tip deliberately publishes a typed Action Log report.
-- **Calendar:** independent executable Edition 2027 optional Package in `rookframe/rookframe-calendar`;
+- **Calendar:** independent executable optional Package in `rookframe/rookframe-calendar`;
   its persisted Gregorian date/note workflow and three Presentations are maintained there.
 
 The optional examples use direct Workshop System compatibility only. They do not load or call

@@ -1,0 +1,16 @@
+extends Resource
+
+const DiceTerm = preload("res://rookframe/sdk/dice_term.gd")
+## Optional attempt identity, allocated with dice.new_request_id().
+## Retain it only while this immediate Roll is running, to cancel abandoned work.
+@export var request_id := ""
+## Terms retain this order. Their total count may not exceed sixteen dice.
+@export var terms: Array[DiceTerm] = []
+func _init(requested_terms: Array[DiceTerm] = [], identity: String = "") -> void:
+	terms = requested_terms
+	request_id = identity
+func to_records() -> Array:
+	var records: Array = []
+	for term in terms:
+		records.append({} if term == null else term.to_record())
+	return records

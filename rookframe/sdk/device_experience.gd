@@ -1,0 +1,15 @@
+extends RefCounted
+
+var _device: int
+var is_desktop: bool:
+	get:
+		return _device == 0
+var is_tablet: bool:
+	get:
+		return _device == 1
+var is_phone: bool:
+	get:
+		return _device == 2
+
+func _init(device: int) -> void:
+	_device = device

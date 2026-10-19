@@ -1,0 +1,22 @@
+extends RefCounted
+
+const WindowButton = preload("res://rookframe/sdk/window_button.gd")
+var _host: Object
+var _side: String
+
+
+func _init(host: Object, side: String) -> void:
+	_host = host
+	_side = side
+
+
+## Add an authored window-opening entry in Package-local insertion order.
+## Repeated registration of the same entry is idempotent in this Presentation.
+## Rookframe owns opening, responsive placement, lifetime and diagnostics.
+func push(entry: WindowButton) -> void:
+	_host.RegisterWindowButtonWithPresentation(
+		_side,
+		entry.button_scene,
+		entry.window.scene,
+		entry.window.initial_presentation()
+	)

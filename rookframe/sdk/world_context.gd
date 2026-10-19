@@ -1,0 +1,15 @@
+extends "res://rookframe/sdk/operation_result.gd"
+
+var display_name: String = ""
+var is_authority: bool = false
+var is_gm: bool = false
+var participant_id: String = ""
+var session_id: String = ""
+func _init(result: Dictionary) -> void:
+	super(result)
+	if ok:
+		display_name = result.value.get("display_name", "")
+		is_authority = result.value.is_authority
+		is_gm = result.value.is_gm
+		participant_id = result.value.participant_id
+		session_id = result.value.session_id

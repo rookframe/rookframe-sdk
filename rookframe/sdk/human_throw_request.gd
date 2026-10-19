@@ -1,0 +1,25 @@
+extends Resource
+
+const DiceTerm = preload("res://rookframe/sdk/dice_term.gd")
+## Stable Package-owned UUID. Retrying it recovers the same immutable request.
+@export var request_id: String
+## Stable World Participant identity that must perform the physical Throw.
+@export var participant_id: String
+@export var terms: Array[DiceTerm] = []
+func _init(identity: String = "", participant: String = "", requested_terms: Array[DiceTerm] = []) -> void:
+	request_id = identity
+	participant_id = participant
+	terms = requested_terms
+func to_records() -> Array:
+	var records: Array = []
+	for term in terms:
+		records.append({} if term == null else term.to_record())
+	return records
+
+## Attach the physical Roll to this record instead of publishing a separate row.
+@export var log_sequence: int = 0
+
+## Immutable ability/base term shown in the host tray.
+@export var base_modifier: int = 0
+## Allow situation adjustment by -20..+20 without changing dice or base.
+@export var allow_modifier := false

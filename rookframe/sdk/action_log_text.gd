@@ -1,0 +1,8 @@
+extends Resource
+
+## Printable text, with normal, strong, or emphasis formatting. Never markup.
+@export var text: String
+@export var style: String = "normal"
+func _init(value: String = "", formatting: String = "normal") -> void:
+	text = value
+	style = formatting

@@ -1,4 +1,4 @@
-extends "res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/sdk/window.gd"
+extends "res://rookframe/sdk/window.gd"
 
 const API: SDK.ServiceDefinition = preload("res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/logic/api.tres")
 const API_KEY: SDK.SecretSetting = preload("res://rookframe/packages/9f64487d-5a09-48e0-8bdf-8071dd9ef882/logic/api_key.tres")

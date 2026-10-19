@@ -1,7 +1,7 @@
 # Integration example
 
-A separate ordinary optional Package for SDK 0.8.0 (Edition 2029 revision 1).
-It uses authored scenes, generated concrete SDK types and the independently
+A separate ordinary optional Package for the installed SDK (Edition 2029 revision 34).
+It uses authored scenes, installed SDK types and the independently
 pinned UI Kit. It imports no application assembly or private host API. Calendar
 does not depend on this example and has no provider account requirement.
 

@@ -1,0 +1,14 @@
+extends RefCounted
+const ServiceScope = preload("res://rookframe/sdk/service_scope.gd")
+const SecretEntry = preload("res://rookframe/sdk/secret_entry.gd")
+const SecretSetting = preload("res://rookframe/sdk/secret_setting.gd")
+
+var _scope: ServiceScope
+var _area: String
+func _init(scope: ServiceScope, area: String) -> void:
+	_scope = scope
+	_area = area
+func entry(name: String) -> SecretEntry:
+	return SecretEntry.new(_scope, _area, name)
+func setting(descriptor: SecretSetting) -> SecretEntry:
+	return entry(descriptor.key)
