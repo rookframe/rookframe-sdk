@@ -25,6 +25,7 @@ class PackageBuildPreparationTests(unittest.TestCase):
             root = source / "rookframe/packages" / PACKAGE_ID
             root.mkdir(parents=True)
             (source / "project.godot").write_text("config_version=5\n")
+            (source / "rookframe_ui_kit_provenance.json").write_text('{"installation": "local"}')
             script = b"extends RefCounted\n\nfunc value() -> int:\n\treturn 1\n"
             (root / "example.gd").write_bytes(script)
             parameters = "\ncompress/mode=0\nsvg/scale=2.0\n"
@@ -39,6 +40,8 @@ class PackageBuildPreparationTests(unittest.TestCase):
                     GODOT, source, Path(temporary) / "prepared", PACKAGE_ID, BUILD_ID, "package"
                 )
             self.assertEqual(script, (project / runtime[6:] / "example.gd").read_bytes())
+            self.assertFalse((project / "rookframe_ui_kit_provenance.json").exists())
+            self.assertTrue((source / "rookframe_ui_kit_provenance.json").exists())
             prepared_import = (project / runtime[6:] / "icon.svg.import").read_text()
             self.assertEqual(parameters, prepared_import.split("[params]", 1)[1])
             self.assertNotIn("[deps]", prepared_import)

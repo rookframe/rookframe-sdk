@@ -22,7 +22,7 @@ import uuid
 BUILD_METADATA = "artifacts/build.json"
 BUILD_SCHEMA = "rookframe-package-build-v1"
 AUTHOR_STATE = {".godot", "__pycache__", ".git", "build", "bin", "obj", ".plugged",
-                ".rookframe-development", ".rookframe-development.pck"}
+                ".rookframe-development", ".rookframe-development.pck", "rookframe_ui_kit_provenance.json"}
 DEVELOPMENT_CONFIG = {"development.json", "installed-application.json"}
 TEXT_RESOURCES = {
     ".gd",
@@ -70,7 +70,7 @@ def source_identity(source: Path) -> str:
             not path.is_file()
             or any(
                 part
-                in AUTHOR_STATE | {"rookframe_ui_kit_provenance.json"}
+                in AUTHOR_STATE
                 for part in path.relative_to(source).parts
             )
             or path.is_relative_to(source / "rookframe/ui")

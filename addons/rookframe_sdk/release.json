@@ -1,16 +1,16 @@
 {
-  "version": "0.36.0-rc.1",
+  "version": "0.36.0-rc.2",
   "uiKit": {
     "version": "v1.0.0-rc.1",
     "commit": "ac8d2ce1e08ec28db3b620810129a1de03eab13c"
   },
   "files": {
-    "rookframe_authoring.py": "1c992f5d2b8fd864a405ab61ab4dced618733efcfea7b9cae233a4632a635743",
+    "rookframe_authoring.py": "5c261cca4d7a8ee17c0d517b5ecf98999fa594960c8a4f52cdc21fd8d53ba8dd",
     "rookframe_authoring_checks.py": "793a5d0f95da46d8f82820521d15348727546e3fc5f1327ed946334dedd34ccd",
     "rookframe_authoring_entries.py": "dd8e3ebb594aeef155f7ecb8d37d809d667c0ab907f2126dc4dc2aa434cfcaca",
     "rookframe_authoring_scenes.py": "b86546b3af60484b58f7f9928ccb7df869bee97107eefead2ed7d9a03892c533",
     "rookframe_media.py": "74a4b4201037930a6758a85a27d17cb2116443bf75325c31d924aca689c1186d",
-    "rookframe_package_build.py": "f31a41de114b5519b716bd0811082ac28d1511fa9372df46f524ffc57bf8acea",
+    "rookframe_package_build.py": "de25f7a9c51d1edff70b1231a86cdd491fa3c90d0632116f859ad89798743308",
     "rookframe_publication.py": "d83a1e7a072ce483e05134a3b3555a99a80c2bf5a88ef83272d3974c7b6f8ef0",
     "rookframe_ui_kit.gd": "e5bcadfd36567f14a2853b1a8b161cfa9fd2cd29c26dabe9957bc131b6f6762b",
     "rookframe_ui_kit.py": "e6ce2096f073b0e97337a4c403e411e837f5b242bf84497097dfeff06d7e8c57",
