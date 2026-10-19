@@ -1,0 +1,33 @@
+extends RefCounted
+const ServiceScope = preload("res://rookframe/sdk/service_scope.gd")
+const FileArea = preload("res://rookframe/sdk/file_area.gd")
+
+const FileLocation = preload("res://rookframe/sdk/file_location.gd")
+var _scope: ServiceScope
+var _package: FileArea
+var _user: FileArea
+var _world: FileArea
+var package: FileArea:
+	get:
+		return _package
+var user: FileArea:
+	get:
+		return _user
+var world: FileArea:
+	get:
+		return _world
+func _init(scope: ServiceScope) -> void:
+	_scope = scope
+	_package = FileArea.new(scope, "package")
+	_user = FileArea.new(scope, "user")
+	_world = FileArea.new(scope, "world")
+const InternalFileReference = preload("res://rookframe/sdk/internal_file_reference.gd")
+const ScopedFile = preload("res://rookframe/sdk/scoped_file.gd")
+
+func open(reference: InternalFileReference) -> ScopedFile:
+	return ScopedFile.new(_scope, FileLocation.new()._text(reference.area), reference.name)
+const InternalFolderReference = preload("res://rookframe/sdk/internal_folder_reference.gd")
+const ScopedFolder = preload("res://rookframe/sdk/scoped_folder.gd")
+
+func open_folder(reference: InternalFolderReference) -> ScopedFolder:
+	return ScopedFolder.new(_scope, FileLocation.new()._text(reference.area), reference.name)

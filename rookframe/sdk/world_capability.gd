@@ -1,0 +1,12 @@
+extends RefCounted
+
+## Stock Godot signal completion; callers await mutating operations.
+func complete(host: Object, result: Dictionary) -> Dictionary:
+	if result.get("code", "") != "pending":
+		return result
+	var request_id: int = result.requestId
+	while true:
+		var outcome: Dictionary = await host.TabletopCommandCompleted
+		if outcome.requestId == request_id:
+			return outcome
+	return result

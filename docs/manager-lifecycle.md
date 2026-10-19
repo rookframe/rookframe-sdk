@@ -1,7 +1,7 @@
 # Package lifecycle and typed authorship
 
 Manager installs exact `.rookpackage` releases. Opening a World creates a fresh
-runtime from its accepted exact selection. Use the generated SDK types for the
+runtime from its accepted exact selection. Use the installed SDK types for the
 Package implementation and presentation: `SDK.DataResult`, `SDK.OperationResult`,
 `SDK.WorldContext`, typed settings descriptors, `Rail`, `WindowButton`, and
 `ExtensionSurface`. Register authored resources through `sdk.rails.left.push(...)`;

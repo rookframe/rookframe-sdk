@@ -1,0 +1,18 @@
+extends RefCounted
+
+const Rail = preload("res://rookframe/sdk/rail.gd")
+var _left: Rail
+var _right: Rail
+## The left Rail's Package contribution slot.
+var left: Rail:
+	get:
+		return _left
+## The right Rail's Package contribution slot.
+var right: Rail:
+	get:
+		return _right
+
+
+func _init(host: Object) -> void:
+	_left = Rail.new(host, "left")
+	_right = Rail.new(host, "right")

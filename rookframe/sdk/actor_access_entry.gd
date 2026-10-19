@@ -1,0 +1,13 @@
+extends RefCounted
+var participant_id: String
+var display_name: String
+var access_level: String
+var is_connected: bool
+func _init(value: Dictionary) -> void:
+	session_id = value.get("session_id", "")
+	participant_id = value.participant_id
+	display_name = value.display_name
+	access_level = value.access_level
+	is_connected = value.get("is_connected", false)
+
+var session_id: String = ""

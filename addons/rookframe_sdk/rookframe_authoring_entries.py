@@ -5,12 +5,10 @@ import hashlib
 import json
 from pathlib import Path
 import re
-import shutil
 import subprocess
 import tempfile
 import os
 
-from rookframe_sdk_facade import facade_sources
 
 CONTENT_TYPES = ("miniature", "prop", "wall_style", "surface_finish", "theme")
 UI_SLOTS = ("left", "right", "ui_root", "actor_creation", "selected_rook")
@@ -37,12 +35,8 @@ def install_dependencies(project: Path) -> dict:
                 "https://github.com/" + repository + ".git", str(target))
             git("-C", str(target), "fetch", "--quiet", "--depth=1", "origin", revision)
             git("-C", str(target), "checkout", "--quiet", "--detach", revision)
-        checkout("rookframe/rookframe-ui-kit", commit, work / "ui")
         checkout("imjp94/gd-plug", bootstrap, work / "plug")
-        files = {project / "rookframe/ui" / path.relative_to(work / "ui/rookframe/ui"): path.read_bytes()
-                 for path in (work / "ui/rookframe/ui").rglob("*") if path.is_file()}
-        if not files:
-            raise ValueError("The pinned UI Kit has no public UI files.")
+        files = {}
         files[project / "addons/gd-plug/plug.gd"] = (work / "plug/addons/gd-plug/plug.gd").read_bytes()
         files[project / "addons/gd-plug/LICENSE"] = (work / "plug/LICENSE").read_bytes()
         for path, contents in files.items():
@@ -50,19 +44,14 @@ def install_dependencies(project: Path) -> dict:
                 raise ValueError("Dependency files must stay inside the author project.")
             if path.exists() and path.read_bytes() != contents:
                 raise ValueError(f"Dependency installation would replace {path.relative_to(project)}. Preserve or reconcile that file first.")
-        cache = project / ".plugged/rookframe-ui-kit"
-        if not cache.resolve().is_relative_to(project.resolve()) or cache.is_symlink() or cache.parent.is_symlink():
-            raise ValueError("The dependency cache must be a real directory inside the author project.")
-        if not cache.exists():
-            cache.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copytree(work / "ui", cache)
-        else:
-            git("-C", str(cache), "fetch", "--quiet", "--depth=1",
-                "https://github.com/rookframe/rookframe-ui-kit.git", commit)
         for path, contents in files.items():
             if not path.exists():
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_bytes(contents)
+    from rookframe_ui_kit_install import install_runtime, write_provenance
+    selection = {"tag": lock["uiKit"]["version"], "commit": commit}
+    install_runtime(project, selection)
+    write_provenance(project, selection)
     return {"status": "dependencies_installed", "uiCommit": commit}
 
 
@@ -72,7 +61,7 @@ def encoded(value: object) -> str:
 
 def register(project: Path, scene: str, entry_id: str, name: str, kind: str,
              presentation_id: str | None = None) -> dict:
-    from rookframe_authoring import SDK_VERSION, check_edition
+    from rookframe_authoring import check_edition
     if not re.fullmatch(r"[a-z][a-z0-9_-]*", entry_id) or not name.strip():
         raise ValueError("Choose a name and a stable ID using lowercase letters, numbers, '-' or '_'.")
     if kind not in CONTENT_TYPES + UI_SLOTS:
@@ -110,7 +99,8 @@ def register(project: Path, scene: str, entry_id: str, name: str, kind: str,
         presentations = manifest.setdefault("presentations", [])
         if not presentations:
             presentations.append({"id": "default", "experiences": ["desktop", "tablet", "phone"],
-                                  "entryPoint": "sdk/presentation.gd"})
+                                  "entryPoint": "ui/base_presentation.gd"})
+            changes[root / "ui/base_presentation.gd"] = 'extends "res://rookframe/sdk/presentation.gd"\n'
         selected = next((p for p in presentations if presentation_id is None or p["id"] == presentation_id), None)
         if selected is None:
             raise ValueError("The selected Presentation no longer exists.")
@@ -140,8 +130,8 @@ def register(project: Path, scene: str, entry_id: str, name: str, kind: str,
             from rookframe_authoring_scenes import rail_scene
             changes[root / f"ui/entries/{entry_id}.tscn"] = rail_scene(name.strip())
             body = f'''[gd_resource type="Resource" load_steps=6 format=3]
-[ext_resource type="Script" path={quote(base + '/sdk/window_button.gd')} id="entry"]
-[ext_resource type="Script" path={quote(base + '/sdk/extension_surface.gd')} id="surface"]
+[ext_resource type="Script" path={quote('res://rookframe/sdk/window_button.gd')} id="entry"]
+[ext_resource type="Script" path={quote('res://rookframe/sdk/extension_surface.gd')} id="surface"]
 [ext_resource type="PackedScene" path={quote(base + '/ui/entries/' + entry_id + '.tscn')} id="button"]
 [ext_resource type="PackedScene" path={quote(base + '/' + relative)} id="scene"]
 [sub_resource type="Resource" id="window"]
@@ -154,7 +144,7 @@ window = SubResource("window")
 '''
         else:
             body = f'''[gd_resource type="Resource" load_steps=3 format=3]
-[ext_resource type="Script" path={quote(base + '/sdk/contribution.gd')} id="entry"]
+[ext_resource type="Script" path={quote('res://rookframe/sdk/contribution.gd')} id="entry"]
 [ext_resource type="PackedScene" path={quote(base + '/' + relative)} id="scene"]
 [resource]
 script = ExtResource("entry")
@@ -182,13 +172,6 @@ scene = ExtResource("scene")
         edition = manifest["sdk"]["edition"]
         revision = manifest["sdk"]["minimumRevision"]
         check_edition(edition, revision)
-        for filename, source in facade_sources(package_id, revision, SDK_VERSION, edition,
-                implementation="implementation" in manifest, presentations=True).items():
-            target = root / "sdk" / filename
-            if target.exists() and target.read_text(encoding="utf-8") != source:
-                raise ValueError("The generated SDK differs from this kit. Resolve the SDK version before registering UI.")
-            if not target.exists():
-                changes[target] = source
     # All semantic and collision checks precede writes. Restore previous bytes on
     # an I/O failure, including the Manifest and editor ownership record.
     changes[manifest_path] = encoded(manifest)

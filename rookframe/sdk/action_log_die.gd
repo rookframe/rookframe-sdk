@@ -1,0 +1,8 @@
+extends Resource
+
+## One raw face in caller-supplied order; publishing does not roll dice.
+@export var sides: int
+@export var value: int
+func _init(face_count: int = 6, face: int = 1) -> void:
+	sides = face_count
+	value = face

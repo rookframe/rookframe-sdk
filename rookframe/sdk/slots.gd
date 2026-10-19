@@ -1,0 +1,16 @@
+extends RefCounted
+
+const ContributionSlot = preload("res://rookframe/sdk/contribution_slot.gd")
+var _selected_rook: ContributionSlot
+var _actor_creation: ContributionSlot
+var selected_rook: ContributionSlot:
+	get:
+		return _selected_rook
+## Only the selected System Extension may contribute Actor Creation UI.
+var actor_creation: ContributionSlot:
+	get:
+		return _actor_creation
+
+func _init(host: Object) -> void:
+	_selected_rook = ContributionSlot.new(host, "selected-rook")
+	_actor_creation = ContributionSlot.new(host, "actor-creation")

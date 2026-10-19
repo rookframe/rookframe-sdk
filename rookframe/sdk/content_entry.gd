@@ -1,0 +1,27 @@
+extends RefCounted
+
+const ContentReference = preload("res://rookframe/sdk/content_reference.gd")
+const ContentKind = preload("res://rookframe/sdk/content_kind.gd")
+var reference: ContentReference
+var title: String
+var kind: ContentKind.Value
+var available: bool
+var package_title: String
+var localized_title: String
+func _init(value: Dictionary) -> void:
+	reference = ContentReference.new(value.packageId, value.localId)
+	title = value.displayName
+	kind = ContentKind.Value.UNKNOWN
+	available = value.available
+	package_title = value.get("packageName", "")
+	localized_title = value.get("localizedDisplayName", value.displayName)
+	if value.type == "actor_definition":
+		kind = ContentKind.Value.ACTOR_DEFINITION
+	if value.type == "miniature":
+		kind = ContentKind.Value.MINIATURE
+	if value.type == "prop":
+		kind = ContentKind.Value.PROP
+	if value.type == "surface_finish":
+		kind = ContentKind.Value.SURFACE_FINISH
+	if value.type == "wall_style":
+		kind = ContentKind.Value.WALL_STYLE

@@ -5,8 +5,8 @@
   "name": "Tabletop Pieces",
   "version": "0.9.0",
   "sdk": {
-    "edition": "2027",
-    "minimumRevision": 1
+    "edition": "2029",
+    "minimumRevision": 34
   },
   "rookframeCompatibility": {
     "minimum": "0.1.0",

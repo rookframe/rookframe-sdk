@@ -4,3 +4,5 @@ addons/
 rookframe/ui/
 build/
 __pycache__/
+
+rookframe/sdk/

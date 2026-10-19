@@ -1,4 +1,4 @@
-extends "res://rookframe/packages/dddddddd-dddd-4ddd-8ddd-dddddddddddd/sdk/window.gd"
+extends "res://rookframe/sdk/window.gd"
 
 func share_tip() -> void:
 	get_node("ShareTip").disabled = true

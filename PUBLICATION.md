@@ -11,8 +11,7 @@ archive checks and installation transactions still apply.
 
 Choose an exact new version and the authoritative public HTTPS `manifest` and
 `download` URLs in `rookframe.json` before building. Preserve the Package ID.
-Commit and push the clean author project, including sources, scenes, generated
-facade, exact dependency lock, presets, documentation and tests. Run the normal
+Commit and push the clean author project, including sources, scenes, exact dependency lock, presets, documentation and tests. Run the normal
 `check` and `build` commands. Keep the one checked complete output; a
 retry uploads those same bytes without rebuilding.
 
@@ -139,5 +138,5 @@ and preserves ownership and review history. It never removes installed copies.
 Manager → Installed Packages → Install Package → Browse Catalogue provides
 public search and exact release details. Installing uses the Publisher-hosted
 Manifest and archive through the existing checks, progress and installation-wide
-replacement confirmation. Local archives and direct links remain available
-when Catalogue is offline or a release is no longer listed.
+replacement confirmation. Public HTTPS Manifest URLs remain usable when Catalogue is offline or a release
+is no longer listed.

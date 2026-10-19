@@ -14,17 +14,19 @@ import sys
 import tempfile
 import uuid
 
-from rookframe_sdk_facade import facade_sources
-from rookframe_authoring_checks import check_dependencies, configured_profiles, verify
+from rookframe_ui_kit import ui_kit_dependency
+from rookframe_authoring_checks import check_dependencies, configured_profiles, configure_application, verify
 from rookframe_package_build import (BUILD_SCHEMA,
     copy_author_project, deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.34.1"
+SDK_VERSION = "0.36.0-rc.3"
+DEVELOPMENT_PLUGIN_VERSION = "0.2.0-rc.1"
 SDK_EDITION = "2029"
-SDK_EDITIONS = {"2027": 7, "2028": 4, "2029": 34}
-UI_VERSION = "v1.0.0-rc.1"
-UI_COMMIT = "1a4c4109d3f57508fc86ed712406f7d3d01d5131"
+SDK_EDITIONS = {"2029": 34}
+UI_DEPENDENCY = ui_kit_dependency()
+UI_VERSION = UI_DEPENDENCY["tag"]
+UI_COMMIT = UI_DEPENDENCY["commit"]
 RESOURCE_EXPORT = "package"
 
 
@@ -34,7 +36,7 @@ class AuthoringError(RuntimeError):
 
 def check_edition(edition: str, revision: int) -> None:
     if type(revision) is not int or not 1 <= revision <= SDK_EDITIONS.get(edition, 0):
-        raise AuthoringError("SDK.REVISION: This kit authors 2029 revisions 1â€“32, 2027 revisions 1â€“7 and 2028 revisions 1â€“4. Use SDK 0.7.0 to author 2027:8 or 2028:5, or migrate integrations to 2029:1.")
+        raise AuthoringError("SDK.REVISION: This SDK exposes the Rookframe C# API for Edition 2029 through revision 34. Set a minimum revision between 1 and 34.")
 
 
 def json_text(value: object) -> str:
@@ -52,7 +54,7 @@ runnable=false
 dedicated_server=false
 export_filter="selected_resources"
 include_filter="rookframe/packages/{package_id}/**"
-exclude_filter="rookframe.json,rookframe/ui/**,addons/**,.rookframe/**,.plugged/**,plug.gd,README.md,presentation/**"
+exclude_filter="rookframe.json,rookframe/ui/**,rookframe/sdk/**,addons/**,.rookframe/**,.plugged/**,plug.gd,README.md,presentation/**"
 export_path="build/{profile}.pck"
 script_export_mode=0
 encrypt_pck=false
@@ -89,7 +91,7 @@ def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: s
         package_id = str(uuid.uuid4())
         manifest = {"manifestVersion": 1, "id": package_id, "kind": kind,
                     "name": name, "version": "0.1.0", "summary": name,
-                    "sdk": {"edition": edition, "minimumRevision": 1},
+                    "sdk": {"edition": edition, "minimumRevision": SDK_EDITIONS[edition]},
                     "rookframeCompatibility": {"minimum": "0.1.0", "verified": "0.1.0"},
                     "implementation": {"entryPoint": "logic/implementation.gd"}}
         if content_only:
@@ -108,9 +110,7 @@ def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: s
         ".rookframe/authoring.lock.json": json_text(lock),
     }
     if not (project / ".gitignore").exists():
-        proposed[".gitignore"] = ".godot/\n.plugged/\naddons/rookframe_sdk/\naddons/gd-plug/\naddons/webrtc_native/lib/\nrookframe/ui/\nrookframe/development/\n.rookframe-development/\n.rookframe-development.pck\n.rookframe/development.json\n.rookframe/development-runtime.json\nbuild/\n__pycache__/\n"
-    proposed.update({f"{package_root}/sdk/{name}": source
-                     for name, source in facade_sources(package_id, revision, SDK_VERSION, edition, implementation="implementation" in manifest, presentations=bool(manifest.get("presentations")) or (ui and not manifest_path.exists())).items()})
+        proposed[".gitignore"] = ".godot/\n.plugged/\naddons/rookframe_sdk/\naddons/rookframe_development/\naddons/gd-plug/\ndependencies/webrtc_native/lib/\naddons/webrtc_native/lib/\nrookframe/ui/\nrookframe/sdk/\nrookframe_ui_kit_provenance.json\nrookframe/development/\n.rookframe-development/\n.rookframe/development.json\n.rookframe/installed-application.json\nbuild/\n__pycache__/\n"
     if ui and not manifest_path.exists():
         from rookframe_authoring_scenes import presentation, window_scene, rail_scene, window_button
         manifest["presentations"] = [{"id": "default", "experiences": ["desktop", "tablet", "phone"],
@@ -121,25 +121,19 @@ def initialize(project: Path, name: str, kind: str, ui: bool = False, edition: s
         proposed[f"{package_root}/ui/window_button.tscn"] = rail_scene(name)
         proposed[f"{package_root}/ui/window_button.tres"] = window_button(package_id)
     if not (project / "plug.gd").exists():
-        proposed["plug.gd"] = f'''extends "res://addons/gd-plug/plug.gd"
-
-
-func request_quit(exit_code := -1) -> bool:
-\treturn super.request_quit(0 if exit_code == -1 else exit_code)
-
-
-func _plugging() -> void:
-\tplug("rookframe/rookframe-sdk", {{"tag": "v{SDK_VERSION}", "include": ["addons/rookframe_sdk"]}})
-\tplug("rookframe/rookframe-ui-kit", {{"commit": "{UI_COMMIT}", "include": ["rookframe/ui"]}})
-'''
+        helper_root = Path(__file__).resolve().parent
+        for name in ("rookframe_ui_kit.gd", "rookframe_ui_kit_install.py"):
+            proposed[f".rookframe/{name}"] = (helper_root / name).read_text(encoding="utf-8")
+        proposed[".rookframe/ui-kit-dependency.json"] = json_text(UI_DEPENDENCY)
+        proposed["plug.gd"] = authoring_plug_script(SDK_VERSION, UI_COMMIT)
     implementation = manifest.get("implementation")
     if implementation and not manifest_path.exists():
-        proposed[f"{package_root}/logic/implementation.gd"] = f'extends "res://{package_root}/sdk/implementation.gd"\n'
+        proposed[f"{package_root}/logic/implementation.gd"] = 'extends "res://rookframe/sdk/implementation.gd"\n'
     if not (project / "project.godot").exists():
         proposed["project.godot"] = 'config_version=5\n[application]\nconfig/name=' + json.dumps(name) + '\n[rendering]\nrenderer/rendering_method="gl_compatibility"\n'
         main = f'run/main_scene="res://{package_root}/ui/window.tscn"\n' if ui else ""
         proposed["project.godot"] = proposed["project.godot"].replace('[rendering]',
-            main + '[editor_plugins]\nenabled=PackedStringArray("res://addons/rookframe_sdk/plugin.cfg")\n[rendering]')
+            main + '[editor_plugins]\nenabled=PackedStringArray("res://addons/rookframe_development/plugin.cfg")\n[rendering]')
     config = read_presets(project)
     existing_names = {config.get(s, "name", fallback="").strip('"'): s
                       for s in config.sections() if not s.endswith(".options")}
@@ -178,7 +172,7 @@ func _plugging() -> void:
             output.write("\n" + "\n".join(additions))
 
 
-def check_facade(project: Path, *, generate_missing: bool = False) -> dict:
+def check_manifest(project: Path) -> dict:
     manifest = json.loads((project / "rookframe.json").read_text(encoding="utf-8"))
     identity = uuid.UUID(manifest["id"])
     revision = manifest["sdk"]["minimumRevision"]
@@ -190,20 +184,6 @@ def check_facade(project: Path, *, generate_missing: bool = False) -> dict:
     if (lock.get("sdkEdition") != edition or lock.get("minimumRevision") != revision
             or lock.get("sdkAuthoringKitVersion") != SDK_VERSION):
         raise AuthoringError("SDK.REVISION: Manifest and exact authoring lock disagree.")
-    generated = {project / f"rookframe/packages/{identity}/sdk/{name}": source
-                 for name, source in facade_sources(str(identity), revision, SDK_VERSION, edition, implementation="implementation" in manifest, presentations=bool(manifest.get("presentations"))).items()}
-    # Preflight the complete generated surface before adding any missing file.
-    for path, expected in generated.items():
-        if any(parent.exists() and not parent.is_dir() for parent in path.parents):
-            raise AuthoringError(f"SDK.FACADE: Parent of {path.name} must be a directory.")
-        if path.exists() and (not path.is_file() or path.read_text(encoding="utf-8") != expected):
-            raise AuthoringError(f"SDK.FACADE: {path.name} differs. Reconcile the lock, then regenerate the SDK directory explicitly.")
-        if not path.exists() and not generate_missing:
-            raise AuthoringError(f"SDK.FACADE: {path.name} is absent. Run `facade` to generate the typed SDK.")
-    for path, expected in generated.items():
-        if not path.exists():
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_bytes(expected.encode("utf-8"))
     return manifest
 
 
@@ -214,7 +194,7 @@ def check_project(project: Path, godot: Path, work: Path) -> tuple[dict, list[st
     profiles = []
     manifest_check = {}
     for operation in (
-        lambda: check_facade(project),
+        lambda: check_manifest(project),
         lambda: check_dependencies(project, SDK_VERSION, UI_VERSION, UI_COMMIT),
         lambda: configured_profiles(project),
         lambda: verify("manifest", project / "rookframe.json"),
@@ -262,7 +242,7 @@ def check_project(project: Path, godot: Path, work: Path) -> tuple[dict, list[st
 def check_revision(manifest: dict, checked: dict) -> None:
     required = checked.get("minimumSdkRevision", 1)
     if manifest["sdk"]["minimumRevision"] < required:
-        raise AuthoringError(f"SDK.MINIMUM: These operations require additive revision {required}; update the Manifest, lock and generated facade explicitly.")
+        raise AuthoringError(f"SDK.MINIMUM: These operations require additive revision {required}; update the Manifest and authoring lock explicitly.")
 
 
 def build_project(project: Path, godot: Path, work: Path, manifest: dict,
@@ -285,7 +265,7 @@ def build_project(project: Path, godot: Path, work: Path, manifest: dict,
     staged.write_bytes(deterministic_archive(
         (project / "rookframe.json").read_bytes(), pcks,
         shared_profile_sources(pcks, metadata), metadata, project_media(project, manifest)))
-    checked = verify("artifact", staged, project / "rookframe/ui")
+    checked = verify("artifact", staged)
     check_revision(manifest, checked)
     output.parent.mkdir(parents=True, exist_ok=True)
     # Publish only the fully checked set, atomically even across filesystems.
@@ -308,7 +288,7 @@ def main() -> int:
         from rookframe_publication import main as publication_main
         return publication_main(sys.argv[1:])
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("init", "facade", "register", "install-dependencies", "check", "build", "media"))
+    parser.add_argument("command", choices=("init", "register", "install-dependencies", "check", "build", "media"))
     parser.add_argument("--project", type=Path, default=Path.cwd())
     parser.add_argument("--name", default="My Package")
     parser.add_argument("--kind", choices=("optional", "system-extension"), default="optional")
@@ -326,6 +306,7 @@ def main() -> int:
     parser.add_argument("--remove")
     parser.add_argument("--move", type=int, choices=(-1, 0, 1), default=0)
     parser.add_argument("--godot", type=Path, default=Path(os.environ.get("ROOKFRAME_GODOT", "/Applications/Godot_mono.app/Contents/MacOS/Godot")))
+    parser.add_argument("--rookframe", type=Path, help="Installed Rookframe executable used to check this Package.")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--graphical", action="store_true", help="Use the graphical export renderer when required by the host.")
     args = parser.parse_args()
@@ -337,9 +318,6 @@ def main() -> int:
         elif args.command == "media":
             from rookframe_media import edit
             result = edit(project, args.file, args.role, args.caption, args.url, args.remove, args.move)
-        elif args.command == "facade":
-            check_facade(project, generate_missing=True)
-            result = {"status": "facade_checked"}
         elif args.command == "install-dependencies":
             from rookframe_authoring_entries import install_dependencies
             result = install_dependencies(project)
@@ -350,6 +328,7 @@ def main() -> int:
             result = register(project, args.scene, args.entry_id, args.name,
                               args.entry_type, args.presentation)
         else:
+            configure_application(project, args.rookframe)
             with tempfile.TemporaryDirectory(prefix="rookframe-author-") as directory:
                 work = Path(directory)
                 manifest, profiles, result = check_project(project, args.godot, work)
@@ -362,6 +341,45 @@ def main() -> int:
     except (RuntimeError, OSError, ValueError, KeyError, configparser.Error, subprocess.SubprocessError) as error:
         print(str(error), file=sys.stderr)
         return 1
+
+
+def authoring_plug_script(sdk_version: str, ui_commit: str) -> str:
+    return '''extends "res://addons/gd-plug/plug.gd"
+var ui_kit = preload("res://.rookframe/rookframe_ui_kit.gd").new()
+
+func _initialize() -> void:
+    if ui_kit.dependency.is_empty():
+        quit(1)
+        return
+    super._initialize()
+
+func request_quit(exit_code := -1) -> bool:
+    if not threadpool.is_all_thread_finished() or not threadpool.is_all_task_finished():
+        return false
+    var result := 0 if exit_code == -1 else exit_code
+    var args := OS.get_cmdline_args()
+    if result == 0 and ("install" in args or "update" in args):
+        result = ui_kit.write_provenance()
+    return super.request_quit(result)
+
+func install_plugin(plugin):
+    if plugin.name == "rookframe-ui-kit":
+        ui_kit.install(self, plugin)
+    else:
+        super.install_plugin(plugin)
+
+func update_plugin(plugin, checking=false):
+    if plugin.name == "rookframe-ui-kit":
+        if not checking:
+            ui_kit.install(self, plugin)
+        return false
+    return super.update_plugin(plugin, checking)
+
+func _plugging() -> void:
+    plug("rookframe/rookframe-sdk", {"tag": "vSDK_VERSION", "include": ["addons/rookframe_sdk", "rookframe/sdk"]})
+    plug("rookframe/rookframe-development-plugin", {"tag": "vDEVELOPMENT_PLUGIN_VERSION", "include": ["addons/rookframe_development"]})
+    plug("rookframe/rookframe-ui-kit", {"commit": "UI_COMMIT", "include": ["rookframe/ui"]})
+'''.replace("SDK_VERSION", sdk_version).replace("UI_COMMIT", ui_commit).replace("DEVELOPMENT_PLUGIN_VERSION", DEVELOPMENT_PLUGIN_VERSION)
 
 
 if __name__ == "__main__":

@@ -4,7 +4,7 @@ import json
 
 def presentation(package_id: str) -> str:
     root = f"res://rookframe/packages/{package_id}"
-    return f'''extends "{root}/sdk/presentation.gd"
+    return f'''extends "res://rookframe/sdk/presentation.gd"
 
 const WINDOW_BUTTON: SDK.WindowButton = preload("{root}/ui/window_button.tres")
 
@@ -19,8 +19,8 @@ def window_button(package_id: str) -> str:
     root = f"res://rookframe/packages/{package_id}"
     return f'''[gd_resource type="Resource" load_steps=6 format=3]
 
-[ext_resource type="Script" path="{root}/sdk/window_button.gd" id="entry"]
-[ext_resource type="Script" path="{root}/sdk/extension_surface.gd" id="surface"]
+[ext_resource type="Script" path="res://rookframe/sdk/window_button.gd" id="entry"]
+[ext_resource type="Script" path="res://rookframe/sdk/extension_surface.gd" id="surface"]
 [ext_resource type="PackedScene" path="{root}/ui/window_button.tscn" id="button"]
 [ext_resource type="PackedScene" path="{root}/ui/window.tscn" id="window"]
 

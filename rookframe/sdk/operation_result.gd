@@ -1,0 +1,10 @@
+extends RefCounted
+
+## Final success means that the complete World change is durable.
+var ok: bool
+var code: String
+var message: String
+func _init(result: Dictionary) -> void:
+	ok = result.get("ok", false)
+	code = result.get("code", "")
+	message = result.get("message", "")

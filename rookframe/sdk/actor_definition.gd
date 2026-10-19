@@ -1,0 +1,6 @@
+extends Resource
+
+## Override to calculate independent Actor data from a human's submitted choices.
+## Rookframe executes this declared Content and owns identity, access and persistence.
+func create_data(choices: Variant) -> Variant:
+	return choices
