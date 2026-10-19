@@ -17,7 +17,7 @@ func request_quit(exit_code := -1) -> bool:
     return super.request_quit(0 if exit_code == -1 else exit_code)
 
 func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.36.0-rc.2", "include": ["rookframe/sdk", "addons/rookframe_sdk"]})
+    plug("rookframe/rookframe-sdk", {"tag": "v0.36.0-rc.3", "include": ["rookframe/sdk", "addons/rookframe_sdk"]})
     plug("rookframe/rookframe-development-plugin", {"tag": "v0.2.0-rc.1", "include": ["addons/rookframe_development"]})
 ```
 
@@ -72,6 +72,16 @@ Rookframe supplies the shared SDK and UI Kit at runtime; neither is copied into
 that archive. Commit Package source, Manifest, dependency lock, `plug.gd` and
 export presets. Ignore downloaded dependencies, `.godot/`, local Development
 World files and build output.
+
+Godot may rewrite UI Kit Theme files when saving a Package scene. Checking and
+building leave that editor copy alone and use the pinned UI Kit's committed
+files in a temporary project. Running gd-plug install or update restores the
+UI Kit's installed files, including any local edits. Keep your custom themes
+and other authored resources inside your Package's directory.
+
+When upgrading a project created with an earlier candidate, also replace its
+committed `.rookframe/rookframe_ui_kit_install.py` bootstrap helper with
+`addons/rookframe_sdk/rookframe_ui_kit_install.py` from the downloaded SDK.
 
 Publish only after checking and review. See [PUBLICATION.md](PUBLICATION.md).
 Other Packages in a Development World must be published and acquired through

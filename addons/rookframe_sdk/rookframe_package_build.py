@@ -89,15 +89,32 @@ def source_identity(source: Path) -> str:
 
 def copy_author_project(source: Path, destination: Path) -> None:
     development_files = development_native_files(source)
+    lock_path = source / ".rookframe/authoring.lock.json"
+    ui_files = None
+    if lock_path.is_file():
+        from rookframe_ui_kit_install import committed_runtime
+        commit = json.loads(lock_path.read_text())["uiKit"]["commit"]
+        try:
+            _, ui_files = committed_runtime(source / ".plugged/rookframe-ui-kit", commit)
+        except (OSError, ValueError, subprocess.SubprocessError) as error:
+            raise RuntimeError(f"UI.INSTALL: Run gd-plug install to restore the cached UI Kit {commit}.") from error
     def ignore(directory, names):
         ignored = AUTHOR_STATE
         if Path(directory) == source / ".rookframe":
             ignored = ignored | DEVELOPMENT_CONFIG
         if Path(directory) == source / "rookframe":
             ignored = ignored | {"development"}
+            if ui_files is not None:
+                ignored = ignored | {"ui"}
         return (set(names) & ignored) | {name for name in names
             if (Path(directory) / name).relative_to(source).as_posix() in development_files}
     shutil.copytree(source, destination, ignore=ignore)
+    # Check and export against the selected release, independent of Godot's
+    # saves in the editor copy. Never restore files in the author's project.
+    for name, data in (ui_files or {}).items():
+        path = destination / "rookframe/ui" / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
 
 
 def development_native_files(source: Path) -> set[str]:

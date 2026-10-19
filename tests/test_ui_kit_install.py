@@ -12,7 +12,8 @@ from unittest.mock import patch
 TOOLS = Path(__file__).resolve().parents[1] / "addons/rookframe_sdk"
 sys.path.insert(0, str(TOOLS))
 from rookframe_ui_kit_install import install_runtime, write_provenance, committed_runtime, INVENTORY
-from rookframe_authoring_checks import committed_ui_files
+from rookframe_authoring_checks import committed_ui_files, check_dependencies
+from rookframe_package_build import copy_author_project
 
 
 class UiKitInstallTests(unittest.TestCase):
@@ -80,22 +81,66 @@ class UiKitInstallTests(unittest.TestCase):
         self.install(self.next)
         self.assertEqual(unrelated.read_text(), "keep me")
 
-    def test_modifications_and_unowned_collisions_fail_without_mutation(self):
+    def test_editor_save_does_not_block_check_or_change_the_checked_ui_release(self):
+        self.install(self.current)
+        lock = self.project / ".rookframe/authoring.lock.json"
+        lock.parent.mkdir()
+        selection = {"version": self.current, "commit": self.current}
+        lock.write_text(json.dumps({"sdkAuthoringKitVersion": "1.0.0", "uiKit": selection}))
+        sdk = self.project / "addons/rookframe_sdk"
+        sdk.mkdir(parents=True)
+        (sdk / "release.json").write_text(json.dumps({
+            "version": "1.0.0", "files": {}, "sdkFiles": {}, "uiKit": selection,
+            "uiFiles": committed_ui_files(self.repo, self.current),
+        }))
+        (self.project / "plug.gd").write_text(
+            'plug("rookframe/rookframe-sdk", {"tag": "v1.0.0"})\n'
+            'plug("rookframe/rookframe-ui-kit", {"commit": "' + self.current + '"})\n')
+        resource = self.project / "rookframe/ui/core.tres"
+        saved = self.resource.replace(b"[resource]", b"\n[resource]")
+        resource.write_bytes(saved)
+        (self.project / "rookframe/ui/local-only.tres").write_text("not part of the release")
+        # A dirty Git checkout must not become the validation input either.
+        (self.project / ".plugged/rookframe-ui-kit/rookframe/ui/core.tres").parent.mkdir(parents=True, exist_ok=True)
+        (self.project / ".plugged/rookframe-ui-kit/rookframe/ui/core.tres").write_text("local cache edit")
+        check_dependencies(self.project, "1.0.0", self.current, self.current)
+        snapshot = self.root / "check"
+        copy_author_project(self.project, snapshot)
+        self.assertEqual((snapshot / "rookframe/ui/core.tres").read_bytes(), self.resource)
+        self.assertFalse((snapshot / "rookframe/ui/local-only.tres").exists())
+        self.assertEqual(resource.read_bytes(), saved)
+
+    def test_reinstall_restores_owned_files_after_editor_save(self):
+        self.install(self.current)
+        resource = self.project / "rookframe/ui/core.tres"
+        resource.write_bytes(self.resource.replace(b"[resource]", b"\n[resource]"))
+        self.install(self.current)
+        self.assertEqual(resource.read_bytes(), self.resource)
+        stale = self.project / "rookframe/ui/theme/legacy.tres"
+        stale.write_text("editor saved")
+        self.install(self.next)
+        self.assertFalse(stale.exists())
+
+    def test_unowned_collisions_fail_without_mutation(self):
         self.install(self.current)
         before = (self.project / "rookframe_ui_kit_provenance.json").read_bytes()
         stale = self.project / "rookframe/ui/theme/legacy.tres"
-        stale.write_text("local edit")
-        with self.assertRaisesRegex(ValueError, "Locally modified"):
-            self.install(self.next)
-        self.assertEqual(stale.read_text(), "local edit")
-        self.assertEqual((self.project / "rookframe_ui_kit_provenance.json").read_bytes(), before)
-        stale.write_bytes(b"legacy bundled theme")
         collision = self.project / "rookframe/ui/new.tres"
         collision.write_bytes(b"new core")
         with self.assertRaisesRegex(ValueError, "unrelated"):
             self.install(self.next)
         self.assertEqual(stale.read_bytes(), b"legacy bundled theme")
         self.assertEqual(collision.read_bytes(), b"new core")
+        self.assertEqual((self.project / "rookframe_ui_kit_provenance.json").read_bytes(), before)
+
+    def test_cached_repository_does_not_claim_unrelated_destination(self):
+        resource = self.project / "rookframe/ui/core.tres"
+        resource.parent.mkdir(parents=True)
+        resource.write_bytes(b"unrelated author resource")
+        with self.assertRaisesRegex(ValueError, "unrelated"):
+            self.install(self.next)
+        self.assertEqual(resource.read_bytes(), b"unrelated author resource")
+        self.assertFalse((self.project / INVENTORY).exists())
 
     def test_core_submodules_are_rejected(self):
         self.git("update-index", "--add", "--cacheinfo", "160000," + self.current + ",ui-kit/rookframe/ui/nested")

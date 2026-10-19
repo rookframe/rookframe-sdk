@@ -20,7 +20,7 @@ from rookframe_package_build import (BUILD_SCHEMA,
     copy_author_project, deterministic_archive, export_prepared_profile, new_build_id, normalize_binary_resources,
     prepare_profile, run_godot, shared_profile_sources, source_identity)
 
-SDK_VERSION = "0.36.0-rc.2"
+SDK_VERSION = "0.36.0-rc.3"
 DEVELOPMENT_PLUGIN_VERSION = "0.2.0-rc.1"
 SDK_EDITION = "2029"
 SDK_EDITIONS = {"2029": 34}

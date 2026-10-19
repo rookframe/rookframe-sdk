@@ -132,11 +132,13 @@ def check_dependencies(project: Path, sdk_version: str, ui_version: str, ui_comm
         # Compare the gd-plug checkout's committed tree without executing it.
         checkout = project / ".plugged/rookframe-ui-kit"
         ui_files = committed_ui_files(checkout, ui_pin["commit"])
-    for relative, expected in ui_files.items():
-        if hashlib.sha256((ui / relative).read_bytes()).hexdigest() != expected:
-            raise RuntimeError(f"UI.CONTENTS: Restore UI Kit {ui_pin['commit']}; {relative} was changed.")
-    # Installed byte identities are authoritative; ordinary acquisition must
-    # also retain the exact dependency selections recorded by initialization.
+    # Godot can reserialize external Themes when saving a Package scene, even
+    # without a theme edit. Check/build use the committed UI release in their
+    # disposable projects; the editor copy need not retain its original bytes.
+    for relative in ui_files:
+        if not (ui / relative).is_file():
+            raise RuntimeError(f"UI.MISSING: Install UI Kit {ui_pin['commit']}; {relative} is missing.")
+    # Ordinary acquisition must retain the exact dependency selections.
     plug = (project / "plug.gd").read_text()
     for repository, pin in (("rookframe-sdk", {"tag": f"v{sdk_version}"}),
                             ("rookframe-ui-kit", {"commit": ui_pin["commit"]})):

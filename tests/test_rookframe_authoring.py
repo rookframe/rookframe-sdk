@@ -229,6 +229,7 @@ class PackageAuthoringTests(unittest.TestCase):
             def import_project(godot, snapshot, *args):
                 (snapshot / "project.godot").write_text("tool modified the disposable copy")
             with patch.object(author, "check_dependencies"), \
+                 patch("rookframe_ui_kit_install.committed_runtime", return_value=("rookframe/ui", {})), \
                  patch.object(author, "normalize_binary_resources"), \
                  patch.object(author, "run_godot", side_effect=import_project), \
                  patch.object(author, "verify", side_effect=verify):
