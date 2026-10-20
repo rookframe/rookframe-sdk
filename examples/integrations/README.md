@@ -5,17 +5,17 @@ It uses authored scenes, installed SDK types and the independently
 pinned UI Kit. It imports no application assembly or private host API. Calendar
 does not depend on this example and has no provider account requirement.
 
-Install gd-plug's bootstrap at `addons/gd-plug/plug.gd` as described in the
-[SDK README](../../README.md), then run from this directory:
+Install the Development Plugin ZIP and enable it. This example chooses SDK helpers
+and UI Kit components; their independent menu actions install those optional libraries.
+Then run the plugin commands from this directory:
 
 ```sh
-/path/to/godot --headless --path . --script plug.gd install
-python3 addons/rookframe_sdk/rookframe_authoring.py check --project . --godot /path/to/godot
-python3 addons/rookframe_sdk/rookframe_authoring.py build --project . --godot /path/to/godot
+python3 addons/rookframe_development/rookframe_authoring.py check --project . --godot /path/to/godot
+python3 addons/rookframe_development/rookframe_authoring.py build --project . --godot /path/to/godot
 ```
 
-Import the resulting archive through Manager and include it alongside one
-System Extension. Open **Integration example** from the left Rail.
+Publish the resulting archive, install it through its public HTTPS Manifest URL,
+and include it alongside one System Extension. Open **Integration example** from the left Rail.
 
 - Save/read a note in this Package's User files, choose an existing file or
   folder, read immutable welcome content, or decode a selected PNG/JPEG/WebP portrait.

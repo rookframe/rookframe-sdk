@@ -1,8 +1,9 @@
 # Package forms and Edition conformance
 
 These three small, ordinary author projects complement the separate Calendar repository.
-Install the SDK and UI Kit from each project's exact pins using the normal gd-plug bootstrap
-and commands in the SDK README. Run `check` and `build` in each project and publish each release before application QA.
+Install the Development Plugin ZIP. These examples choose SDK helper types; install
+the SDK from the plugin menu. UI Kit resources used by an example can be installed
+independently from the separate optional menu action. Run `check` and `build` in each project and publish each release before application QA.
 Install through Manager using the public Manifest URL; invited Players acquire the
 World’s required releases automatically. Local archive imports are prohibited for QA.
 Catalogue listing is optional. Select the published Packages needed by the World.
