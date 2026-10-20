@@ -1,43 +1,20 @@
 # Rookframe GDScript SDK
 
-Install this repository with gd-plug. The files in `rookframe/sdk/` are ordinary,
-typed GDScript source ready to use. Package authors do not generate or compile the SDK.
-The SDK calls Rookframe's C# API; Rookframe owns its behavior and compatibility.
+An optional typed GDScript helper library in `rookframe/sdk/`. Rookframe owns
+runtime behavior and API compatibility. No Package kind requires this library
+or the UI Kit. Packages can use ordinary Godot nodes and the host domain API.
 
-## Install
+## Install when wanted
 
-Use stock Godot .NET 4.7.2 with its documented prerequisites, an installed Rookframe
-application, and Git. Package creation and export commands also use Python 3.10+.
-Install [gd-plug](https://github.com/imjp94/gd-plug) in the author project, then add:
+Install the standalone [Development Plugin ZIP](https://github.com/rookframe/rookframe-development-plugin/releases/download/v0.3.1-rc.1/rookframe-development-0.3.1-rc.1.zip) in Godot and enable **Rookframe Development**. Choose **Project > Tools >
+Rookframe: Install latest SDK** to download the helper library automatically.
+**Install latest UI Kit** is a separate, optional action. Neither requires
+manual gd-plug setup. Existing dependency managers may still install just
+`rookframe/sdk/` from an exact SDK release.
 
-```gdscript
-extends "res://addons/gd-plug/plug.gd"
+## Use the typed helpers
 
-func request_quit(exit_code := -1) -> bool:
-    return super.request_quit(0 if exit_code == -1 else exit_code)
-
-func _plugging() -> void:
-    plug("rookframe/rookframe-sdk", {"tag": "v0.36.0-rc.3", "include": ["rookframe/sdk", "addons/rookframe_sdk"]})
-    plug("rookframe/rookframe-development-plugin", {"tag": "v0.2.0-rc.1", "include": ["addons/rookframe_development"]})
-```
-
-Run `godot --headless --path . --script plug.gd install`. The SDK source is
-ready to use. The Development Plugin provides the Package and Development World dock.
-
-To create a separate new Package project from this downloaded tool:
-
-```sh
-python addons/rookframe_sdk/rookframe_authoring.py init --project ../my-package --name "My Package" --ui
-python addons/rookframe_sdk/rookframe_authoring.py install-dependencies --project ../my-package
-godot --headless --path ../my-package --script plug.gd install
-```
-
-Creation writes the new project's Manifest, source, export preset and complete
-`plug.gd`, including its pinned public UI Kit. It preserves an existing `plug.gd`;
-when adding Package structure to an existing project, merge its dependencies with
-the complete examples in this repository before checking or exporting.
-
-An Implementation starts with:
+An Implementation choosing the SDK can extend `res://rookframe/sdk/implementation.gd`:
 
 ```gdscript
 extends "res://rookframe/sdk/implementation.gd"
@@ -46,54 +23,25 @@ func start() -> void:
     var data: SDK.DataResult = sdk.world_data.read()
 ```
 
-A Presentation extends `res://rookframe/sdk/presentation.gd` and overrides
-`compose()`. Authored windows can extend `res://rookframe/sdk/window.gd`.
-Use ordinary Godot scenes, Resources, signals and public UI Kit Controls.
-See [API.md](API.md) for the domain operations and callbacks.
+A Presentation choosing the SDK can extend `res://rookframe/sdk/presentation.gd`
+and override `compose()`. Authored windows may extend the SDK's `window.gd`.
+Use ordinary Godot Controls, signals and Resources; UI Kit components are optional.
+See [API.md](API.md) for operations and callbacks.
 
-## Develop, check and export
+## Author, develop and publish Packages
 
-Open the author project in stock Godot .NET. Enable **Rookframe Development**,
-select the installed Rookframe application in the dock, and reuse one named
-Development World. The plugin prepares Godot's library cache from that
-application. Run the World, save supported script and scene edits, and reimport
-assets in the same session. Use Godot's normal debugger and breakpoints.
-
-The installed Rookframe application checks both source and exported Packages:
-
-```sh
-python addons/rookframe_sdk/rookframe_authoring.py check --project . --godot /path/to/godot --rookframe /path/to/Rookframe
-python addons/rookframe_sdk/rookframe_authoring.py build --project . --godot /path/to/godot --rookframe /path/to/Rookframe
-```
-
-The application path can also come from the dock's saved configuration or
-`ROOKFRAME_APP`. One Package archive contains the Package's own code and assets.
-Rookframe supplies the shared SDK and UI Kit at runtime; neither is copied into
-that archive. Commit Package source, Manifest, dependency lock, `plug.gd` and
-export presets. Ignore downloaded dependencies, `.godot/`, local Development
-World files and build output.
-
-Godot may rewrite UI Kit Theme files when saving a Package scene. Checking and
-building leave that editor copy alone and use the pinned UI Kit's committed
-files in a temporary project. Running gd-plug install or update restores the
-UI Kit's installed files, including any local edits. Keep your custom themes
-and other authored resources inside your Package's directory.
-
-When upgrading a project created with an earlier candidate, also replace its
-committed `.rookframe/rookframe_ui_kit_install.py` bootstrap helper with
-`addons/rookframe_sdk/rookframe_ui_kit_install.py` from the downloaded SDK.
-
-Publish only after checking and review. See [PUBLICATION.md](PUBLICATION.md).
-Other Packages in a Development World must be published and acquired through
-public HTTPS Manifest URLs.
+All authoring tools live exclusively in the Development Plugin: creation,
+registration, model preparation, media, checks, builds and publication commands.
+Use its Package tab and Project > Tools menu. Its commands live under
+`addons/rookframe_development/`; there are no Package authoring commands in this SDK.
+The installed application performs source and archive admission checks.
+See the plugin's [README](https://github.com/rookframe/rookframe-development-plugin#author-packages)
+and [publication instructions](https://github.com/rookframe/rookframe-development-plugin/blob/main/PUBLICATION.md).
 
 ## Maintain this SDK
 
-Edit the GDScript files here directly. Keep C# API changes in `rookframe-godot`
-and editor tools in `rookframe-development-plugin`. There is no SDK source
-assembly step in the application repository.
-
-Run `python -m unittest discover -s tests -v` for the Package tools. Verify SDK
-changes with the matching application and the existing Development World before
-publishing an immutable version. Release metadata records the exact source files;
-it does not produce SDK code or a checker executable.
+Edit GDScript here directly. Keep runtime behavior in `rookframe-godot` and all
+Package authoring tools in `rookframe-development-plugin`. The SDK never requires
+a UI Kit checkout. `python tools/release_metadata.py --version VERSION` records
+SDK source hashes only. Verify changed helper calls against the matching
+application before publishing an immutable release.
