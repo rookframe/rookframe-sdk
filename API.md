@@ -1493,7 +1493,12 @@ with the same eligible contributions. Camera navigation is not a context change.
 
 Content uses ordinary Godot Controls and signals. Its full-rectangle root receives
 the safe area and uses `MOUSE_FILTER_IGNORE`; interactive children use normal
-Godot input. Hiding the content root makes the contribution unavailable. The host
+Godot input. Keep the base HUD in a bounded child Control at the bottom; any
+full-rectangle intermediate Controls are wrappers, and popovers sit above the
+base. The host aligns switching controls to that bottommost footprint, preserving
+existing Character HUD dimensions. It may translate the mount horizontally to
+keep the HUD and switcher inside the safe area without resizing the content.
+Hiding the content root makes the contribution unavailable. The host
 hides a separate mount when another HUD is chosen, retaining the content instance
 and its state. Presentation replacement stages registrations atomically, abort
 preserves the previous contributions, and Package teardown retires its HUDs.
