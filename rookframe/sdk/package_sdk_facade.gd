@@ -5,7 +5,7 @@ const Rails = preload("res://rookframe/sdk/rails.gd")
 const WindowButton = preload("res://rookframe/sdk/window_button.gd")
 const ExtensionSurface = preload("res://rookframe/sdk/extension_surface.gd")
 const SDK_EDITION := "2029"
-const MINIMUM_REVISION := 34
+const MINIMUM_REVISION := 35
 
 var _host: Object
 var _rails: Rails
@@ -44,6 +44,7 @@ func _init(host: Object) -> void:
 	_world_data = WorldData.new(host)
 	_rails = Rails.new(host)
 	_character_hud = CharacterHud.new(host)
+	_huds = Huds.new(host)
 	_ui_root = ContributionSlot.new(host, "ui-root")
 	_slots = Slots.new(host)
 	_feedback = Feedback.new(host)
@@ -343,3 +344,10 @@ var _character_hud: CharacterHud
 var character_hud: CharacterHud:
 	get:
 		return _character_hud
+
+const Huds = preload("res://rookframe/sdk/huds.gd")
+const HudContribution = preload("res://rookframe/sdk/hud_contribution.gd")
+var _huds: Huds
+var huds: Huds:
+	get:
+		return _huds

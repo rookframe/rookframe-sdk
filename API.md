@@ -1473,3 +1473,29 @@ refuses selection during a Rook movement, and returns an `OperationResult`.
 Selection changes the ordinary HUD context and smoothly flies the local camera to the
 Rook, preserving the camera mode, angle and zoom. It does not target or move the
 Rook, grant access, or save World data. Read the current selection with `rooks.selected()`.
+
+## Shared HUD contributions — Edition 2029 revision 35
+
+`sdk.huds.register(HudContribution)` registers an authored native Control using
+its Package-scoped stable `id`, `display_name`, optional `icon`, explicit integer
+`order`, `scene`, and eligibility (`mode`: all/play/builder, `role`: all/gm/player,
+`subject`: all/rook/character). Character retains its existing Owner/access,
+Player fallback and Play-only eligibility. `sdk.character_hud.mount` registers
+Character into this same stack, with id `character` and order zero.
+
+Rookframe owns the shared slot. Source priority is System Extension, Rookframe,
+then Optional Extension. Optional providers follow World Package Selection's
+canonical Package UUID ordering. Within each provider, integer order then stable
+id determine order. Discovery and loading timing never determine order. Filtering
+preserves survivor order. A changed Scene, persona, mode or selected subject
+rebuilds the stack and selects its first eligible HUD, including a different Rook
+with the same eligible contributions. Camera navigation is not a context change.
+
+Content uses ordinary Godot Controls and signals. Its full-rectangle root receives
+the safe area and uses `MOUSE_FILTER_IGNORE`; interactive children use normal
+Godot input. Hiding the content root makes the contribution unavailable. The host
+hides a separate mount when another HUD is chosen, retaining the content instance
+and its state. Presentation replacement stages registrations atomically, abort
+preserves the previous contributions, and Package teardown retires its HUDs.
+Contributions sit above floating tasks and below docks and full-viewport tasks.
+Camera jumps, browsing and HUD choices are Participant-local presentation.
