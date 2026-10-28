@@ -25,3 +25,5 @@ func _init(value: Dictionary) -> void:
 		kind = ContentKind.Value.SURFACE_FINISH
 	if value.type == "wall_style":
 		kind = ContentKind.Value.WALL_STYLE
+	if value.type == "roof_style":
+		kind = ContentKind.Value.ROOF_STYLE
