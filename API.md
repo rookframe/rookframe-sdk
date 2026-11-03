@@ -134,7 +134,7 @@ Implementation references: [Godot Environment](https://docs.godotengine.org/en/s
 and [texture import](https://docs.godotengine.org/en/stable/classes/class_resourceimportertexture.html).
 
 Install the SDK source from `rookframe-sdk`. This version exposes the Edition
-2029 C# API through revision 35. Section headings identify the underlying API's
+2029 C# API through revision 36. Section headings identify the underlying API's
 revision requirements; installing the SDK does not generate per-Package variants.
 
 Extend `res://rookframe/sdk/presentation.gd`. It supplies a typed `sdk`
