@@ -1,7 +1,140 @@
 # Package SDK API
 
+## Scene atmosphere (Edition 2029, revision 36)
+
+`sdk.atmosphere` controls the picture through typed Godot Resources. Shared Scene
+atmosphere is durable World data, replicated in full to every Participant. Local
+effects belong only to the viewing Participant. Neither interface changes their
+graphics preferences or rendering budget.
+
+| Operation | Contract |
+| --- | --- |
+| `read(scene: SceneId) -> AtmosphereResult` | Returns a copied `SceneAtmosphere`, excluding local effects. Editing the copy alone changes nothing. |
+| `await set_scene(scene: SceneId, picture: SceneAtmosphere) -> OperationResult` | GM-only. Validates the complete picture, persists it, then shares it. Await completion before treating it as saved. |
+| `set_local(id: String, scene: SceneId, effect: AtmosphereOverride, priority: int = 0) -> OperationResult` | Replaces this Package's named local effect for one Scene. Any Participant can use it. |
+| `clear_local(id: String) -> OperationResult` | Idempotently removes only this Package's named effect. |
+
+Use shared changes for weather and time-of-day milestones, rather than a network
+write every frame. A System can store its clock/weather state in World Data and
+apply the corresponding picture through this capability. Concurrent shared
+writes follow the ordinary World command ordering: the last accepted complete
+picture wins. Invalid input leaves the previous state intact. Handle `ok`,
+`code`, and `message` as with other SDK operations; missing Scenes, denied access,
+invalid values, unavailable resources and persistence failures are reported.
+
+`SceneAtmosphere` has six required groups. `AtmosphereOverride` has the same six
+groups, initially `null`: omitted groups preserve the underlying picture;
+supplied groups replace that entire group. Read the shared picture and copy its
+group when changing only one field. All numeric values must be finite. Colors
+are native `Color` values with RGB channels in 0..1; alpha is unused and light
+energy is separate. SDK source comments document every field and unit.
+
+| Group | Fields and accepted ranges |
+| --- | --- |
+| `AtmosphereSun` | `pitch_degrees` -90..90 (negative points down), `yaw_degrees` -360..360, `color`, `energy` 0..16 |
+| `AtmosphereAmbient` | `color`, `energy` 0..8; constant fill independent of sky brightness |
+| `AtmosphereSky` | `energy` 0..8, `rotation_degrees` -360..360; existing sky panorama |
+| `AtmosphereFog` | `density` 0..1, `color`, `energy` 0..8, `begin` 0..100000 m, `end` 0.01..100000 m and greater than begin, `curve` 0.01..16, `sky_affect` 0..1, `height` -100000..100000 m, `height_density` -16..16, `sun_scatter` and `aerial_perspective` 0..1 |
+| `AtmosphereGrade` | `exposure` 0.01..16, `agx_contrast` 0.1..2, `agx_white` 1..64, `brightness`, `contrast`, `saturation` 0..4, `lookup: AtmosphereLookup` |
+| `AtmosphereOcclusion` | `radius` 0.01..16 m, `intensity` 0..16, `power` 0.01..8, `detail` 0..5, `light_affect` 0..1 |
+
+An effect ID is 1..80 characters; each Package may retain up to 32 local effects.
+Priorities range from -1000 to 1000. Higher priorities apply later. Equal
+priorities sort by Package UUID, then effect ID, using ordinal ordering. Effects
+survive switching away from their Scene, but affect only that Scene. Clear them
+when the gameplay effect ends. Package shutdown or leaving the World clears its
+effects automatically; closing a Package window does not. Effects never enter
+saved World data or another Participant's image.
+
+```gdscript
+# Imports use the installed Rookframe SDK.
+const RookframeSdk = preload("res://rookframe/sdk/package_sdk_facade.gd")
+const AtmosphereOverride = preload("res://rookframe/sdk/atmosphere_override.gd")
+
+func apply_evening(sdk: RookframeSdk) -> void:
+	var current = sdk.scenes.current()
+	if not current.ok:
+		return
+	var result = sdk.atmosphere.read(current.scene.id)
+	if not result.ok:
+		return
+	result.atmosphere.sun.pitch_degrees = -12.0
+	result.atmosphere.sun.color = Color(1.0, 0.65, 0.35)
+	result.atmosphere.sun.energy = 1.8
+	var saved = await sdk.atmosphere.set_scene(current.scene.id, result.atmosphere)
+	if not saved.ok:
+		push_warning(saved.message)
+
+func enable_local_vision(sdk: RookframeSdk) -> void:
+	var current = sdk.scenes.current()
+	if not current.ok:
+		return
+	var result = sdk.atmosphere.read(current.scene.id)
+	if not result.ok:
+		return
+	var effect = AtmosphereOverride.new()
+	effect.ambient = result.atmosphere.ambient
+	effect.ambient.energy = 0.8
+	effect.grade = result.atmosphere.grade
+	effect.grade.saturation = 0.25
+	sdk.atmosphere.set_local("night-vision", current.scene.id, effect, 100)
+
+func disable_local_vision(sdk: RookframeSdk) -> void:
+	sdk.atmosphere.clear_local("night-vision")
+```
+
+`AtmosphereLookup` selects an immutable authored color transform. An empty
+`package_id` selects the built-in `path = "forest"` or `path = ""` for neutral.
+Otherwise supply an installed Package UUID and a relative resource path under
+that Package's namespace. The resource must be an admitted native cubic
+`Texture3D`, 2..64 texels per edge, without mipmaps. Traversal and absolute paths
+are rejected. Package resources use the ordinary checked loader. A lookup that
+later becomes unavailable retains its saved reference and renders neutral with
+a diagnostic. Prefer reusing loaded lookups; loading/swapping assets is not a
+cost-free per-frame operation.
+
+### Artistic intent and device quality
+
+Main Menu → Settings → Graphics owns resolution scale/height, antialiasing,
+shadow quality/distance, mesh detail, texture filtering, ambient-occlusion
+quality, and decorative grass density/distance. Those values are local device
+preferences. Changes do not rewrite Scene atmosphere. Conversely, weather or
+local vision cannot enable higher sample counts or override the user's budget.
+The approved daytime forest treatment is the exterior default; existing Scenes
+without stored atmosphere remain readable and use their preset's default.
+
+Depth fog opacity, color and distance are artistic parameters of a fixed-cost
+fog pass. Denser fog does **not** automatically cull distant geometry. Expensive
+volumetric fog is a different Godot effect and is not enabled by this API.
+Occlusion strength/radius describe intent; the device decides whether and at
+what quality SSAO is evaluated. Godot 4.7.2 Mobile has no SSAO; the requested
+intent remains stored. Mobile also uses a fixed AgX white unless HDR 2D is
+enabled. Sky brightness never reduces rendering resolution. This API does not
+allocate arbitrary sky shaders, lights, reflection probes or post-process passes.
+Updating scalar/color parameters avoids changing the rendering budget, though
+moving sunlight and loading resources can still cause ordinary engine work.
+
+For authored decorative grass, place native `MultiMeshInstance3D` nodes in the
+`rookframe_graphics_foliage` group before they enter the tree. Author instance
+order with a spatially distributed prefix: density draws that prefix through
+Godot's `visible_instance_count`. The host isolates shared MultiMesh Resources,
+respects the authored maximum distance/count, and never changes collisions or
+Rooks. Do not opt gameplay-bearing geometry into this group. Mesh detail uses
+native mesh LOD data; assets without LODs cannot benefit. Texture filtering
+requires anisotropic samplers/material filtering on the authored assets.
+
+Texture memory is controlled during native Godot import: GPU compression,
+mipmaps, and `process/size_limit`. Filtering is not texture-resolution reduction.
+The menu does not claim to unload texture memory through mip bias. Future
+runtime texture tiers require authored/imported size variants.
+
+Implementation references: [Godot Environment](https://docs.godotengine.org/en/stable/classes/class_environment.html),
+[Viewport](https://docs.godotengine.org/en/stable/classes/class_viewport.html),
+[MultiMesh](https://docs.godotengine.org/en/stable/classes/class_multimesh.html),
+and [texture import](https://docs.godotengine.org/en/stable/classes/class_resourceimportertexture.html).
+
 Install the SDK source from `rookframe-sdk`. This version exposes the Edition
-2029 C# API through revision 34. Section headings identify the underlying API's
+2029 C# API through revision 35. Section headings identify the underlying API's
 revision requirements; installing the SDK does not generate per-Package variants.
 
 Extend `res://rookframe/sdk/presentation.gd`. It supplies a typed `sdk`

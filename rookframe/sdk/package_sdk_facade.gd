@@ -5,7 +5,7 @@ const Rails = preload("res://rookframe/sdk/rails.gd")
 const WindowButton = preload("res://rookframe/sdk/window_button.gd")
 const ExtensionSurface = preload("res://rookframe/sdk/extension_surface.gd")
 const SDK_EDITION := "2029"
-const MINIMUM_REVISION := 35
+const MINIMUM_REVISION := 36
 
 var _host: Object
 var _rails: Rails
@@ -17,6 +17,7 @@ var rails: Rails:
 
 func _init(host: Object) -> void:
 	_host = host
+	_atmosphere = Atmosphere.new(host)
 	_service_scope = ServiceScope.new(host)
 	_portraits = ActorPortraits.new(_service_scope)
 	_browser = Browser.new(_service_scope)
@@ -351,3 +352,10 @@ var _huds: Huds
 var huds: Huds:
 	get:
 		return _huds
+
+const Atmosphere = preload("res://rookframe/sdk/atmosphere.gd")
+var _atmosphere: Atmosphere
+## Shared Scene atmosphere and Participant-local picture effects. Revision 36.
+var atmosphere: Atmosphere:
+	get:
+		return _atmosphere
