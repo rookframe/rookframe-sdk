@@ -3,6 +3,7 @@ const ServiceScope = preload("res://rookframe/sdk/service_scope.gd")
 const TextResult = preload("res://rookframe/sdk/text_result.gd")
 const BytesResult = preload("res://rookframe/sdk/bytes_result.gd")
 const IntegrationResult = preload("res://rookframe/sdk/integration_result.gd")
+const DataResult = preload("res://rookframe/sdk/data_result.gd")
 
 var _scope: ServiceScope
 var _area: String
@@ -15,6 +16,13 @@ func read_text() -> TextResult:
 	return TextResult.new(_scope._host.ReadText(_area, _path))
 func read_bytes() -> BytesResult:
 	return BytesResult.new(_scope._host.ReadFile(_area, _path))
+
+## Reads immutable data by its Package-relative logical source path.
+func read_data() -> DataResult:
+	if _area != "package":
+		return DataResult.new({"ok": false, "code": "area_denied",
+			"message": "Compiled data can only be read from the Package area."})
+	return DataResult.new(_scope._host.ReadPackageContentData(_path))
 ## Immutable Package content always refuses writes.
 func write_text(text: String) -> IntegrationResult:
 	return IntegrationResult.new(_scope._host.WriteText(_area, _path, text))

@@ -134,7 +134,7 @@ Implementation references: [Godot Environment](https://docs.godotengine.org/en/s
 and [texture import](https://docs.godotengine.org/en/stable/classes/class_resourceimportertexture.html).
 
 Install the SDK source from `rookframe-sdk`. This version exposes the Edition
-2029 C# API through revision 36. Section headings identify the underlying API's
+2029 C# API through revision 37. Section headings identify the underlying API's
 revision requirements; installing the SDK does not generate per-Package variants.
 
 Extend `res://rookframe/sdk/presentation.gd`. It supplies a typed `sdk`
@@ -1637,3 +1637,15 @@ and its state. Presentation replacement stages registrations atomically, abort
 preserves the previous contributions, and Package teardown retires its HUDs.
 Contributions sit above floating tasks and below docks and full-viewport tasks.
 Camera jumps, browsing and HUD choices are Participant-local presentation.
+
+## Compiled Package data (Edition 2029, revision 37)
+
+Use `sdk.files.package.file("data/table.json").read_data()` to read a compiled value by its
+logical path. The result has `ok`, `value`, `code`, and `message`. A null payload can succeed.
+Nested Arrays and Dictionaries are read-only. Make an independent copy before editing values
+for an Actor or another durable record.
+
+Actor Definitions can override `create_data_with_content(choices, content)` and call
+`content.ReadData(path)` with the same result shape. The read-only capability is scoped to the
+definition's owning Package and expires when the factory returns. Existing `create_data`
+overrides continue to work through the SDK base callback.
